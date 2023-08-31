@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>c12be74f-7ce3-471d-9a0e-f84ef42f023a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DLM.Extensions</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Eventos.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensoesNetDxfEM1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_ArquivoPasta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_CAM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_CAM_PERFIL_TIPO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Canvas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_CanvasNetDXF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Classe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Clipper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Conversao.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Datagrid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_DataTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Double.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_DXF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Face.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Furo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Furo_Purlin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_LinhaLiv.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Lista.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_ListasForms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXFMBS.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Node.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_P3d.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Pacote.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_PDF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_PGO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Prompt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_ReadCAM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_RichTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_RME.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Salvar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Selecao.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Shape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_String.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Tabela.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Trigonometria.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemsControlFilter.cs" />
+  </ItemGroup>
+</Project>
