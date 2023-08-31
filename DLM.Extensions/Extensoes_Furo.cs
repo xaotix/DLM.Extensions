@@ -15,8 +15,8 @@ namespace DLM.cam
         public static List<Furo> AlinharX(this List<Furo> fros, double tolerancia)
         {
             var grp_X = fros.Select(x => x.Origem.X.Round(0)).Distinct().ToList();
-            List<Furo> lista_controle = new List<Furo>();
-            List<Furo> lista_alinhada = new List<Furo>();
+            var lista_controle = new List<Furo>();
+            var lista_alinhada = new List<Furo>();
             foreach (var fr in grp_X)
             {
                 var frs = fros.FindAll(x => lista_controle.Find(y => y.ToString() == x.ToString()) == null).FindAll(x => x.Origem.X.Round(0) == fr);
