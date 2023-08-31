@@ -742,7 +742,8 @@ namespace DLM.desenho
                 {
                     if (arquivo.Exists())
                     {
-                        block = new netDxf.Blocks.Block(arquivo.getNome(), DxfDocument.Load(arquivo).CloneAll());
+                        var dxf = DxfDocument.Load(arquivo);
+                        block = new netDxf.Blocks.Block(arquivo.getNome(), dxf.CloneAll(),dxf.GetModelAttributes());
                     }
                 }
                 if (block != null)
@@ -921,7 +922,23 @@ namespace DLM.desenho
 
                 list.Add(t1);
             }
+
             return list;
+        }
+
+        private static List<AttributeDefinition> GetModelAttributes(this DxfDocument dxf)
+        {
+            var atts = new List<AttributeDefinition>();
+            var model = dxf.Blocks["*Model_Space"];
+
+            foreach (var obj in model.AttributeDefinitions)
+            {
+                var entity = obj.Value as AttributeDefinition;
+
+             
+                atts.Add(entity);
+            }
+            return atts;
         }
 
         public static MText Get(this Text txt)
