@@ -26,22 +26,54 @@ namespace DLM.desenho
         public static List<EntityObject> AddPerfil_UFrontal(this DxfDocument dxf, netDxf.Tables.Layer l, netDxf.Tables.Layer lC, EM2Parte parte)
         {
             var esc = parte.Escada;
-
-            var retorno = new List<EntityObject>();
-            //desenho do perfil
-            var comp = parte.Comp_Fim;
-            retorno.Add(dxf.AddRec(l, parte.X, parte.Y, esc.puL, comp));
-            retorno.Add(dxf.AddRec(l, parte.X + esc.deH + esc.puL, parte.Y, esc.puL, comp));
-            //linhas pontilhadas espessura perfil
-            retorno.Add(dxf.AddLine(l, parte.X + esc.puL - esc.puE, parte.Y, parte.X + esc.puL - esc.puE, parte.Y + comp, netDxf.Tables.Linetype.Dashed));
-            retorno.Add(dxf.AddLine(l, parte.X + esc.deH + esc.puL + esc.puE, parte.Y, parte.X + esc.deH + esc.puL + esc.puE, parte.Y + comp, netDxf.Tables.Linetype.Dashed));
             double y0 = parte.Y + esc.caB;
             double y1 = parte.Y;
             double x1 = parte.X + esc.puL;
             double x2 = parte.X + esc.deH + esc.puL;
 
+
+            var retorno = new List<EntityObject>();
+            //desenho do perfil
+            var comp = parte.Comp_Fim;
+            //esquerda
+            retorno.Add(dxf.AddRec(l, 0, 0, esc.puL, comp));
+            retorno.Add(dxf.AddLine(l, esc.puL - esc.puE, 0, esc.puL - esc.puE, comp, netDxf.Tables.Linetype.Dashed));
+            foreach (var furo in parte.ESQ.Furos)
+            {
+                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
+                {
+                    retorno.AddRange(dxf.AddFuro(l, esc.puL - esc.puLM, furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
+                }
+                else
+                {
+                    retorno.AddRange(dxf.AddFuro(l, esc.puL, furo.Origem.X, esc.caD, Desenho_Furo.Corte, true, Sentido.Horizontal));
+                }
+            }
+
+            parte.ESQ.DxfVista = dxf.CreateBlock(retorno, parte.ESQ.Nome, new desenho.P3d(parte.X, parte.Y), true, new db.Linha("HASH", parte.ESQ.Hash));
+            retorno.Clear();
+
+            //direita
+            retorno.Add(dxf.AddRec(l, 0, 0, esc.puL, comp));
+            retorno.Add(dxf.AddLine(l, esc.puE, 0, esc.puE, comp, netDxf.Tables.Linetype.Dashed));
+            foreach (var furo in parte.DIR.Furos)
+            {
+                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
+                {
+                    retorno.AddRange(dxf.AddFuro(l, esc.puLM, furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
+                }
+                else
+                {
+                    retorno.AddRange(dxf.AddFuro(l, 0, furo.Origem.X, esc.caD, Desenho_Furo.Corte, true, Sentido.Horizontal));
+                }
+            }
+
+            parte.DIR.DxfVista = dxf.CreateBlock(retorno, parte.DIR.Nome, new desenho.P3d(parte.X + esc.deH + esc.puL, parte.Y), true, new db.Linha("HASH", parte.DIR.Hash));
+            retorno.Clear();
+
+
             //cantoneira da base
-            if (parte.Tipo == EM2_Tipo.Parte_Inicial | parte.Tipo == EM2_Tipo.Parte_Simples)
+            if ((parte.Tipo == EM2_Tipo.Parte_Inicial | parte.Tipo == EM2_Tipo.Parte_Simples) && parte.Escada.Considerar_Cantoneira_Base)
             {
                 //cantoneiras
                 //esquerdo
@@ -53,76 +85,66 @@ namespace DLM.desenho
                 retorno.AddRange(dxf.AddFuro(lC, x1 - esc.caO - esc.puE, y1, esc.caD, Desenho_Furo.Corte, true, Sentido.Vertical));
                 retorno.AddRange(dxf.AddFuro(lC, x2 + esc.caO + esc.puE, y1, esc.caD, Desenho_Furo.Corte, true, Sentido.Vertical));
             }
-
-            foreach (var furo in parte.ESQ.Furos)
-            {
-                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
-                {
-                    retorno.AddRange(dxf.AddFuro(l, x1 - esc.puLM, parte.Y + furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
-                }
-                else
-                {
-                    retorno.AddRange(dxf.AddFuro(l, x1, parte.Y + furo.Origem.X, esc.caD, Desenho_Furo.Corte, true, Sentido.Horizontal));
-                }
-            }
-            foreach (var furo in parte.DIR.Furos)
-            {
-                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
-                {
-                    retorno.AddRange(dxf.AddFuro(l, x2 + esc.puLM, parte.Y + furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
-                }
-                else
-                {
-                    retorno.AddRange(dxf.AddFuro(l, x2, parte.Y + furo.Origem.X, esc.caD, Desenho_Furo.Corte, true, Sentido.Horizontal));
-                }
-            }
             return retorno;
         }
-        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, netDxf.Tables.Layer l, EM2Parte parte, double offset_x)
+        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, netDxf.Tables.Layer l, EM2Parte parte, double x)
         {
             var esc = parte.Escada;
 
             var retorno = new List<netDxf.Entities.EntityObject>();
 
             var comp = parte.Comp_Fim;
+            double y1 = 0;
+            double y2 = comp;
 
-            retorno.Add(dxf.AddRec(l, offset_x, parte.Y, esc.puS, comp));
-            double y1 = parte.Y;
-            double y2 = parte.Y + comp;
-            retorno.Add(dxf.AddLine(l, offset_x + esc.puE, y1, offset_x + esc.puE, y2));
-            retorno.Add(dxf.AddLine(l, offset_x + esc.puS - esc.puE, y1, offset_x + esc.puS - esc.puE, y2));
+
+            retorno.Add(dxf.AddLine(l, esc.puS - esc.puE, y1, esc.puS - esc.puE, y2));
+            retorno.Add(dxf.AddRec(l, 0, 0, esc.puS, comp));
+            retorno.Add(dxf.AddLine(l, esc.puE, y1, esc.puE, y2));
+            foreach (var furo in parte.ESQ.Furos)
+            {
+                if (furo.Face == Furo_Face.Alma)
+                {
+                    retorno.AddRange(dxf.AddFuro(l, furo.Origem.Y, furo.Origem.X, furo.Diametro, Desenho_Furo.Vista));
+                }
+                else if (furo.Face == Furo_Face.Aba2)
+                {
+                    retorno.AddRange(dxf.AddFuro(l, 0, furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
+                }
+                else if (furo.Face == Furo_Face.Aba1)
+                {
+                    retorno.AddRange(dxf.AddFuro(l, esc.puS, furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
+                }
+            }
+            parte.ESQ.DxfCorte = dxf.CreateBlock(retorno, parte.ESQ.Nome, new desenho.P3d(x, parte.Y), true, new db.Linha("HASH", parte.ESQ.Hash));
+
+            retorno.Clear();
+
+
+
+            retorno.Add(dxf.AddLine(l, esc.puS - esc.puE, y1, esc.puS - esc.puE, y2));
+            retorno.Add(dxf.AddRec(l, 0, 0, esc.puS, comp));
+            retorno.Add(dxf.AddLine(l, esc.puE, y1, esc.puE, y2));
 
             foreach (var furo in parte.DIR.Furos)
             {
                 if (furo.Face == Furo_Face.Alma)
                 {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x + furo.Origem.Y, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Vista));
+                    retorno.AddRange(dxf.AddFuro(l, furo.Origem.Y, furo.Origem.X, furo.Diametro, Desenho_Furo.Vista));
                 }
                 else if (furo.Face == Furo_Face.Aba1)
                 {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
+                    retorno.AddRange(dxf.AddFuro(l, 0, furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
                 }
                 else if (furo.Face == Furo_Face.Aba2)
                 {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x + esc.puS, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
+                    retorno.AddRange(dxf.AddFuro(l, 0 + esc.puS, furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
                 }
             }
+            parte.DxfCorte = dxf.CreateBlock(retorno, parte.DIR.Nome, new desenho.P3d(x, parte.Y), true, new db.Linha("HASH", parte.DIR.Hash));
 
-            foreach (var furo in parte.ESQ.Furos)
-            {
-                if (furo.Face == Furo_Face.Alma)
-                {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x + furo.Origem.Y, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Vista));
-                }
-                else if (furo.Face == Furo_Face.Aba2)
-                {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
-                }
-                else if (furo.Face == Furo_Face.Aba1)
-                {
-                    retorno.AddRange(dxf.AddFuro(l, offset_x + esc.puS, parte.Y + furo.Origem.X, furo.Diametro, Desenho_Furo.Corte));
-                }
-            }
+
+
 
             return retorno;
         }
@@ -416,8 +438,9 @@ namespace DLM.desenho
             return retorno;
         }
 
-        public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, string prefix = "BLOCO", P3d origem = null, bool criar_se_existir = true)
+        public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, string prefix = "BLOCO", P3d origem = null, bool criar_se_existir = true, DLM.db.Linha atributos = null)
         {
+
             if (origem == null)
             {
                 origem = new P3d();
@@ -455,8 +478,30 @@ namespace DLM.desenho
 
                 }
             }
+
+            if (atributos != null)
+            {
+                if (atributos.Celulas.Count > 0)
+                {
+
+                    foreach (var cel in atributos.Celulas)
+                    {
+                        var tag = cel.Coluna.ToUpper();
+
+                        var natt = new netDxf.Entities.AttributeDefinition(cel.Coluna);
+                        natt.Value = cel.Valor;
+                        natt.Height = 0.0001;
+                        block.AttributeDefinitions.Add(natt);
+                    }
+                }
+
+            }
+
+
             var insert = new netDxf.Entities.Insert(block);
             insert.Position = origem.ToVector3();
+
+            insert.Sync();
 
             dxf.Entities.Add(insert);
 
@@ -607,7 +652,7 @@ namespace DLM.desenho
             {
                 var ang = p1.GetAngulo(p2);
                 var linha = new Line(p1.ToVector2(), p2.ToVector2());
-                var cota = new netDxf.Entities.LinearDimension(linha, offset, ang,style);
+                var cota = new netDxf.Entities.LinearDimension(linha, offset, ang, style);
                 cota.Layer = l;
                 cota.Style = style;
                 dxf.Entities.Add(cota);
@@ -743,7 +788,7 @@ namespace DLM.desenho
                     if (arquivo.Exists())
                     {
                         var dxf = DxfDocument.Load(arquivo);
-                        block = new netDxf.Blocks.Block(arquivo.getNome(), dxf.CloneAll(),dxf.GetModelAttributes());
+                        block = new netDxf.Blocks.Block(arquivo.getNome(), dxf.CloneAll(), dxf.GetModelAttributes());
                     }
                 }
                 if (block != null)
@@ -765,7 +810,7 @@ namespace DLM.desenho
                     return null;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return null;
@@ -935,9 +980,10 @@ namespace DLM.desenho
             {
                 var entity = obj.Value as AttributeDefinition;
 
-             
-                atts.Add(entity);
+
+                atts.Add(entity.Clone() as AttributeDefinition);
             }
+
             return atts;
         }
 

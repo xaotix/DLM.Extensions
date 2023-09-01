@@ -184,11 +184,11 @@ namespace Conexoes
                 var nome = Arquivo.getNome();
                 var Pasta = Cfg.Init.TMP_DWG();
 
-                var dest = Pasta + nome + Extensao;
+                var dest = $"{Pasta}{nome}.{Extensao}";
                 int c = 1;
                 while (!Arquivo.Copiar(dest, false))
                 {
-                    dest = Pasta + nome + "_" + c + Extensao;
+                    dest = $"{Pasta}{nome}_{c}.{Extensao}";
                     c++;
                 }
                 if (abrir)
