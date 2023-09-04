@@ -23,13 +23,13 @@ namespace DLM.desenho
             mm.Show();
         }
 
-        public static List<EntityObject> AddPerfil_UFrontal(this DxfDocument dxf, netDxf.Tables.Layer l, netDxf.Tables.Layer lC, EM2Parte parte)
+        public static List<EntityObject> AddPerfil_UFrontal(this DxfDocument dxf, netDxf.Tables.Layer l, netDxf.Tables.Layer lC, EM2Parte parte, EM2 esc)
         {
-            var esc = parte.Escada;
+
             double y0 = parte.Y + esc.caB;
             double y1 = parte.Y;
-            double x1 = parte.X + esc.puL;
-            double x2 = parte.X + esc.deH + esc.puL;
+            double x1 = parte.X+ esc.puL;
+            double x2 = parte.X+ esc.deH + esc.puL;
 
 
             var retorno = new List<EntityObject>();
@@ -68,12 +68,12 @@ namespace DLM.desenho
                 }
             }
 
-            parte.DIR.DxfVista = dxf.CreateBlock(retorno, parte.DIR.Nome, new desenho.P3d(parte.X + esc.deH + esc.puL, parte.Y), true, new db.Linha("HASH", parte.DIR.Hash));
+            parte.DIR.DxfVista = dxf.CreateBlock(retorno, parte.DIR.Nome, new desenho.P3d(parte.X+ esc.deH + esc.puL, parte.Y), true, new db.Linha("HASH", parte.DIR.Hash));
             retorno.Clear();
 
 
             //cantoneira da base
-            if ((parte.Tipo == EM2_Tipo.Parte_Inicial | parte.Tipo == EM2_Tipo.Parte_Simples) && parte.Escada.Considerar_Cantoneira_Base)
+            if ((parte.Tipo == EM2_Tipo.Parte_Inicial | parte.Tipo == EM2_Tipo.Parte_Simples) && esc.Considerar_Cantoneira_Base)
             {
                 //cantoneiras
                 //esquerdo
@@ -87,9 +87,8 @@ namespace DLM.desenho
             }
             return retorno;
         }
-        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, netDxf.Tables.Layer l, EM2Parte parte, double x)
+        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, netDxf.Tables.Layer l, EM2Parte parte, double x, EM2 esc)
         {
-            var esc = parte.Escada;
 
             var retorno = new List<netDxf.Entities.EntityObject>();
 
