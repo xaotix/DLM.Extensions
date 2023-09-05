@@ -776,7 +776,7 @@ namespace DLM.desenho
                 t.Value = Valor;
             }
         }
-        public static Insert AddBlock(this DxfDocument destino, string arquivo, P3d origem, double escala = 1, double ang = 0, netDxf.Tables.Layer l = null)
+        public static Insert AddBlock(this DxfDocument destino, string arquivo, P3d origem, double escala = 1, double ang = 0, netDxf.Tables.Layer l = null, bool layout = false)
         {
             try
             {
@@ -801,7 +801,16 @@ namespace DLM.desenho
                     {
                         n_Bloco.Layer = l;
                     }
-                    destino.Entities.Add(n_Bloco);
+                    var layouts = destino.Layouts.ToList().FindAll(x=>x.AssociatedBlock.Name.ToUpper() == "*PAPER_SPACE");
+
+                    if (layout && layouts.Count > 0)
+                    {
+                        layouts[0].AssociatedBlock.Entities.Add(n_Bloco);
+                    }
+                    else
+                    {
+                        destino.Entities.Add(n_Bloco);
+                    }
                     return n_Bloco;
                 }
                 else
