@@ -73,9 +73,9 @@ namespace DLM.desenho
 
                 //cantoneiras
                 //esquerdo
-                dxf.AddPerfil_L(lC, x1 - DLM.vars.Global.EM1.Perfil_U_Espessura, y, Orientacao.SEI);
+                dxf.AddPerfilL(lC, x1 - DLM.vars.Global.EM1.Perfil_U_Espessura, y, Orientacao.SEI);
                 //direito
-                dxf.AddPerfil_L(lC, x2 + DLM.vars.Global.EM1.Perfil_U_Espessura, y, Orientacao.SDS);
+                dxf.AddPerfilL(lC, x2 + DLM.vars.Global.EM1.Perfil_U_Espessura, y, Orientacao.SDS);
 
                 //furos base
                 dxf.AddFuro(lC, x1 - DLM.vars.Global.EM1.Cantoneira_Offset_Furo - DLM.vars.Global.EM1.Perfil_U_Espessura, y0, DLM.vars.Global.EM1.Cantoneira_Furo_Diametro, Desenho_Furo.Corte, true, Sentido.Vertical);

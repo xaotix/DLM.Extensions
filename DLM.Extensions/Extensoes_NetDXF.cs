@@ -77,9 +77,9 @@ namespace DLM.desenho
             {
                 //cantoneiras
                 //esquerdo
-                retorno.AddRange(dxf.AddPerfil_L(lC, x1 - esc.puE, y0, Orientacao.SEI, esc.caC, esc.caL, esc.caE));
+                retorno.AddRange(dxf.AddPerfilL(lC, x1 - esc.puE, y0, Orientacao.SEI, esc.caC, esc.caL, esc.caE));
                 //direito
-                retorno.AddRange(dxf.AddPerfil_L(lC, x2 + esc.puE, y0, Orientacao.SDS, esc.caC, esc.caL, esc.caE));
+                retorno.AddRange(dxf.AddPerfilL(lC, x2 + esc.puE, y0, Orientacao.SDS, esc.caC, esc.caL, esc.caE));
 
                 //furos base
                 retorno.AddRange(dxf.AddFuro(lC, x1 - esc.caO - esc.puE, y1, esc.caD, Desenho_Furo.Corte, true, Sentido.Vertical));
@@ -273,7 +273,7 @@ namespace DLM.desenho
             retorno.Add(block_ent);
             return retorno;
         }
-        public static List<EntityObject> AddPerfil_L(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, Orientacao lado, double comp = 0, double larg = 0, double esp = 0)
+        public static List<EntityObject> AddPerfilL(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, Orientacao lado, double comp = 0, double larg = 0, double esp = 0)
         {
             var retorno = new List<EntityObject>();
 
@@ -729,7 +729,20 @@ namespace DLM.desenho
             }
             return dxf.AddMText(new List<string> { msg }, posicao, true);
         }
-        public static MText AddMText(this DxfDocument dxf, List<string> linhas, P3d posicao = null, bool adicionar = true)
+        public static MText AddMText(this DxfDocument dxf, string valor, P3d posicao, double tamanho, netDxf.Tables.Layer layer = null, MTextAttachmentPoint origem = MTextAttachmentPoint.MiddleRight)
+        {
+            var novo = dxf.AddMText(new List<string> { valor }, posicao, true, layer);
+            if(tamanho>0)
+            {
+                novo.Height = tamanho;
+            }
+            novo.AttachmentPoint = origem;
+
+            novo.Color = AciColor.Cyan;
+
+            return novo;
+        }
+        public static MText AddMText(this DxfDocument dxf, List<string> linhas, P3d posicao = null, bool adicionar = true, netDxf.Tables.Layer layer = null)
         {
             if (posicao == null)
             {
@@ -742,6 +755,10 @@ namespace DLM.desenho
             retorno.Style = estilo;
             retorno.Value = string.Join(@"\P", linhas);
             retorno.Position = new Vector3(posicao.X, posicao.Y, 0);
+            if(layer!=null)
+            {
+                retorno.Layer = layer;
+            }
             if (adicionar)
             {
                 dxf.Entities.Add(retorno);
