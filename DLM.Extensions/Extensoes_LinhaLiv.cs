@@ -614,7 +614,7 @@ namespace DLM.cam
                     points.Add(points.First().Clonar());
                 }
 
-                var area_win = points.GetPath().Area();
+                var area_win = points.GetPath().Area().Abs();
 
                 //Clipper2Lib.Clipper.Area(points.GetPath());
 

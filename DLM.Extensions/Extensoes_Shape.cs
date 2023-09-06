@@ -88,10 +88,13 @@ namespace Conexoes
         }
         public static double GetPeso(this Shape shape)
         {
-            var liv1P = shape.LIV1_SemBordas().GetPeso(shape.Perfil);
-            var liv2P = shape.LIV2.GetPeso(shape.Perfil);
-            var liv3P = shape.LIV3.GetPeso(shape.Perfil);
-            var liv4P = shape.LIV4.GetPeso(shape.Perfil);
+            var liv1 = shape.LIV1;
+            var liv1P = shape.LIV1_SemBordas();
+            var liv2P = shape.LIV2;
+            var liv3P = shape.LIV3;
+            var liv4P = shape.LIV4;
+            var planificada = shape.GetPlanificada();
+
 
 
 
@@ -99,33 +102,33 @@ namespace Conexoes
             {
                 return Math.Round(shape.Perfil.GetPesoMetro() / 1000 * shape.Comprimento, Cfg.Init.CAM_Decimais_Peso);
             }
-            else if (shape.Perfil.Primitivo == CAM_PRIMITIVO._)
-            {
-                return liv1P;
-            }
             else if (shape.Perfil.Familia == CAM_FAMILIA.Laminado)
             {
                 if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.L_Laminado)
                 {
-                    return Math.Round(liv1P + liv2P, Cfg.Init.CAM_Decimais_Peso);
+                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Chata)
                 {
-                    return liv1P;
+                    return planificada.GetPeso(shape.Perfil);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.INP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.WLam)
                 {
-                    return Math.Round(liv1P + liv2P + liv3P, Cfg.Init.CAM_Decimais_Peso);
+                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.UAP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.UNP)
                 {
-                    return Math.Round(liv1P + liv2P + liv3P, Cfg.Init.CAM_Decimais_Peso);
+                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Quadrado)
                 {
-                    return Math.Round((liv1P * 2) + liv2P + liv3P, Cfg.Init.CAM_Decimais_Peso);
+                    return Math.Round((liv1P.GetPeso(shape.Perfil) * 2) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
                 }
 
+            }
+            else if(shape.Perfil.Familia == CAM_FAMILIA.Dobrado | shape.Perfil.Primitivo == CAM_PRIMITIVO._)
+            {
+                return planificada.GetPeso(shape.Perfil);
             }
             else
             {
@@ -136,6 +139,10 @@ namespace Conexoes
         }
         public static Face GetPlanificada(this Shape shape)
         {
+            if(shape.Perfil.Familia == CAM_FAMILIA.Chapa)
+            {
+                return shape.LIV1;
+            }
             var originais = new List<Face>();
             var faces = new List<Face>();
             var pf = shape.Perfil;
