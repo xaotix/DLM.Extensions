@@ -7,6 +7,10 @@ namespace Conexoes
 {
     public static class Extensoes_Lista
     {
+        public static List<T> Get<T>(this List<object> items)
+        {
+            return items.FindAll(x => x is T).Cast<T>().ToList();
+        }
         public static List<T> Simplificar<T>(this List<T> Origem)
         {
             return Origem.GroupBy(x => x).Select(g => g.First()).ToList();

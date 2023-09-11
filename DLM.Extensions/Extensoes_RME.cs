@@ -14,8 +14,8 @@ namespace Conexoes
         {
             double peso = 0;
 
-            peso += objetos.FindAll(x => x is RME).Cast<RME>().Sum(x => x.PESOTOT);
-            peso += objetos.FindAll(x => x is RMA).Cast<RMA>().Sum(x => x.PESOTOT);
+            peso += objetos.Get<RME>().Sum(x => x.PESOTOT);
+            peso += objetos.Get<RMA>().Sum(x => x.PESOTOT);
 
             return peso;
         }
@@ -31,13 +31,14 @@ namespace Conexoes
             var retorno_RMUs = new List<RME>();
 
 
-            var correntes_macros = Lista.FindAll(x => x.GetObjeto() is Macros.Corrente).Select(x => x.GetObjeto() as Macros.Corrente).ToList();
-            var tirantes = Lista.FindAll(x => x.GetObjeto() is Macros.Tirante).Select(x => x.GetObjeto() as Macros.Tirante).ToList();
-            var zenitais = Lista.FindAll(x => x.GetObjeto() is Macros.Zenital).Select(x => x.GetObjeto() as Macros.Zenital).ToList();
-            var purlins = Lista.FindAll(x => x.GetObjeto() is Macros.Purlin).Select(x => x.GetObjeto() as Macros.Purlin).ToList();
-            var contraventos = Lista.FindAll(x => x.GetObjeto() is Macros.Contravento).Select(x => x.GetObjeto() as Macros.Contravento).ToList();
-            var medaluxes = Lista.FindAll(x => x.GetObjeto() is Macros.Medalux).Select(x => x.GetObjeto() as Macros.Medalux).ToList();
-            var escadas_marinheiro = Lista.FindAll(x => x.GetObjeto() is Macros.Escada.Marinheiro).Select(y => y.GetObjeto()).Cast<Macros.Escada.Marinheiro>().ToList();
+            var objetos = Lista.Select(x => x.GetObjeto()).ToList();
+            var correntes = objetos.Get<Macros.Corrente>();
+            var tirantes = objetos.Get<Macros.Tirante>();
+            var zenitais = objetos.Get<Macros.Zenital>();
+            var purlins = objetos.Get<Macros.Purlin>();
+            var contraventos = objetos.Get<Macros.Contravento>();
+            var medaluxes = objetos.Get<Macros.Medalux>(); 
+            var escadas_marinheiro = objetos.Get<Macros.Escada.Marinheiro>(); 
 
 
             var pacote_marinheiro = new Macros.Escada.PacoteMarinheiro(escadas_marinheiro);
@@ -52,82 +53,6 @@ namespace Conexoes
                 retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
                 retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
             }
-
-            foreach (var obj in medaluxes)
-            {
-                obj.getPecas();
-                retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
-                retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
-                retorno_RMUs.AddRange(obj.getPecas().GetRMUs());
-            }
-
-
-            if (correntes_macros.Sum(x => x.Qtd) > 0)
-            {
-                var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
-                if (par_corrente != null)
-                {
-                    if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
-                    {
-
-                        RMA prCTR = new RMA(par_corrente, correntes_macros.FindAll(X => X.Parafusos).Sum(X => X.QuantidadeParafusos), "[MACRO CORRENTES]");
-                        if (prCTR.Quantidade > 0)
-                        {
-                            retorno_RMAs.Add(prCTR);
-                            retorno_RMAs.Add(prCTR.GetPORCA());
-                            retorno_RMAs.Add(prCTR.GetARRUELA());
-                        }
-                    }
-                }
-                var CrF46 = correntes_macros.FindAll(x => x.Fixacao == Fixacao.F46);
-                var CrF76 = correntes_macros.FindAll(x => x.Fixacao == Fixacao.F76);
-                var CrF156 = correntes_macros.FindAll(x => x.Fixacao == Fixacao.F156);
-                if (CrF46.Count > 0 && CrF46.Sum(X => X.Qtd * 2) > 0)
-                {
-                    var supF46 = DBases.GetBancoRM().GetRMA("F46");
-                    if (supF46 != null)
-                    {
-                        retorno_RMAs.Add(new RMA(supF46, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
-                    }
-                }
-
-                if (CrF76.Count > 0 && CrF76.Sum(X => X.Qtd * 2) > 0)
-                {
-                    var supF76 = DBases.GetBancoRM().GetRMA("F76");
-                    if (supF76 != null)
-                    {
-                        retorno_RMAs.Add(new RMA(supF76, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
-                    }
-                }
-
-                if (CrF156.Count > 0 && CrF156.Sum(X => X.Qtd * 2) > 0)
-                {
-                    var supF156 = DBases.GetBancoRM().GetRMA("F156");
-                    if (supF156 != null)
-                    {
-                        retorno_RMAs.Add(new RMA(supF156, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
-                    }
-                }
-
-
-               foreach(var corrente in correntes_macros)
-                {
-                    if (corrente.Diagonal != null)
-                    {
-                        if (corrente.Comprimento >= corrente.Diagonal.COMP_MIN && corrente.Comprimento <= corrente.Diagonal.COMP_MAX)
-                        {
-                            var rme = corrente.Diagonal.Clonar();
-                            rme.COMP = corrente.Comprimento;
-                            rme.OBSERVACOES = "[MACRO]" + corrente.Observacoes;
-                            rme.FICHA_PINTURA = corrente.Tratamento;
-                            rme.Quantidade = corrente.Qtd;
-                            retorno_RMEs.Add(rme);
-                        }
-                    }
-                }
-            }
-
-
 
             foreach (var purlin in purlins)
             {
@@ -169,6 +94,81 @@ namespace Conexoes
                     }
                 }
             }
+
+            foreach (var obj in medaluxes)
+            {
+                obj.getPecas();
+                retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
+                retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
+                retorno_RMUs.AddRange(obj.getPecas().GetRMUs());
+            }
+
+
+            if (correntes.Sum(x => x.Qtd) > 0)
+            {
+                var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
+                if (par_corrente != null)
+                {
+                    if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
+                    {
+
+                        RMA prCTR = new RMA(par_corrente, correntes.FindAll(X => X.Parafusos).Sum(X => X.QuantidadeParafusos), "[MACRO CORRENTES]");
+                        if (prCTR.Quantidade > 0)
+                        {
+                            retorno_RMAs.Add(prCTR);
+                            retorno_RMAs.Add(prCTR.GetPORCA());
+                            retorno_RMAs.Add(prCTR.GetARRUELA());
+                        }
+                    }
+                }
+                var CrF46 = correntes.FindAll(x => x.Fixacao == Fixacao.F46);
+                var CrF76 = correntes.FindAll(x => x.Fixacao == Fixacao.F76);
+                var CrF156 = correntes.FindAll(x => x.Fixacao == Fixacao.F156);
+                if (CrF46.Count > 0 && CrF46.Sum(X => X.Qtd * 2) > 0)
+                {
+                    var supF46 = DBases.GetBancoRM().GetRMA("F46");
+                    if (supF46 != null)
+                    {
+                        retorno_RMAs.Add(new RMA(supF46, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                    }
+                }
+
+                if (CrF76.Count > 0 && CrF76.Sum(X => X.Qtd * 2) > 0)
+                {
+                    var supF76 = DBases.GetBancoRM().GetRMA("F76");
+                    if (supF76 != null)
+                    {
+                        retorno_RMAs.Add(new RMA(supF76, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                    }
+                }
+
+                if (CrF156.Count > 0 && CrF156.Sum(X => X.Qtd * 2) > 0)
+                {
+                    var supF156 = DBases.GetBancoRM().GetRMA("F156");
+                    if (supF156 != null)
+                    {
+                        retorno_RMAs.Add(new RMA(supF156, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                    }
+                }
+
+
+               foreach(var corrente in correntes)
+                {
+                    if (corrente.Diagonal != null)
+                    {
+                        if (corrente.Comprimento >= corrente.Diagonal.COMP_MIN && corrente.Comprimento <= corrente.Diagonal.COMP_MAX)
+                        {
+                            var rme = corrente.Diagonal.Clonar();
+                            rme.COMP = corrente.Comprimento;
+                            rme.OBSERVACOES = "[MACRO]" + corrente.Observacoes;
+                            rme.FICHA_PINTURA = corrente.Tratamento;
+                            rme.Quantidade = corrente.Qtd;
+                            retorno_RMEs.Add(rme);
+                        }
+                    }
+                }
+            }
+
 
 
 
@@ -434,15 +434,15 @@ namespace Conexoes
 
         public static List<RMA> GetRMAs(this List<object> lista)
         {
-            return lista.FindAll(x => x is RMA).Cast<RMA>().ToList();
+            return lista.Get<RMA>();
         }
         public static List<RME> GetRMUs(this List<object> lista)
         {
-            return lista.FindAll(x => x is RME).Cast<RME>().ToList().FindAll(x => x.DESTINO == "RMU").ToList();
+            return lista.Get<RME>().FindAll(x => x.DESTINO == "RMU").ToList();
         }
         public static List<RME> GetRMEs(this List<object> lista)
         {
-            return lista.FindAll(x=>x is RME).Cast<RME>().ToList().FindAll(x => x.DESTINO == "RME").ToList();
+            return lista.Get<RME>().FindAll(x => x.DESTINO == "RME").ToList();
         }
         public static RME GetRMDB(this RME rme)
         {
