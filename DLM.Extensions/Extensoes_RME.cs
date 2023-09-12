@@ -652,7 +652,7 @@ namespace Conexoes
             foreach (RMT t in distinct)
             {
                 RMT N = new RMT(t, t.Bobina, t.GetLinha_RMT_User());
-                N.Quantidade = Origem.FindAll(x => x.ToString() == t.ToString()).Sum(y => y.Qtd);
+                N.Quantidade = Origem.FindAll(x => x.ToString() == t.ToString()).Sum(y => y.Quantidade);
                 retorno.Add(N);
             }
             var lista_fim = retorno.GroupBy(x => x.NomeFim).ToList();
