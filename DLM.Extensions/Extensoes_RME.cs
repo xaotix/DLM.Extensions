@@ -39,12 +39,29 @@ namespace Conexoes
             var purlins = objetos.Get<Macros.Purlin>();
             var contraventos = objetos.Get<Macros.Contravento>();
             var medaluxes = objetos.Get<Macros.Medalux>(); 
-            var escadas_marinheiro = objetos.Get<Macros.Escada.Marinheiro>(); 
+            var escadasEM1 = objetos.Get<Macros.Escada.Marinheiro>(); 
+            var pacoteEM1 = new Macros.Escada.PacoteMarinheiro(escadasEM1);
+            var escadasEM2 = objetos.Get<DLM.macros.EM2>();
+            var pacoteEM2 = new DLM.macros.EM2Pacote(escadasEM2);
+
+            retorno_RMAs.AddRange(pacoteEM1.getPecas().Get<RMA>());
+            retorno_RMEs.AddRange(pacoteEM1.getPecas().Get<RME>());
 
 
-            var pacote_marinheiro = new Macros.Escada.PacoteMarinheiro(escadas_marinheiro);
-            retorno_RMAs.AddRange(pacote_marinheiro.getPecas().FindAll(x => x is RMA).Cast<RMA>());
-            retorno_RMEs.AddRange(pacote_marinheiro.getPecas().FindAll(x => x is RME).Cast<RME>());
+            var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado);
+            foreach(var pc in pcsEM2)
+            {
+                var igual = DBases.GetBancoRM().GetPeca(pc.Key);
+                if(igual!=null)
+                {
+
+                }
+                else
+                {
+                    pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
+                }
+            }
+
 
 
 
@@ -57,10 +74,10 @@ namespace Conexoes
 
             foreach (var purlin in purlins)
             {
-                var pc = purlin.GetPeca();
-                if (pc != null)
+                var pcPurlin = purlin.getPeca();
+                if (pcPurlin != null)
                 {
-                    var nova = pc.Clonar(purlin.Quantidade, purlin.Comprimento);
+                    var nova = pcPurlin.Clonar(purlin.Quantidade, purlin.Comprimento);
                     nova.User = purlin.User;
                     nova.FICHA_PINTURA = purlin.Pintura;
                     nova.Quantidade = purlin.Quantidade;
