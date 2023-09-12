@@ -1,4 +1,5 @@
 ﻿using Conexoes.Macros.Escada;
+using DLM.encoder;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
@@ -93,11 +94,14 @@ namespace Conexoes
                         retorno_RMEs.Add(nova);
                     }
                 }
+                else
+                {
+                    pecas.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
+                }
             }
 
             foreach (var obj in medaluxes)
             {
-                obj.getPecas();
                 retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
                 retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
                 retorno_RMUs.AddRange(obj.getPecas().GetRMUs());
@@ -169,9 +173,6 @@ namespace Conexoes
                 }
             }
 
-
-
-
             if(tirantes.Sum(x=>x.Qtd)>0)
             {
                 //TIRANTES
@@ -214,6 +215,7 @@ namespace Conexoes
                     }
                 }
             }
+
             if (zenitais.Sum(x => x.Qtd) > 0)
             {
                 double qtd_MASTIC = zenitais.FindAll(x => x.Considerar_Selante_e_Mastic).Sum(x => x.Qtd * DBases.GetBancoRM().ZENITAL_MASTIC);

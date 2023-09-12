@@ -49,7 +49,7 @@ namespace Conexoes
                     if (txt2.Count > 0)
                     {
                         txt2.Insert(0, txt1);
-                        reports.Add(new Report("Inferferências furações", $"{string.Join("", txt2)}\n\n", TipoReport.Crítico));
+                        reports.Add(new Report("Inferferências furações", $"{string.Join("", txt2)}\n\n", TipoReport.Critico));
                     }
                 }
             }
