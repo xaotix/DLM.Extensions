@@ -48,13 +48,40 @@ namespace Conexoes
             retorno_RMEs.AddRange(pacoteEM1.getPecas().Get<RME>());
 
 
+            var txt_macro_medalux = "[MACRO ZENITAL]";
+            var txt_macro_corrente = "[MACRO CORRENTE]";
+            var txt_macro_tirante = "[MACRO TIRANTES]";
+            var txt_macro_em2 = "[MACRO EM2]";
+
             var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado);
             foreach(var pc in pcsEM2)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.Key);
                 if(igual!=null)
                 {
+                    if(igual is RME)
+                    {
+                        foreach(var p1 in pc.ToList())
+                        {
+                            var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
+                            nrm.OBSERVACOES = txt_macro_em2;
+                            retorno_RMEs.Add(nrm);
+                        }
+                    }
+                    else if(igual is RMA)
+                    {
+                       foreach(var p1 in pc.ToList())
+                        {
+                            var nrm = igual.As<RMA>().Clonar();
+                            nrm.Quantidade = p1.Qtd;
+                            nrm.OBSERVACOES = txt_macro_em2;
+                            retorno_RMAs.Add(nrm);
+                        }
+                    }
+                    else
+                    {
 
+                    }
                 }
                 else
                 {
@@ -133,7 +160,7 @@ namespace Conexoes
                     if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
                     {
 
-                        RMA prCTR = new RMA(par_corrente, correntes.FindAll(X => X.Parafusos).Sum(X => X.QuantidadeParafusos), "[MACRO CORRENTES]");
+                        RMA prCTR = new RMA(par_corrente, correntes.FindAll(X => X.Parafusos).Sum(X => X.QuantidadeParafusos), txt_macro_corrente);
                         if (prCTR.Quantidade > 0)
                         {
                             retorno_RMAs.Add(prCTR);
@@ -150,7 +177,7 @@ namespace Conexoes
                     var supF46 = DBases.GetBancoRM().GetRMA("F46");
                     if (supF46 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF46, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                        retorno_RMAs.Add(new RMA(supF46, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
                     }
                 }
 
@@ -159,7 +186,7 @@ namespace Conexoes
                     var supF76 = DBases.GetBancoRM().GetRMA("F76");
                     if (supF76 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF76, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                        retorno_RMAs.Add(new RMA(supF76, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
                     }
                 }
 
@@ -168,7 +195,7 @@ namespace Conexoes
                     var supF156 = DBases.GetBancoRM().GetRMA("F156");
                     if (supF156 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF156, CrF46.Sum(X => X.Qtd * 2), "[MACRO CORRENTES]"));
+                        retorno_RMAs.Add(new RMA(supF156, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
                     }
                 }
 
@@ -181,7 +208,7 @@ namespace Conexoes
                         {
                             var rme = corrente.Diagonal.Clonar();
                             rme.COMP = corrente.Comprimento;
-                            rme.OBSERVACOES = "[MACRO]" + corrente.Observacoes;
+                            rme.OBSERVACOES = txt_macro_corrente;
                             rme.FICHA_PINTURA = corrente.Tratamento;
                             rme.Quantidade = corrente.Qtd;
                             retorno_RMEs.Add(rme);
@@ -201,12 +228,12 @@ namespace Conexoes
                     var ARR = DBases.GetBancoRM().GetArruela("3/8", "GALVANIZADO");
                     if (SFT != null)
                     {
-                        retorno_RMAs.Add(new RMA(SFT, qtdSFT, "[MACRO TIRANTES]"));
+                        retorno_RMAs.Add(new RMA(SFT, qtdSFT, txt_macro_tirante));
                     }
                     if (POR != null && ARR != null)
                     {
-                        retorno_RMAs.Add(new RMA(POR, qtdSFT, "[MACRO TIRANTES]"));
-                        retorno_RMAs.Add(new RMA(ARR, qtdSFT, "[MACRO TIRANTES]"));
+                        retorno_RMAs.Add(new RMA(POR, qtdSFT, txt_macro_tirante));
+                        retorno_RMAs.Add(new RMA(ARR, qtdSFT, txt_macro_tirante));
                     }
                 }
 
@@ -253,7 +280,7 @@ namespace Conexoes
                     var parMastic = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_MASTIC_CODIGO);
                     if (parMastic != null)
                     {
-                        retorno_RMAs.Add(new RMA(parMastic, qtd_MASTIC, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(parMastic, qtd_MASTIC, txt_macro_medalux));
                     }
                 }
 
@@ -262,7 +289,7 @@ namespace Conexoes
                     var parSelante = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_SELANTE_CODIGO);
                     if (parSelante != null)
                     {
-                        retorno_RMAs.Add(new RMA(parSelante, qtd_SELANTE, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(parSelante, qtd_SELANTE, txt_macro_medalux));
                     }
                 }
 
@@ -271,7 +298,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_REBITE_CODIGO);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_REBITE, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(par, qtd_REBITE, txt_macro_medalux));
                     }
                 }
 
@@ -283,7 +310,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_CABECA_INOX);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_CABECA_INOX, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_CABECA_INOX, txt_macro_medalux));
                     }
                 }
                 if (qtd_PARAFUSO_NORMAL > 0)
@@ -291,7 +318,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_NORMAL);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_NORMAL, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_NORMAL, txt_macro_medalux));
                     }
                 }
                 if (qtd_PARAFUSO_TODO_INOX > 0)
@@ -299,7 +326,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_TODO_INOX);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_TODO_INOX, "[MACRO ZENITAL]"));
+                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_TODO_INOX, txt_macro_medalux));
                     }
                 }
 
@@ -311,7 +338,7 @@ namespace Conexoes
                     {
                         User = Global.UsuarioAtual,
                         Quantidade = zenitais.Sum(X => X.Qtd),
-                        OBSERVACOES = "[MACRO ZENITAL]"
+                        OBSERVACOES = txt_macro_medalux
 
                     };
                     retorno_RMUs.Add(T);
@@ -322,7 +349,7 @@ namespace Conexoes
                     {
                         User = Global.UsuarioAtual,
                         Quantidade = (zenitais.Sum(X => X.Qtd) * DBases.GetBancoRM().ZENITAL_PS4).Int(),
-                        OBSERVACOES = "[MACRO ZENITAL]"
+                        OBSERVACOES = txt_macro_medalux
 
                     };
                     retorno_RMUs.Add(T);
@@ -345,7 +372,7 @@ namespace Conexoes
                         foreach (var bob in bobinas1)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ1));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -353,7 +380,7 @@ namespace Conexoes
                         foreach (var bob in bobinas2)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ1));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -373,7 +400,7 @@ namespace Conexoes
                         foreach (var bob in bobinas1)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ2));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -381,7 +408,7 @@ namespace Conexoes
                         foreach (var bob in bobinas2)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ2));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -400,7 +427,7 @@ namespace Conexoes
                         foreach (var bob in bobinas1)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_1840));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -408,7 +435,7 @@ namespace Conexoes
                         foreach (var bob in bobinas2)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_1840));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -427,7 +454,7 @@ namespace Conexoes
                         foreach (var bob in bobinas1)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_620));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -435,7 +462,7 @@ namespace Conexoes
                         foreach (var bob in bobinas2)
                         {
                             var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_620));
-                            npc.OBSERVACOES = "[MACRO ZENITAL]";
+                            npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
                             retorno_RMUs.Add(npc);
@@ -596,17 +623,17 @@ namespace Conexoes
                                 Origem.FindAll(x => x != null).GroupBy(x => x.ToString())
                                         .Select(g => g.First())
                                         .ToList();
-            foreach (RMA r in distinct)
+            foreach (RMA rm in distinct)
             {
-                var nrma = new RMA(r);
-                var iguais = Origem.FindAll(x => x.SAP == r.SAP);
+                var nrma = new RMA(rm);
+                var iguais = Origem.FindAll(x => x.SAP == rm.SAP);
                 nrma.Quantidade = iguais.Sum(x => x.Quantidade);
                 if (arredondar_multiplo && nrma.Multiplo > 0)
                 {
                     nrma.SetQuantidadeMultipla(nrma.Quantidade);
                 }
-                List<string> OBS = Origem.FindAll(x => x != null).FindAll(X => X.SAP == r.SAP).Select(x => x.OBSERVACOES).Distinct().ToList().FindAll(x => x.Replace(" ", "") != "");
-                nrma.OBSERVACOES = string.Join(", ", iguais.Select(x => x.OBSERVACOES).Select(x => x.CortarString(10)).Distinct().ToList()).CortarString(50);
+                List<string> OBS = Origem.FindAll(x => x != null).FindAll(X => X.SAP == rm.SAP).Select(x => x.OBSERVACOES).Distinct().ToList().FindAll(x => x.Replace(" ", "") != "");
+                nrma.OBSERVACOES = string.Join(", ", iguais.Select(x => x.OBSERVACOES).Distinct().ToList()).CortarString(50);
 
 
                 retorno.Add(nrma);
@@ -646,9 +673,10 @@ namespace Conexoes
                                                 .GroupBy(x => x.ToString() + "@@@@" + string.Join("|", x.Programa))
                                                 .Select(g => g.First())
                                                 .ToList().OrderBy(x => x.CODIGOFIM).ToList();
-            foreach (RME t in distinct)
+            foreach (RME rm in distinct)
             {
-                var nPeca = t.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == t.ToString()).Sum(y => y.Quantidade));
+                var nPeca = rm.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade));
+                nPeca.OBSERVACOES = rm.OBSERVACOES;
                 retorno.Add(nPeca);
             }
             var lista_fim = retorno.GroupBy(x => x.CODIGOFIM).ToList();
