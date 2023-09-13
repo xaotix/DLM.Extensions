@@ -39,8 +39,8 @@ namespace Conexoes
             var purlins = objetos.Get<Macros.Purlin>();
             var contraventos = objetos.Get<Macros.Contravento>();
             var medaluxes = objetos.Get<Macros.Medalux>(); 
-            var escadasEM1 = objetos.Get<Macros.Escada.Marinheiro>(); 
-            var pacoteEM1 = new Macros.Escada.PacoteMarinheiro(escadasEM1);
+            var escadasEM1 = objetos.Get<Marinheiro>(); 
+            var pacoteEM1 = new PacoteMarinheiro(escadasEM1);
             var escadasEM2 = objetos.Get<DLM.macros.EM2>();
             var pacoteEM2 = new DLM.macros.EM2Pacote(escadasEM2);
 
@@ -80,7 +80,6 @@ namespace Conexoes
                     }
                     else
                     {
-
                     }
                 }
                 else
@@ -88,9 +87,6 @@ namespace Conexoes
                     _pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
                 }
             }
-
-
-
 
 
             foreach (var obj in contraventos)
@@ -118,13 +114,10 @@ namespace Conexoes
                     nova.TIPO_ACO_CUSTOM = purlin.Material;
 
                     var linhas = nova.Linhas;
-
                     if (linhas.Count == 2)
                     {
                         nova.PDF_CUSTOM = true;
-
                         int furos = purlin.GetFurosVista(false).Count;
-
                         if (nova.COMP <= purlin.Comp_Min)
                         {
                             linhas[0].MAKTX = "PERFIL DOBRADO";
@@ -133,7 +126,6 @@ namespace Conexoes
                             linhas[1].ZPP_CORTE = purlin.Corte;
                             linhas[1].QTD_FUROS_Custom = furos;
                         }
-
                         linhas[1].ZPP_TIPOACO = purlin.Material;
                         retorno_RMEs.Add(nova);
                     }
@@ -159,7 +151,6 @@ namespace Conexoes
                 {
                     if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
                     {
-
                         var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
                         prCTR.OBSERVACOES = txt_macro_corrente;
                         if (prCTR.Quantidade > 0)
@@ -170,9 +161,9 @@ namespace Conexoes
                         }
                     }
                 }
-                var CrF46 = correntes.FindAll(x => x.Fixacao == Fixacao.F46);
-                var CrF76 = correntes.FindAll(x => x.Fixacao == Fixacao.F76);
-                var CrF156 = correntes.FindAll(x => x.Fixacao == Fixacao.F156);
+                var CrF46 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F46);
+                var CrF76 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F76);
+                var CrF156 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F156);
 
                 var qtdF46 = CrF46.Sum(X => X.Quantidade * 2);
                 var qtdF76 = CrF76.Sum(X => X.Quantidade * 2);
@@ -180,28 +171,34 @@ namespace Conexoes
 
                 if (CrF46.Count > 0 && qtdF46 > 0)
                 {
-                    var supF46 = DBases.GetBancoRM().GetRMA("F46");
+                    var supF46 = DBases.GetBancoRM().GetRME("F46");
                     if (supF46 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF46, qtdF46, txt_macro_corrente));
+                        supF46.Quantidade = qtdF46;
+                        supF46.OBSERVACOES = txt_macro_corrente;
+                        retorno_RMEs.Add(supF46);
                     }
                 }
 
                 if (CrF76.Count > 0 && qtdF76 > 0)
                 {
-                    var supF76 = DBases.GetBancoRM().GetRMA("F76");
+                    var supF76 = DBases.GetBancoRM().GetRME("F76");
                     if (supF76 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF76, qtdF76, txt_macro_corrente));
+                        supF76.Quantidade = qtdF76;
+                        supF76.OBSERVACOES = txt_macro_corrente;
+                        retorno_RMEs.Add(supF76);
                     }
                 }
 
                 if (CrF156.Count > 0 && qtdF156 > 0)
                 {
-                    var supF156 = DBases.GetBancoRM().GetRMA("F156");
+                    var supF156 = DBases.GetBancoRM().GetRME("F156");
                     if (supF156 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF156, qtdF156, txt_macro_corrente));
+                        supF156.Quantidade = qtdF156;
+                        supF156.OBSERVACOES = txt_macro_corrente;
+                        retorno_RMEs.Add(supF156);
                     }
                 }
 
@@ -219,22 +216,32 @@ namespace Conexoes
                             rme.Quantidade = corrente.Quantidade;
                             retorno_RMEs.Add(rme);
                         }
+                        else
+                        {
+                            _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para a diagonal: {corrente}",TipoReport.Critico));
+                        }
                     }
                 }
             }
 
-            if(tirantes.Sum(x=>x.Qtd)>0)
+            if(tirantes.Sum(x=>x.Quantidade)>0)
             {
                 //TIRANTES
-                int qtdSFT = tirantes.Sum(x => x.Qtd * 2);
+                int qtdSFT = tirantes.Sum(x => x.Quantidade * 2);
                 if (qtdSFT > 0)
                 {
-                    var SFT = DBases.GetBancoRM().GetRMA("SFT01");
+                    var sft_nome = "SFT01";
+                    var SFT = DBases.GetBancoRM().GetRMA(sft_nome);
                     var POR = DBases.GetBancoRM().GetPorca("3/8", "GALVANIZADO");
                     var ARR = DBases.GetBancoRM().GetArruela("3/8", "GALVANIZADO");
                     if (SFT != null)
                     {
                         retorno_RMAs.Add(new RMA(SFT, qtdSFT, txt_macro_tirante));
+                    }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sft_nome}", TipoReport.Critico));
+
                     }
                     if (POR != null && ARR != null)
                     {
@@ -248,18 +255,23 @@ namespace Conexoes
 
                 if (nTR != null)
                 {
-                    foreach (var tr in tr_comps)
+                    foreach (var tr_comp in tr_comps)
                     {
-                        var corr = tirantes.FindAll(x => x.Comprimento == tr);
+                        var corr = tirantes.FindAll(x => x.Comprimento == tr_comp);
                         var tr_trats = tirantes.Select(x => x.Tratamento).Distinct().ToList();
                         foreach (var trat in tr_trats)
                         {
-                            if (tr <= nTR.COMP_MAX && tr >= nTR.COMP_MIN)
+                            if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
                             {
-                                var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Qtd), tr);
+                                var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Quantidade), tr_comp);
                                 novo.FICHA_PINTURA = trat;
                                 novo.User = Global.UsuarioAtual;
                                 retorno_RMEs.Add(novo);
+                            }
+                            else
+                            {
+                                _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
+
                             }
                         }
                     }
@@ -345,7 +357,6 @@ namespace Conexoes
                         User = Global.UsuarioAtual,
                         Quantidade = zenitais.Sum(X => X.Qtd),
                         OBSERVACOES = txt_macro_medalux
-
                     };
                     retorno_RMUs.Add(T);
                 }
@@ -581,11 +592,11 @@ namespace Conexoes
         {
             if (rme.DESTINO == "RMU")
             {
-                return DBases.GetBancoRM().GetRMUs().FindAll(x => x.FAMILIA == rme.FAMILIA);
+                return DBases.GetBancoRM().GetRMUs().FindAll(x => x.FAMILIA == rme.FAMILIA && x.VARIAVEL == rme.VARIAVEL);
             }
             else
             {
-                return DBases.GetBancoRM().GetRMEs().FindAll(x => x.FAMILIA == rme.FAMILIA);
+                return DBases.GetBancoRM().GetRMEs().FindAll(x => x.FAMILIA == rme.FAMILIA && x.VARIAVEL == rme.VARIAVEL);
             }
         }
 
