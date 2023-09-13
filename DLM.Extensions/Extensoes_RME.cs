@@ -178,6 +178,10 @@ namespace Conexoes
                         supF46.OBSERVACOES = txt_macro_corrente;
                         retorno_RMEs.Add(supF46);
                     }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F46", TipoReport.Critico));
+                    }
                 }
 
                 if (CrF76.Count > 0 && qtdF76 > 0)
@@ -189,6 +193,10 @@ namespace Conexoes
                         supF76.OBSERVACOES = txt_macro_corrente;
                         retorno_RMEs.Add(supF76);
                     }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F76", TipoReport.Critico));
+                    }
                 }
 
                 if (CrF156.Count > 0 && qtdF156 > 0)
@@ -199,6 +207,10 @@ namespace Conexoes
                         supF156.Quantidade = qtdF156;
                         supF156.OBSERVACOES = txt_macro_corrente;
                         retorno_RMEs.Add(supF156);
+                    }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F156", TipoReport.Critico));
                     }
                 }
 
@@ -231,22 +243,35 @@ namespace Conexoes
                 if (qtdSFT > 0)
                 {
                     var sft_nome = "SFT01";
-                    var SFT = DBases.GetBancoRM().GetRMA(sft_nome);
+                    var SFT = DBases.GetBancoRM().GetRME(sft_nome);
                     var POR = DBases.GetBancoRM().GetPorca("3/8", "GALVANIZADO");
                     var ARR = DBases.GetBancoRM().GetArruela("3/8", "GALVANIZADO");
                     if (SFT != null)
                     {
-                        retorno_RMAs.Add(new RMA(SFT, qtdSFT, txt_macro_tirante));
+                        SFT.Quantidade = qtdSFT;
+                        SFT.OBSERVACOES = txt_macro_tirante;
+                        retorno_RMEs.Add(SFT);
                     }
                     else
                     {
                         _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sft_nome}", TipoReport.Critico));
-
                     }
-                    if (POR != null && ARR != null)
+                    if (POR != null)
                     {
                         retorno_RMAs.Add(new RMA(POR, qtdSFT, txt_macro_tirante));
+                    }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {POR}", TipoReport.Critico));
+                    }
+
+                    if (ARR!=null)
+                    {
                         retorno_RMAs.Add(new RMA(ARR, qtdSFT, txt_macro_tirante));
+                    }
+                    else
+                    {
+                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ARR}", TipoReport.Critico));
                     }
                 }
 
