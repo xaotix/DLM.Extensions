@@ -22,9 +22,9 @@ namespace Conexoes
         }
 
 
-        public static void GetPecas(this List<RME_Macro> Lista, out List<object> pecas)
+        public static void GetPecas(this List<RME_Macro> Lista, out List<object> _pecas)
         {
-            pecas = new List<object>();
+            _pecas = new List<object>();
 
 
             var retorno_RMEs = new List<RME>();
@@ -85,7 +85,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
+                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
                 }
             }
 
@@ -140,7 +140,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    pecas.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
+                    _pecas.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
                 }
             }
 
@@ -152,7 +152,7 @@ namespace Conexoes
             }
 
 
-            if (correntes.Sum(x => x.Qtd) > 0)
+            if (correntes.Sum(x => x.Quantidade) > 0)
             {
                 var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
                 if (par_corrente != null)
@@ -160,7 +160,8 @@ namespace Conexoes
                     if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
                     {
 
-                        RMA prCTR = new RMA(par_corrente, correntes.FindAll(X => X.Parafusos).Sum(X => X.QuantidadeParafusos), txt_macro_corrente);
+                        var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
+                        prCTR.OBSERVACOES = txt_macro_corrente;
                         if (prCTR.Quantidade > 0)
                         {
                             retorno_RMAs.Add(prCTR);
@@ -172,45 +173,50 @@ namespace Conexoes
                 var CrF46 = correntes.FindAll(x => x.Fixacao == Fixacao.F46);
                 var CrF76 = correntes.FindAll(x => x.Fixacao == Fixacao.F76);
                 var CrF156 = correntes.FindAll(x => x.Fixacao == Fixacao.F156);
-                if (CrF46.Count > 0 && CrF46.Sum(X => X.Qtd * 2) > 0)
+
+                var qtdF46 = CrF46.Sum(X => X.Quantidade * 2);
+                var qtdF76 = CrF76.Sum(X => X.Quantidade * 2);
+                var qtdF156 = CrF156.Sum(X => X.Quantidade * 2);
+
+                if (CrF46.Count > 0 && qtdF46 > 0)
                 {
                     var supF46 = DBases.GetBancoRM().GetRMA("F46");
                     if (supF46 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF46, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
+                        retorno_RMAs.Add(new RMA(supF46, qtdF46, txt_macro_corrente));
                     }
                 }
 
-                if (CrF76.Count > 0 && CrF76.Sum(X => X.Qtd * 2) > 0)
+                if (CrF76.Count > 0 && qtdF76 > 0)
                 {
                     var supF76 = DBases.GetBancoRM().GetRMA("F76");
                     if (supF76 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF76, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
+                        retorno_RMAs.Add(new RMA(supF76, qtdF76, txt_macro_corrente));
                     }
                 }
 
-                if (CrF156.Count > 0 && CrF156.Sum(X => X.Qtd * 2) > 0)
+                if (CrF156.Count > 0 && qtdF156 > 0)
                 {
                     var supF156 = DBases.GetBancoRM().GetRMA("F156");
                     if (supF156 != null)
                     {
-                        retorno_RMAs.Add(new RMA(supF156, CrF46.Sum(X => X.Qtd * 2), txt_macro_corrente));
+                        retorno_RMAs.Add(new RMA(supF156, qtdF156, txt_macro_corrente));
                     }
                 }
 
 
                foreach(var corrente in correntes)
                 {
-                    if (corrente.Diagonal != null)
+                    if (corrente.GetDiagonal() != null)
                     {
-                        if (corrente.Comprimento >= corrente.Diagonal.COMP_MIN && corrente.Comprimento <= corrente.Diagonal.COMP_MAX)
+                        if (corrente.CompCorrente >= corrente.GetDiagonal().COMP_MIN && corrente.CompCorrente <= corrente.GetDiagonal().COMP_MAX)
                         {
-                            var rme = corrente.Diagonal.Clonar();
-                            rme.COMP = corrente.Comprimento;
+                            var rme = corrente.GetDiagonal().Clonar();
+                            rme.COMP = corrente.CompCorrente;
                             rme.OBSERVACOES = txt_macro_corrente;
                             rme.FICHA_PINTURA = corrente.Tratamento;
-                            rme.Quantidade = corrente.Qtd;
+                            rme.Quantidade = corrente.Quantidade;
                             retorno_RMEs.Add(rme);
                         }
                     }
@@ -471,9 +477,9 @@ namespace Conexoes
                 }
             }
 
-            pecas.AddRange(retorno_RMAs);
-            pecas.AddRange(retorno_RMEs);
-            pecas.AddRange(retorno_RMUs);
+            _pecas.AddRange(retorno_RMAs);
+            _pecas.AddRange(retorno_RMEs);
+            _pecas.AddRange(retorno_RMUs);
 
         }
 
