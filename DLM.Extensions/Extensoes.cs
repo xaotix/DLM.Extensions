@@ -262,6 +262,16 @@ namespace Conexoes
             return null;
 
         }
+
+
+        public static void AddKeyEvent<T>(this Window window, System.Windows.Input.KeyEventHandler KeyDown)
+        {
+            var elementos = window.GetChildren<T>();
+            foreach(var elemento in elementos)
+            {
+                (elemento as FrameworkElement).PreviewKeyDown += KeyDown;
+            }
+        }
      
 
         public static bool Is<T>(this object en)

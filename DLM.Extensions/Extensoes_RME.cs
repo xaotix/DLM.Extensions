@@ -11,6 +11,14 @@ namespace Conexoes
 {
     public static class Extensoes_RME
     {
+        public static void SincronizarDB(this List<RME> lista)
+        {
+            foreach (var rme in lista)
+            {
+                rme.Carregar_Codigo(false);
+                rme.SincronizarDB();
+            }
+        }
         public static double GetPesoTotal(this List<object> objetos)
         {
             double peso = 0;
@@ -20,7 +28,33 @@ namespace Conexoes
 
             return peso;
         }
+        public static string Tratar(this string valor, RME RME)
+        {
+            if (RME == null) { return valor; }
 
+            string retorno = valor
+                                .Replace(Cfg.Init.RM_SufixFicha, RME.FICHA_PINTURA)
+                                .Replace(Cfg.Init.RM_SufixMaterial, RME.MAT)
+                                .Replace(Cfg.Init.RM_SufixPeso, RME.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
+                                .Replace(Cfg.Init.RM_SufixComp, RME.COMP.String(0, RME.QTDCARACTCOMP))
+                                .Replace(Cfg.Init.RM_SufixEsp, RME.ESP.String())
+                                .Replace(Cfg.Init.RM_SufixLarg, RME.LARG.String())
+                                .Replace(Cfg.Init.RM_SufixAba, RME.ABA.String())
+                                .Replace(Cfg.Init.RM_SufixAba2, RME.ABA2.String())
+                                .Replace(Cfg.Init.RM_SufixAba3, RME.ABA3.String())
+                                .Replace(Cfg.Init.RM_SufixAbaEspecial, RME.ABA_ESPECIAL.String())
+
+                                .Replace(Cfg.Init.RM_SufixSecao, RME.SECAO.String())
+                                .Replace(Cfg.Init.RM_SufixCorte, RME.CORTE.String())
+
+                                .Replace(Cfg.Init.RM_SufixFuracoes, RME.QTD_FUROS.ToString())
+
+                                .Replace(Cfg.Init.RM_SufixPos, RME.CODIGOFIM)
+                                .Replace(Cfg.Init.RM_SufixQtd, RME.Quantidade.ToString());
+
+
+            return retorno;
+        }
 
         public static void GetPecas(this List<RME_Macro> Lista, out List<object> _pecas)
         {
@@ -238,27 +272,41 @@ namespace Conexoes
 
             if(tirantes.Sum(x=>x.Quantidade)>0)
             {
-                //TIRANTES
-                int qtdSFT = tirantes.Sum(x => x.Quantidade * 2);
-                if (qtdSFT > 0)
+                var tipos_sft = new List<string>();
+                tipos_sft.AddRange(tirantes.Select(x => x.Fixacao_1));
+                tipos_sft.AddRange(tirantes.Select(x => x.Fixacao_2));
+                tipos_sft = tipos_sft.Distinct().ToList();
+
+                foreach(var sftNome in tipos_sft)
                 {
-                    var sft_nome = "SFT01";
-                    var SFT = DBases.GetBancoRM().GetRME(sft_nome);
+                    var qtdSFT = tirantes.FindAll(x => x.Fixacao_1 == sftNome).Sum(x => x.Quantidade) + tirantes.FindAll(x => x.Fixacao_2 == sftNome).Sum(x => x.Quantidade);
+                    if(qtdSFT>0)
+                    {
+                        var SFT = DBases.GetBancoRM().GetRME(sftNome);
+                        if (SFT != null)
+                        {
+                            SFT.Quantidade = qtdSFT;
+                            SFT.OBSERVACOES = txt_macro_tirante;
+                            retorno_RMEs.Add(SFT);
+                        }
+                        else
+                        {
+                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
+                        }
+                    }
+                }
+
+                //TIRANTES
+                int qtdSftPorcas = tirantes.Sum(x => x.Quantidade * 2);
+                if (qtdSftPorcas > 0)
+                {
+                   
                     var POR = DBases.GetBancoRM().GetPorca("3/8", "GALVANIZADO");
                     var ARR = DBases.GetBancoRM().GetArruela("3/8", "GALVANIZADO");
-                    if (SFT != null)
-                    {
-                        SFT.Quantidade = qtdSFT;
-                        SFT.OBSERVACOES = txt_macro_tirante;
-                        retorno_RMEs.Add(SFT);
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sft_nome}", TipoReport.Critico));
-                    }
+                    
                     if (POR != null)
                     {
-                        retorno_RMAs.Add(new RMA(POR, qtdSFT, txt_macro_tirante));
+                        retorno_RMAs.Add(new RMA(POR, qtdSftPorcas, txt_macro_tirante));
                     }
                     else
                     {
@@ -267,7 +315,7 @@ namespace Conexoes
 
                     if (ARR!=null)
                     {
-                        retorno_RMAs.Add(new RMA(ARR, qtdSFT, txt_macro_tirante));
+                        retorno_RMAs.Add(new RMA(ARR, qtdSftPorcas, txt_macro_tirante));
                     }
                     else
                     {
