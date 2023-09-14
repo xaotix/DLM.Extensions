@@ -48,121 +48,7 @@ namespace Conexoes
 
             return "";
         }
-        public static bool InserirTabelasPDFsCAMs(this Pacotes pacotes, bool horizontal = false)
-        {
-            var cams = pacotes.GetCAMs().FindAll(x => x.Mesa);
-            var pos_mesas = pacotes.GetPosicoes_NaoRM_CHGrossa().FindAll(x => x.NORMT == TAB_NORMT.VIGA_MESA).FindAll(x => x.GetCam() != null);
-            pos_mesas = pos_mesas.FindAll(x => x.Marca.Pacote.Tipo == Pacote_Tipo.MBS);
 
-
-            var erros = new List<Report>();
-            var cams_mesas = cams.FindAll(x => x.Formato.LIV1.Furacoes.Count > 0);
-            cams_mesas.AddRange(pos_mesas.Select(x => x.GetCam()));
-            cams_mesas = cams_mesas.GroupBy(x => x.Nome).Select(x => x.First()).ToList();
-
-            if (cams_mesas.Count == 0)
-            {
-                return true;
-            }
-            var programas = new List<string>();
-            var destino = pacotes.PastaPDF.GetSubPasta(Cfg.Init.FLANGES);
-            foreach (var cam in cams_mesas)
-            {
-                try
-                {
-                    var pdf_origem = $"{pacotes.PastaPDF}{cam.Nome}.PDF";
-                    var pdf_destino = $"{destino}{cam.Nome}.PDF";
-
-                    if (!pdf_origem.Exists())
-                    {
-                        erros.Add($"Arquivo PDF não encontrado: {pdf_origem}");
-                        continue;
-                    }
-
-                    var furos = cam.Formato.LIV1.Furacoes.GetGages();
-
-                    programas.Add("$");
-                    programas.Add("@CAB");
-                    programas.Add($"NOME:{cam.Nome}");
-                    programas.Add($"COMP:{cam.Comprimento.Round(0)}");
-                    programas.Add($"ESP:{cam.Espessura.String(2)}");
-                    programas.Add($"PUNCOES:{furos.Count}");
-                    programas.Add($"RECORTE:{(cam.TemRecorte ? "SIM" : "NAO")}");
-                    programas.Add("@GAGES");
-
-
-                    foreach (var furo in furos)
-                    {
-                        programas.Add($"{furo.ToString()}{(furo.Gages.Count > 1 ? "[!]" : "")}");
-                    }
-
-                    programas.Add("$");
-
-                    if (furos.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    var tabelas = new List<TabelaPDF>();
-                    var furacoes = new List<List<string>>();
-                    furacoes.Add(new List<string> { "X", "G  ", "Ø  ", "EF " });
-                    for (int i = 0; i < furos.Count; i++)
-                    {
-                        var fr = furos[i];
-                        var fa = 0.0;
-                        if (i > 0)
-                        {
-                            fa = (fr.X - furos[i - 1].X);
-                        }
-                        if (fa > 1.5 | i == 0)
-                        {
-                            furacoes.Add(new List<string> { fr.X.String(0, 5), string.Join(",", fr.Gages), fr.Diametro.Replace("Ø", ""), fa > 0 ? fa.String(0) : "" });
-                        }
-                    }
-                    if (!horizontal)
-                    {
-                        furacoes = furacoes.Inverter();
-                    }
-
-                    var pdf = new PdfReader(pdf_origem);
-                    var tamanho = pdf.GetPageSizeWithRotation(1);
-                    var w = tamanho.Width / 842;
-                    var h = tamanho.Height / 595;
-                    var fonte = 8 * w;
-
-                    if (!horizontal)
-                    {
-                        w = w * 750;
-                        h = h * 20;
-                    }
-                    else
-                    {
-                        fonte = 9 * w;
-                        w = w * 25;
-                        h = h * 60;
-                    }
-
-
-                    var tabela_furos = new TabelaPDF(new P3d(w, h), furacoes, fonte);
-                    tabelas.Add(tabela_furos);
-
-                    pdf.AddTabelas(pdf_destino, tabelas);
-                }
-                catch (Exception ex)
-                {
-                    erros.Add(new Report(ex));
-                }
-            }
-            string arq_destino = $"{destino}RESUMO.FLANGES";
-            if (programas.Count > 0)
-            {
-                Conexoes.Utilz.Arquivo.Gravar(arq_destino, programas);
-            }
-
-            erros.Show();
-
-            return erros.Count == 0;
-        }
         public static List<FuroGage> GetGages(this List<Furo> Furacoes)
         {
             var _Gages = new List<FuroGage>();
@@ -741,14 +627,7 @@ namespace Conexoes
         }
 
 
-        public static void SincronizarDB(this List<RME> lista)
-        {
-            foreach (var rme in lista)
-            {
-                rme.Carregar_Codigo(false);
-                rme.SincronizarDB();
-            }
-        }
+
 
         public static void CriarCopiaRev(this string Arquivo)
         {
@@ -773,33 +652,7 @@ namespace Conexoes
 
 
 
-        public static string Tratar(this string valor, RME RME)
-        {
-            if (RME == null) { return valor; }
-
-            string retorno = valor
-                                .Replace(Cfg.Init.RM_SufixFicha, RME.FICHA_PINTURA)
-                                .Replace(Cfg.Init.RM_SufixMaterial, RME.MAT)
-                                .Replace(Cfg.Init.RM_SufixPeso, RME.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
-                                .Replace(Cfg.Init.RM_SufixComp, RME.COMP.String(0, RME.QTDCARACTCOMP))
-                                .Replace(Cfg.Init.RM_SufixEsp, RME.ESP.String())
-                                .Replace(Cfg.Init.RM_SufixLarg, RME.LARG.String())
-                                .Replace(Cfg.Init.RM_SufixAba, RME.ABA.String())
-                                .Replace(Cfg.Init.RM_SufixAba2, RME.ABA2.String())
-                                .Replace(Cfg.Init.RM_SufixAba3, RME.ABA3.String())
-                                .Replace(Cfg.Init.RM_SufixAbaEspecial, RME.ABA_ESPECIAL.String())
-
-                                .Replace(Cfg.Init.RM_SufixSecao, RME.SECAO.String())
-                                .Replace(Cfg.Init.RM_SufixCorte, RME.CORTE.String())
-
-                                .Replace(Cfg.Init.RM_SufixFuracoes, RME.QTD_FUROS.ToString())
-
-                                .Replace(Cfg.Init.RM_SufixPos, RME.CODIGOFIM)
-                                .Replace(Cfg.Init.RM_SufixQtd, RME.Quantidade.ToString());
-
-
-            return retorno;
-        }
+     
 
         //public static double Prompt(this double valor)
         //{

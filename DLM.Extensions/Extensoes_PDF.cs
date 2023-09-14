@@ -1,4 +1,5 @@
-﻿using iTextSharp.text;
+﻿using DLM.encoder;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,122 @@ namespace Conexoes
 {
     public static class ExtensoesPDF
     {
+        public static bool InserirTabelasPDFsCAMs(this Pacotes pacotes, bool horizontal = false)
+        {
+            var cams = pacotes.GetCAMs().FindAll(x => x.Mesa);
+            var pos_mesas = pacotes.GetPosicoes_NaoRM_CHGrossa().FindAll(x => x.NORMT == TAB_NORMT.VIGA_MESA).FindAll(x => x.GetCam() != null);
+            pos_mesas = pos_mesas.FindAll(x => x.Marca.Pacote.Tipo == Pacote_Tipo.MBS);
+
+
+            var erros = new List<Report>();
+            var cams_mesas = cams.FindAll(x => x.Formato.LIV1.Furacoes.Count > 0);
+            cams_mesas.AddRange(pos_mesas.Select(x => x.GetCam()));
+            cams_mesas = cams_mesas.GroupBy(x => x.Nome).Select(x => x.First()).ToList();
+
+            if (cams_mesas.Count == 0)
+            {
+                return true;
+            }
+            var programas = new List<string>();
+            var destino = pacotes.PastaPDF.GetSubPasta(Cfg.Init.FLANGES);
+            foreach (var cam in cams_mesas)
+            {
+                try
+                {
+                    var pdf_origem = $"{pacotes.PastaPDF}{cam.Nome}.PDF";
+                    var pdf_destino = $"{destino}{cam.Nome}.PDF";
+
+                    if (!pdf_origem.Exists())
+                    {
+                        erros.Add($"Arquivo PDF não encontrado: {pdf_origem}");
+                        continue;
+                    }
+
+                    var furos = cam.Formato.LIV1.Furacoes.GetGages();
+
+                    programas.Add("$");
+                    programas.Add("@CAB");
+                    programas.Add($"NOME:{cam.Nome}");
+                    programas.Add($"COMP:{cam.Comprimento.Round(0)}");
+                    programas.Add($"ESP:{cam.Espessura.String(2)}");
+                    programas.Add($"PUNCOES:{furos.Count}");
+                    programas.Add($"RECORTE:{(cam.TemRecorte ? "SIM" : "NAO")}");
+                    programas.Add("@GAGES");
+
+
+                    foreach (var furo in furos)
+                    {
+                        programas.Add($"{furo.ToString()}{(furo.Gages.Count > 1 ? "[!]" : "")}");
+                    }
+
+                    programas.Add("$");
+
+                    if (furos.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    var tabelas = new List<TabelaPDF>();
+                    var furacoes = new List<List<string>>();
+                    furacoes.Add(new List<string> { "X", "G  ", "Ø  ", "EF " });
+                    for (int i = 0; i < furos.Count; i++)
+                    {
+                        var fr = furos[i];
+                        var fa = 0.0;
+                        if (i > 0)
+                        {
+                            fa = (fr.X - furos[i - 1].X);
+                        }
+                        if (fa > 1.5 | i == 0)
+                        {
+                            furacoes.Add(new List<string> { fr.X.String(0, 5), string.Join(",", fr.Gages), fr.Diametro.Replace("Ø", ""), fa > 0 ? fa.String(0) : "" });
+                        }
+                    }
+                    if (!horizontal)
+                    {
+                        furacoes = furacoes.Inverter();
+                    }
+
+                    var pdf = new PdfReader(pdf_origem);
+                    var tamanho = pdf.GetPageSizeWithRotation(1);
+                    var w = tamanho.Width / 842;
+                    var h = tamanho.Height / 595;
+                    var fonte = 8 * w;
+
+                    if (!horizontal)
+                    {
+                        w = w * 750;
+                        h = h * 20;
+                    }
+                    else
+                    {
+                        fonte = 9 * w;
+                        w = w * 25;
+                        h = h * 60;
+                    }
+
+
+                    var tabela_furos = new TabelaPDF(new P3d(w, h), furacoes, fonte);
+                    tabelas.Add(tabela_furos);
+
+                    pdf.AddTabelas(pdf_destino, tabelas);
+                }
+                catch (Exception ex)
+                {
+                    erros.Add(new Report(ex));
+                }
+            }
+            string arq_destino = $"{destino}RESUMO.FLANGES";
+            if (programas.Count > 0)
+            {
+                Conexoes.Utilz.Arquivo.Gravar(arq_destino, programas);
+            }
+
+            erros.Show();
+
+            return erros.Count == 0;
+        }
+
         public static void AddTabelas(this PdfReader pdf, string PDF_Destino, List<TabelaPDF> tabelas)
         {
             try
