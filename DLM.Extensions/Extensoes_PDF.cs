@@ -1,4 +1,6 @@
-﻿using DLM.encoder;
+﻿using DLM.desenho;
+using DLM.encoder;
+using DLM.vars;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
