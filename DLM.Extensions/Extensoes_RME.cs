@@ -99,6 +99,7 @@ namespace Conexoes
                         {
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
                             nrm.OBSERVACOES = txt_macro_em2;
+                            nrm.FICHA_PINTURA = p1.Tratamento;
                             retorno_RMEs.Add(nrm);
                         }
                     }
