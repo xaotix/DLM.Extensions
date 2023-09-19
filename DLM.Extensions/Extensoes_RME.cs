@@ -107,14 +107,38 @@ namespace Conexoes
                     {
                        foreach(var p1 in pc.ToList())
                         {
-                            var nrm = igual.As<RMA>().Clonar();
-                            nrm.Quantidade = p1.Qtd;
-                            nrm.OBSERVACOES = txt_macro_em2;
-                            retorno_RMAs.Add(nrm);
+                            var PAR = igual.As<RMA>().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
+                            retorno_RMAs.Add(PAR);
+
+                            if(PAR.TIPO == "PAR")
+                            {
+                                var POR = PAR.GetPOR().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
+                                if (POR != null)
+                                {
+                                    retorno_RMAs.Add(POR);
+                                }
+                                else
+                                {
+                                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
+                                }
+
+                                var ARR = PAR.GetARR().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
+                                if (ARR != null)
+                                {
+                                    retorno_RMAs.Add(ARR);
+                                }
+                                else
+                                {
+                                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
+                                }
+                            }
                         }
+
+                     
                     }
                     else
                     {
+
                     }
                 }
                 else
@@ -184,15 +208,15 @@ namespace Conexoes
                 var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
                 if (par_corrente != null)
                 {
-                    if (par_corrente.GetPORCA() != null && par_corrente.GetARRUELA() != null)
+                    if (par_corrente.GetPOR() != null && par_corrente.GetARR() != null)
                     {
                         var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
                         prCTR.OBSERVACOES = txt_macro_corrente;
                         if (prCTR.Quantidade > 0)
                         {
                             retorno_RMAs.Add(prCTR);
-                            retorno_RMAs.Add(prCTR.GetPORCA());
-                            retorno_RMAs.Add(prCTR.GetARRUELA());
+                            retorno_RMAs.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade));
+                            retorno_RMAs.Add(prCTR.GetARR().Clonar(prCTR.Quantidade));
                         }
                     }
                 }
