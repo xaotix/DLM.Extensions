@@ -16,6 +16,7 @@ namespace Conexoes
 
     public static class ExtensoesCAM
     {
+
         public static List<Report> Verificar(this List<Furo> furos)
         {
             var reports = new List<Report>();
@@ -32,15 +33,15 @@ namespace Conexoes
                     {
                         if (!f2.Validado)
                         {
-                            var min = ((f2.Diametro / 2 + f1.Diametro / 2) * Cfg.Init.TestList_V_CAMS_Furacoes_Dist_Entre_furos_Borda).Round(1);
-                            var dist = f2.DistanciaBorda(f1);
+                            var min_borda = f1.GetMinBorda(f2);
+                            var dist = f2.DistanciaBorda(f1).Abs();
                             var dist_fr = f1.Origem.Distancia(f2.Origem);
 
-                            if (dist <= min | dist <= 0 | dist_fr == 0)
+                            if (dist <= min_borda | dist <= 0 | dist_fr == 0)
                             {
                                 f2.Validado = true;
                                 txt2.Add(
-                                    $"\n[{f2}] -> [Dist.:{dist_fr}, Borda:{dist}, Mín.: {min}]"
+                                    $"\n[{f2}] -> [Dist.:{dist_fr}, Borda:{dist}, Mín.: {min_borda}]"
                                     );
                             }
                         }
@@ -59,6 +60,12 @@ namespace Conexoes
             }
             return reports;
         }
+
+        public static double GetMinBorda(this Furo f1, Furo f2)
+        {
+            return ((f2.Diametro / 2 + f1.Diametro / 2) * Cfg.Init.TestList_V_CAMS_Furacoes_Dist_Entre_furos_Borda).Round(1).Abs();
+        }
+
         public static List<Cam> Quebrar(this ReadCAM Origem, double comp_max)
         {
             var Retorno = new List<Cam>();

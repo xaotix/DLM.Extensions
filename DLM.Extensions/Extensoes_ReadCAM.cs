@@ -19,7 +19,7 @@ namespace Conexoes
 
             if (Reports.Count > 0)
             {
-                return new List<Report> { new Report("Furação", $"[{readCAM.Nome}] -> Furos batendo ou com pouca borda:\n{string.Join("\n", Reports.Select(x => x.Descricao))}\n\n\n", TipoReport.Alerta) };
+                return new List<Report> { new Report("Furação", $"[{readCAM.Nome}] -> Furos batendo, sobrepostos ou com pouca borda:\n{string.Join("\n", Reports.Select(x => x.Descricao))}\n\n\n", TipoReport.Alerta) };
             }
 
             return Reports;
