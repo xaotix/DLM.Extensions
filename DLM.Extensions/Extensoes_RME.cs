@@ -71,7 +71,8 @@ namespace Conexoes
             var tirantes = objetos.Get<Macros.Tirante>();
             var zenitais = objetos.Get<Macros.Zenital>();
             var purlins = objetos.Get<Macros.Purlin>();
-            var contraventos = objetos.Get<Macros.Contravento>();
+            var ctv1 = objetos.Get<Macros.Contravento>();
+            var ctv2 = objetos.Get<DLM.macros.CTV2>();
             var medaluxes = objetos.Get<Macros.Medalux>(); 
             var escadasEM1 = objetos.Get<Marinheiro>(); 
             var pacoteEM1 = new PacoteMarinheiro(escadasEM1);
@@ -148,7 +149,7 @@ namespace Conexoes
             }
 
 
-            foreach (var obj in contraventos)
+            foreach (var obj in ctv1)
             {
                 retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
                 retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
