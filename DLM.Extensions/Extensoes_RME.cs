@@ -87,7 +87,7 @@ namespace Conexoes
             var txt_macro_tirante = "[MACRO TIRANTES]";
             var txt_macro_em2 = "[MACRO EM2]";
 
-            var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado);
+            var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado).OrderBy(x=>x.Key).ToList();
             foreach(var pc in pcsEM2)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.Key);
@@ -105,36 +105,36 @@ namespace Conexoes
                     }
                     else if(igual is RMA)
                     {
-                       foreach(var p1 in pc.ToList())
+                        var pecas = pc.ToList();
+                        var qtd = pecas.Sum(x => x.Qtd);
+
+                        var PAR = igual.As<RMA>().Clonar(qtd, txt_macro_em2);
+                        retorno_RMAs.Add(PAR);
+
+                        if (PAR.TIPO == "PAR")
                         {
-                            var PAR = igual.As<RMA>().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
-                            retorno_RMAs.Add(PAR);
-
-                            if(PAR.TIPO == "PAR")
+                            var POR = PAR.GetPOR().Clonar(qtd, txt_macro_em2);
+                            if (POR != null)
                             {
-                                var POR = PAR.GetPOR().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
-                                if (POR != null)
-                                {
-                                    retorno_RMAs.Add(POR);
-                                }
-                                else
-                                {
-                                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
-                                }
+                                retorno_RMAs.Add(POR);
+                            }
+                            else
+                            {
+                                _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
+                            }
 
-                                var ARR = PAR.GetARR().Clonar(p1.Qtd, $"{txt_macro_em2} {p1.Descricao}");
-                                if (ARR != null)
-                                {
-                                    retorno_RMAs.Add(ARR);
-                                }
-                                else
-                                {
-                                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
-                                }
+                            var ARR = PAR.GetARR().Clonar(qtd, txt_macro_em2);
+                            if (ARR != null)
+                            {
+                                retorno_RMAs.Add(ARR);
+                            }
+                            else
+                            {
+                                _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
                         }
 
-                     
+
                     }
                     else
                     {
