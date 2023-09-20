@@ -461,6 +461,20 @@ namespace Conexoes
             return props;
         }
 
+        public static string GetPropriedade<T>(this T obj, string propriedade)
+        {
+            string valor = "";
+            var propriedaes = obj.GetPropriedades();
+            var prop = propriedaes.Find(x => x.Name.ToUpper() == propriedade.ToUpper());
+
+            if(prop!=null)
+            {
+                return prop.GetValue(obj).ToString();
+            }
+
+
+            return valor;
+        }
 
 
 
