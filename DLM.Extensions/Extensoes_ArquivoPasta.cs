@@ -56,9 +56,14 @@ namespace Conexoes
         public static bool LimparArquivosPasta(this Pasta Pasta, string filtro = "*", bool backup = false, string arquivo_backup = null)
         {
             var arquivos = Pasta.GetArquivos(filtro);
+           
             if (backup)
             {
-                Utilz.FazerBackup(Pasta.Endereco, arquivo_backup, filtro);
+                if(arquivo_backup==null)
+                {
+                    arquivo_backup = $"{Pasta.Endereco.GetSubPasta(Cfg.Init.PASTA_BACKUPS)}R00.ZIP";
+                }
+                Utilz.FazerBackup(arquivo_backup, arquivos);
             }
 
             foreach (var p in arquivos)

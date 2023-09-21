@@ -78,6 +78,7 @@ namespace Conexoes
             var pacoteEM1 = new PacoteMarinheiro(escadasEM1);
             var escadasEM2 = objetos.Get<DLM.macros.EM2>();
             var pacoteEM2 = new DLM.macros.EM2Pacote(escadasEM2);
+            var pacoteCTV = new DLM.macros.CTV2Pacote(ctv2);
 
             retorno_RMAs.AddRange(pacoteEM1.getPecas().Get<RMA>());
             retorno_RMEs.AddRange(pacoteEM1.getPecas().Get<RME>());
@@ -86,9 +87,43 @@ namespace Conexoes
             var txt_macro_medalux = "[MACRO ZENITAL]";
             var txt_macro_corrente = "[MACRO CORRENTE]";
             var txt_macro_tirante = "[MACRO TIRANTES]";
+            var txt_macro_ctv2 = "[MACRO CTV2]";
             var txt_macro_em2 = "[MACRO EM2]";
 
             var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado).OrderBy(x=>x.Key).ToList();
+
+            foreach(var pc in pacoteCTV.Pecas)
+            {
+                var igual = DBases.GetBancoRM().GetPeca(pc.Nome);
+                if (igual != null)
+                {
+                    if (igual is RME)
+                    {
+                        var nrm = igual.As<RME>().Clonar(pc.Qtd, pc.Comp, pc.Nome);
+                        nrm.OBSERVACOES = txt_macro_ctv2;
+                        nrm.FICHA_PINTURA = pc.Tratamento;
+                        retorno_RMEs.Add(nrm);
+                    }
+                    else if (igual is RMA)
+                    {
+                        var qtd = pc.Qtd;
+
+                        var PAR = igual.As<RMA>().Clonar(qtd, txt_macro_ctv2);
+                        retorno_RMAs.Add(PAR);
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                    _pecas.Add(new Report("Peça Não encontrada", $"CTV2 => {pc.Nome}", TipoReport.Critico));
+                }
+            }
+
+
+
+
             foreach(var pc in pcsEM2)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.Key);
@@ -675,7 +710,7 @@ namespace Conexoes
         {
             DLM.cam.ReadCAM pp = new DLM.cam.ReadCAM();
             pp.Tratamento = rme.FICHA_PINTURA;
-            pp.Material = string.Join(" ", rme.GetMateriais());
+            pp.Material = rme.MATERIAL;
             pp.Data = DateTime.Now.ToShortDateString();
             pp.Descricao = rme.PERFIL;
             pp.Espessura = rme.ESP;
