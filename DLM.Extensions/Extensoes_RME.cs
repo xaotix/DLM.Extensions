@@ -34,7 +34,7 @@ namespace Conexoes
 
             string retorno = valor
                                 .Replace(Cfg.Init.RM_SufixFicha, RME.FICHA_PINTURA)
-                                .Replace(Cfg.Init.RM_SufixMaterial, RME.MAT)
+                                .Replace(Cfg.Init.RM_SufixMaterial, RME.MATERIAL)
                                 .Replace(Cfg.Init.RM_SufixPeso, RME.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
                                 .Replace(Cfg.Init.RM_SufixComp, RME.COMP.String(0, RME.QTDCARACTCOMP))
                                 .Replace(Cfg.Init.RM_SufixEsp, RME.ESP.String())
