@@ -11,15 +11,15 @@ namespace Conexoes
 {
     public static class Extensoes_RME
     {
-        public static void SincronizarDB(this List<RME> lista)
+        public static void SincronizarDB(this List<RME> _lista)
         {
             var erros = new List<Report>();
-            foreach (var rme in lista)
+            foreach (var rme in _lista)
             {
                 rme.Carregar_Codigo(false);
             }
 
-            var tipos = lista.GroupBy(x => x.id_codigo).ToList();
+            var tipos = _lista.GroupBy(x => x.id_codigo).ToList();
             foreach(var tipo in tipos)
             {
                 var igual = Conexoes.DBases.GetBancoRM().GetRME(tipo.Key);
@@ -36,44 +36,44 @@ namespace Conexoes
                 }
             }
         }
-        public static double GetPesoTotal(this List<object> objetos)
+        public static double GetPesoTotal(this List<object> _objetos)
         {
             double peso = 0;
 
-            peso += objetos.Get<RME>().Sum(x => x.PESOTOT);
-            peso += objetos.Get<RMA>().Sum(x => x.PESOTOT);
+            peso += _objetos.Get<RME>().Sum(x => x.PESOTOT);
+            peso += _objetos.Get<RMA>().Sum(x => x.PESOTOT);
 
             return peso;
         }
-        public static string Tratar(this string valor, RME RME)
+        public static string Tratar(this string _valor, RME _rme)
         {
-            if (RME == null) { return valor; }
+            if (_rme == null) { return _valor; }
 
-            string retorno = valor
-                                .Replace(Cfg.Init.RM_SufixFicha, RME.FICHA_PINTURA)
-                                .Replace(Cfg.Init.RM_SufixMaterial, RME.MATERIAL)
-                                .Replace(Cfg.Init.RM_SufixPeso, RME.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
-                                .Replace(Cfg.Init.RM_SufixComp, RME.COMP.String(0, RME.QTDCARACTCOMP))
-                                .Replace(Cfg.Init.RM_SufixEsp, RME.ESP.String())
-                                .Replace(Cfg.Init.RM_SufixLarg, RME.LARG.String())
-                                .Replace(Cfg.Init.RM_SufixAba, RME.ABA.String())
-                                .Replace(Cfg.Init.RM_SufixAba2, RME.ABA2.String())
-                                .Replace(Cfg.Init.RM_SufixAba3, RME.ABA3.String())
-                                .Replace(Cfg.Init.RM_SufixAbaEspecial, RME.ABA_ESPECIAL.String())
+            string retorno = _valor
+                                .Replace(Cfg.Init.RM_SufixFicha, _rme.FICHA_PINTURA)
+                                .Replace(Cfg.Init.RM_SufixMaterial, _rme.MATERIAL)
+                                .Replace(Cfg.Init.RM_SufixPeso, _rme.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
+                                .Replace(Cfg.Init.RM_SufixComp, _rme.COMP.String(0, _rme.QTDCARACTCOMP))
+                                .Replace(Cfg.Init.RM_SufixEsp, _rme.ESP.String())
+                                .Replace(Cfg.Init.RM_SufixLarg, _rme.LARG.String())
+                                .Replace(Cfg.Init.RM_SufixAba, _rme.ABA.String())
+                                .Replace(Cfg.Init.RM_SufixAba2, _rme.ABA2.String())
+                                .Replace(Cfg.Init.RM_SufixAba3, _rme.ABA3.String())
+                                .Replace(Cfg.Init.RM_SufixAbaEspecial, _rme.ABA_ESPECIAL.String())
 
-                                .Replace(Cfg.Init.RM_SufixSecao, RME.SECAO.String())
-                                .Replace(Cfg.Init.RM_SufixCorte, RME.CORTE.String())
+                                .Replace(Cfg.Init.RM_SufixSecao, _rme.SECAO.String())
+                                .Replace(Cfg.Init.RM_SufixCorte, _rme.CORTE.String())
 
-                                .Replace(Cfg.Init.RM_SufixFuracoes, RME.QTD_FUROS.ToString())
+                                .Replace(Cfg.Init.RM_SufixFuracoes, _rme.QTD_FUROS.ToString())
 
-                                .Replace(Cfg.Init.RM_SufixPos, RME.CODIGOFIM)
-                                .Replace(Cfg.Init.RM_SufixQtd, RME.Quantidade.ToString());
+                                .Replace(Cfg.Init.RM_SufixPos, _rme.CODIGOFIM)
+                                .Replace(Cfg.Init.RM_SufixQtd, _rme.Quantidade.ToString());
 
 
             return retorno;
         }
 
-        public static void GetPecas(this List<RME_Macro> Lista, out List<object> _pecas)
+        public static void GetPecas(this List<RME_Macro> _lista, out List<object> _pecas)
         {
             _pecas = new List<object>();
 
@@ -83,7 +83,7 @@ namespace Conexoes
             var retorno_RMUs = new List<RME>();
 
 
-            var objetos = Lista.Select(x => x.GetObjeto()).ToList();
+            var objetos = _lista.Select(x => x.GetObjeto()).ToList();
             var correntes = objetos.Get<DLM.macros.Corrente>();
             var tirantes = objetos.Get<DLM.macros.Tirante>();
             var zenitais = objetos.Get<Macros.Zenital>();
@@ -111,7 +111,7 @@ namespace Conexoes
 
             foreach(var pc in pacoteCTV.Pecas)
             {
-                var igual = DBases.GetBancoRM().GetPeca(pc.Nome);
+                var igual = DBases.GetBancoRM().GetPeca(pc.NomePadronizado);
                 if (igual != null)
                 {
                     if (igual is RME)
@@ -123,9 +123,7 @@ namespace Conexoes
                     }
                     else if (igual is RMA)
                     {
-                        var qtd = pc.Quantidade;
-
-                        var PAR = igual.As<RMA>().Clonar(qtd, txt_macro_ctv2);
+                        var PAR = igual.As<RMA>().Clonar(pc.Quantidade, txt_macro_ctv2);
                         retorno_RMAs.Add(PAR);
                     }
                     else
@@ -422,7 +420,6 @@ namespace Conexoes
                             else
                             {
                                 _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
-
                             }
                         }
                     }
@@ -518,7 +515,6 @@ namespace Conexoes
                         User = Global.UsuarioAtual,
                         Quantidade = (zenitais.Sum(X => X.Qtd) * DBases.GetBancoRM().ZENITAL_PS4).Int(),
                         OBSERVACOES = txt_macro_medalux
-
                     };
                     retorno_RMUs.Add(T);
                 }
@@ -638,48 +634,44 @@ namespace Conexoes
                     }
                 }
             }
-
             _pecas.AddRange(retorno_RMAs);
             _pecas.AddRange(retorno_RMEs);
             _pecas.AddRange(retorno_RMUs);
-
         }
-
-
-        public static List<RMA> GetRMAs(this List<object> lista)
+        public static List<RMA> GetRMAs(this List<object> _lista)
         {
-            return lista.Get<RMA>();
+            return _lista.Get<RMA>();
         }
-        public static List<RME> GetRMUs(this List<object> lista)
+        public static List<RME> GetRMUs(this List<object> _lista)
         {
-            return lista.Get<RME>().FindAll(x => x.DESTINO == "RMU").ToList();
+            return _lista.Get<RME>().FindAll(x => x.DESTINO == "RMU").ToList();
         }
-        public static List<RME> GetRMEs(this List<object> lista)
+        public static List<RME> GetRMEs(this List<object> _lista)
         {
-            return lista.Get<RME>().FindAll(x => x.DESTINO == "RME").ToList();
+            return _lista.Get<RME>().FindAll(x => x.DESTINO == "RME").ToList();
         }
-        public static RME GetRMDB(this RME rme)
+        public static RME GetRMDB(this RME _rme)
         {
             RME _RMDB = null;
-            if (rme.id_codigo > 0)
+            if (_rme.id_codigo > 0)
             {
-                _RMDB = DBases.GetBancoRM().GetRME(rme.id_codigo);
+                _RMDB = DBases.GetBancoRM().GetRME(_rme.id_codigo);
             }
             if (_RMDB == null)
             {
-                _RMDB = DBases.GetBancoRM().GetRME(rme.CODIGOFIM);
+                _RMDB = DBases.GetBancoRM().GetRME(_rme.CODIGOFIM);
             }
 
             return _RMDB;
         }
-        public static bool Comprimento_Pode(this RME rme, double Valor, bool setar = true)
+        public static bool Comprimento_Pode(this RME _rme, double _valor, bool _setar = true)
         {
-            if (!rme.VARIAVEL) { "Peça com comprimento fixo".Alerta(); return false; }
-            if (rme.COMP_MAX > 0 && Valor > rme.COMP_MAX) { $"Comprimento maior que o máximo [{rme.COMP_MAX}]".Alerta(); return false; }
-            if (Valor < rme.COMP_MIN) { $"Comprimento menor que o mínimo [{rme.COMP_MIN}]".Alerta(); return false; }
-            if (setar)
+            if (!_rme.VARIAVEL) { "Peça com comprimento fixo".Alerta(); return false; }
+            if (_rme.COMP_MAX > 0 && _valor > _rme.COMP_MAX) { $"Comprimento maior que o máximo [{_rme.COMP_MAX}]".Alerta(); return false; }
+            if (_valor < _rme.COMP_MIN) { $"Comprimento menor que o mínimo [{_rme.COMP_MIN}]".Alerta(); return false; }
+            if (_setar)
             {
-                rme.COMP = Valor;
+                _rme.COMP = _valor;
             }
             return true;
         }
