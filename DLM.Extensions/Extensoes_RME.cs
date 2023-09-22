@@ -13,10 +13,27 @@ namespace Conexoes
     {
         public static void SincronizarDB(this List<RME> lista)
         {
+            var erros = new List<Report>();
             foreach (var rme in lista)
             {
                 rme.Carregar_Codigo(false);
-                rme.SincronizarDB();
+            }
+
+            var tipos = lista.GroupBy(x => x.id_codigo).ToList();
+            foreach(var tipo in tipos)
+            {
+                var igual = Conexoes.DBases.GetBancoRM().GetRME(tipo.Key);
+                if(igual!=null)
+                {
+                    foreach(var pc in tipo.ToList())
+                    {
+                        pc.SincronizarDB(igual);
+                    }
+                }
+                else
+                {
+                    erros.Add(tipo.First().ToString(), "Peça não encontrada no banco de dados");
+                }
             }
         }
         public static double GetPesoTotal(this List<object> objetos)
@@ -67,8 +84,8 @@ namespace Conexoes
 
 
             var objetos = Lista.Select(x => x.GetObjeto()).ToList();
-            var correntes = objetos.Get<Macros.Corrente>();
-            var tirantes = objetos.Get<Macros.Tirante>();
+            var correntes = objetos.Get<DLM.macros.Corrente>();
+            var tirantes = objetos.Get<DLM.macros.Tirante>();
             var zenitais = objetos.Get<Macros.Zenital>();
             var purlins = objetos.Get<Macros.Purlin>();
             var ctv1 = objetos.Get<Macros.Contravento>();
@@ -99,14 +116,14 @@ namespace Conexoes
                 {
                     if (igual is RME)
                     {
-                        var nrm = igual.As<RME>().Clonar(pc.Qtd, pc.Comp, pc.Nome);
+                        var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento, pc.Nome);
                         nrm.OBSERVACOES = txt_macro_ctv2;
                         nrm.FICHA_PINTURA = pc.Tratamento;
                         retorno_RMEs.Add(nrm);
                     }
                     else if (igual is RMA)
                     {
-                        var qtd = pc.Qtd;
+                        var qtd = pc.Quantidade;
 
                         var PAR = igual.As<RMA>().Clonar(qtd, txt_macro_ctv2);
                         retorno_RMAs.Add(PAR);
