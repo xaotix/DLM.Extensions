@@ -20,12 +20,12 @@ namespace Conexoes
             }
 
             var tipos = _lista.GroupBy(x => x.id_codigo).ToList();
-            foreach(var tipo in tipos)
+            foreach (var tipo in tipos)
             {
                 var igual = Conexoes.DBases.GetBancoRM().GetRME(tipo.Key);
-                if(igual!=null)
+                if (igual != null)
                 {
-                    foreach(var pc in tipo.ToList())
+                    foreach (var pc in tipo.ToList())
                     {
                         pc.SincronizarDB(igual);
                     }
@@ -90,8 +90,8 @@ namespace Conexoes
             var purlins = objetos.Get<Macros.Purlin>();
             var ctv1 = objetos.Get<Macros.Contravento>();
             var ctv2 = objetos.Get<DLM.macros.CTV2>();
-            var medaluxes = objetos.Get<Macros.Medalux>(); 
-            var escadasEM1 = objetos.Get<Marinheiro>(); 
+            var medaluxes = objetos.Get<Macros.Medalux>();
+            var escadasEM1 = objetos.Get<Marinheiro>();
             var pacoteEM1 = new PacoteMarinheiro(escadasEM1);
             var escadasEM2 = objetos.Get<DLM.macros.EM2>();
             var pacoteEM2 = new DLM.macros.EM2Pacote(escadasEM2);
@@ -107,9 +107,9 @@ namespace Conexoes
             var txt_macro_ctv2 = "[MACRO CTV2]";
             var txt_macro_em2 = "[MACRO EM2]";
 
-            var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado).OrderBy(x=>x.Key).ToList();
+            var pcsEM2 = pacoteEM2.Pecas.GroupBy(x => x.Nome_Padronizado).OrderBy(x => x.Key).ToList();
 
-            foreach(var pc in pacoteCTV.Pecas)
+            foreach (var pc in pacoteCTV.Pecas)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.NomePadronizado);
                 if (igual != null)
@@ -139,14 +139,14 @@ namespace Conexoes
 
 
 
-            foreach(var pc in pcsEM2)
+            foreach (var pc in pcsEM2)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.Key);
-                if(igual!=null)
+                if (igual != null)
                 {
-                    if(igual is RME)
+                    if (igual is RME)
                     {
-                        foreach(var p1 in pc.ToList())
+                        foreach (var p1 in pc.ToList())
                         {
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
                             nrm.OBSERVACOES = txt_macro_em2;
@@ -154,7 +154,7 @@ namespace Conexoes
                             retorno_RMEs.Add(nrm);
                         }
                     }
-                    else if(igual is RMA)
+                    else if (igual is RMA)
                     {
                         var pecas = pc.ToList();
                         var qtd = pecas.Sum(x => x.Qtd);
@@ -253,7 +253,6 @@ namespace Conexoes
                 retorno_RMUs.AddRange(obj.getPecas().GetRMUs());
             }
 
-
             if (correntes.Sum(x => x.Quantidade) > 0)
             {
                 var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
@@ -266,8 +265,8 @@ namespace Conexoes
                         if (prCTR.Quantidade > 0)
                         {
                             retorno_RMAs.Add(prCTR);
-                            retorno_RMAs.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade));
-                            retorno_RMAs.Add(prCTR.GetARR().Clonar(prCTR.Quantidade));
+                            retorno_RMAs.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade, txt_macro_corrente));
+                            retorno_RMAs.Add(prCTR.GetARR().Clonar(prCTR.Quantidade, txt_macro_corrente));
                         }
                     }
                 }
@@ -325,7 +324,7 @@ namespace Conexoes
                 }
 
 
-               foreach(var corrente in correntes)
+                foreach (var corrente in correntes)
                 {
                     if (corrente.GetDiagonal() != null)
                     {
@@ -340,86 +339,94 @@ namespace Conexoes
                         }
                         else
                         {
-                            _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para a diagonal: {corrente}",TipoReport.Critico));
+                            _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para a diagonal: {corrente}", TipoReport.Critico));
                         }
                     }
                 }
             }
 
-            if(tirantes.Sum(x=>x.Quantidade)>0)
+
+
+            if (tirantes.Sum(x => x.Quantidade) > 0)
             {
-                var tipos_sft = new List<string>();
-                tipos_sft.AddRange(tirantes.Select(x => x.Fixacao_1));
-                tipos_sft.AddRange(tirantes.Select(x => x.Fixacao_2));
-                tipos_sft = tipos_sft.Distinct().ToList();
-
-                foreach(var sftNome in tipos_sft)
+                var ntrPOR = DBases.GetBancoRM().GetPorca(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
+                var ntrARR = DBases.GetBancoRM().GetArruela(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
+                var tiposTR = tirantes.GroupBy(x => x.Tipo).ToList();
+                foreach(var tipoTR in tiposTR)
                 {
-                    var qtdSFT = tirantes.FindAll(x => x.Fixacao_1 == sftNome).Sum(x => x.Quantidade) + tirantes.FindAll(x => x.Fixacao_2 == sftNome).Sum(x => x.Quantidade);
-                    if(qtdSFT>0)
+                    var nTR = DBases.GetBancoRM().GetRME($"{tipoTR.Key}{Cfg.Init.RM_SufixComp}");
+                    var trrs = tipoTR.ToList();
+
+                    var tipos_sft = new List<string>();
+                    tipos_sft.AddRange(trrs.Select(x => x.Fixacao_1 + "@" + x.Tratamento));
+                    tipos_sft.AddRange(trrs.Select(x => x.Fixacao_2 + "@" + x.Tratamento));
+                    tipos_sft = tipos_sft.Distinct().ToList();
+
+                    foreach (var sftNome in tipos_sft)
                     {
-                        var SFT = DBases.GetBancoRM().GetRME(sftNome);
-                        if (SFT != null)
+                        var txt = sftNome.Split('@').ToList();
+                        var qtdSFT = trrs.FindAll(x => x.Fixacao_1 == txt[0]).Sum(x => x.Quantidade) + trrs.FindAll(x => x.Fixacao_2 == txt[0]).Sum(x => x.Quantidade);
+                        if (qtdSFT > 0)
                         {
-                            SFT.Quantidade = qtdSFT;
-                            SFT.OBSERVACOES = txt_macro_tirante;
-                            retorno_RMEs.Add(SFT);
-                        }
-                        else
-                        {
-                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
-                        }
-                    }
-                }
-
-                //TIRANTES
-                int qtdSftPorcas = tirantes.Sum(x => x.Quantidade * 2);
-                if (qtdSftPorcas > 0)
-                {
-                   
-                    var POR = DBases.GetBancoRM().GetPorca("3/8", "GALVANIZADO");
-                    var ARR = DBases.GetBancoRM().GetArruela("3/8", "GALVANIZADO");
-                    
-                    if (POR != null)
-                    {
-                        retorno_RMAs.Add(new RMA(POR, qtdSftPorcas, txt_macro_tirante));
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {POR}", TipoReport.Critico));
-                    }
-
-                    if (ARR!=null)
-                    {
-                        retorno_RMAs.Add(new RMA(ARR, qtdSftPorcas, txt_macro_tirante));
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ARR}", TipoReport.Critico));
-                    }
-                }
-
-                var tr_comps = tirantes.Select(x => x.Comprimento).Distinct().ToList();
-                var nTR = DBases.GetBancoRM().GetRME($"03TR{Cfg.Init.RM_SufixComp}");
-
-                if (nTR != null)
-                {
-                    foreach (var tr_comp in tr_comps)
-                    {
-                        var corr = tirantes.FindAll(x => x.Comprimento == tr_comp);
-                        var tr_trats = tirantes.Select(x => x.Tratamento).Distinct().ToList();
-                        foreach (var trat in tr_trats)
-                        {
-                            if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
+                            var nsft = DBases.GetBancoRM().GetRME(txt[0]);
+                            if (nsft != null)
                             {
-                                var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Quantidade), tr_comp);
-                                novo.FICHA_PINTURA = trat;
-                                novo.User = Global.UsuarioAtual;
-                                retorno_RMEs.Add(novo);
+                                nsft.Quantidade = qtdSFT;
+                                nsft.OBSERVACOES = txt_macro_tirante;
+                                nsft.FICHA_PINTURA = txt[1];
                             }
                             else
                             {
-                                _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
+                                _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
+                            }
+                        }
+                    }
+
+                    //TIRANTES
+                    int qtdSftPorcas = trrs.Sum(x => x.Quantidade * 2);
+                    if (qtdSftPorcas > 0)
+                    {
+                        if (ntrPOR != null)
+                        {
+                            retorno_RMAs.Add(new RMA(ntrPOR, qtdSftPorcas, txt_macro_tirante));
+                        }
+                        else
+                        {
+                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrPOR}", TipoReport.Critico));
+                        }
+
+                        if (ntrARR != null)
+                        {
+                            retorno_RMAs.Add(new RMA(ntrARR, qtdSftPorcas, txt_macro_tirante));
+                        }
+                        else
+                        {
+                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrARR}", TipoReport.Critico));
+                        }
+                    }
+
+                    var tr_comps = trrs.Select(x => x.Comprimento).Distinct().ToList();
+
+                    if (nTR != null)
+                    {
+                        foreach (var tr_comp in tr_comps)
+                        {
+                            var corr = trrs.FindAll(x => x.Comprimento == tr_comp);
+                            var tr_trats = trrs.Select(x => x.Tratamento).Distinct().ToList();
+                            foreach (var trat in tr_trats)
+                            {
+                                if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
+                                {
+                                    var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Quantidade), tr_comp);
+                                    novo.FICHA_PINTURA = trat;
+                                    novo.User = Global.UsuarioAtual;
+                                    novo.OBSERVACOES = txt_macro_tirante;
+                                    retorno_RMEs.Add(novo);
+                                }
+                                else
+                                {
+                                    _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
+                                }
                             }
                         }
                     }
@@ -788,7 +795,7 @@ namespace Conexoes
                 var nrma = new RMA(rm);
                 var iguais = Origem.FindAll(x => x.SAP == rm.SAP);
                 nrma.Quantidade = iguais.Sum(x => x.Quantidade);
-                if (arredondar_multiplo && nrma.Multiplo > 0)
+                if (arredondar_multiplo && nrma.MULTIPLO > 0)
                 {
                     nrma.SetQuantidadeMultipla(nrma.Quantidade);
                 }
