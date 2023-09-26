@@ -15,6 +15,55 @@ namespace DLM.desenho
 {
     public static class ExtensoesNetDxf
     {
+        private static Dictionary<System.Windows.Media.Color, AciColor> _CoresAci { get; set; } = new Dictionary<System.Windows.Media.Color, AciColor>();
+        public static AciColor getCor(this Janela_Cor Cor)
+        {
+
+            if (Cor == Janela_Cor.Amarelo)
+            {
+                return AciColor.Yellow;
+            }
+            else if (Cor == Janela_Cor.Cyan)
+            {
+                return AciColor.Cyan;
+            }
+            else if (Cor == Janela_Cor.Green)
+            {
+                return AciColor.Green;
+            }
+            else if (Cor == Janela_Cor.Magenta)
+            {
+                return AciColor.Magenta;
+            }
+            else if (Cor == Janela_Cor.Red)
+            {
+                return AciColor.Red;
+            }
+            else if (Cor == Janela_Cor.Yellow)
+            {
+                return AciColor.Yellow;
+            }
+            else
+            {
+                return AciColor.ByLayer;
+            }
+
+
+        }
+        public static AciColor getCor(this System.Windows.Media.Color cor)
+        {
+            AciColor ret = null;
+            var igual = _CoresAci.TryGetValue(cor, out ret);
+            if (ret != null)
+            {
+                return ret;
+            }
+
+            AciColor retorno = new AciColor(cor.R, cor.G, cor.B);
+            _CoresAci.Add(cor, retorno);
+
+            return retorno;
+        }
         public static void Show(this DxfDocument dxf)
         {
             var mm = new Conexoes.Janelas.VisualizarDXF();
