@@ -11,6 +11,46 @@ namespace Conexoes
 {
     public static class ExtensoesP3d
     {
+        public static P3d Tratar(this P3d origem, int decimais = 5)
+        {
+            var p0 = new P3d(origem.X, origem.Y);
+            if (Double.IsNaN(p0.X) | Double.IsInfinity(p0.X))
+            {
+                p0.X = 0;
+            }
+            if (Double.IsNaN(p0.Y) | Double.IsInfinity(p0.Y))
+            {
+                p0.Y = 0;
+            }
+            if (Double.IsNaN(p0.Z) | Double.IsInfinity(p0.Z))
+            {
+                p0.Z = 0;
+            }
+            p0 = new P3d(Math.Round(p0.X, decimais), Math.Round(p0.Y, decimais), Math.Round(p0.Z, decimais));
+            return p0;
+        }
+        public static List<P3d> GetHorizontaisTop(this List<P3d> Origens)
+        {
+            var xs = Origens.Select(x => x.X).Distinct().ToList().OrderBy(x => x).ToList();
+            var ys = Origens.Select(x => x.Y).Distinct().ToList().OrderBy(x => x).ToList();
+            var origens = new List<P3d>();
+            for (int i = 0; i < xs.Count; i++)
+            {
+                origens.Add(new P3d(xs[i], ys[0]));
+            }
+            return origens;
+        }
+        public static List<P3d> GetVerticaisRight(this List<P3d> Origens)
+        {
+            var xs = Origens.Select(x => x.X).Distinct().ToList().OrderBy(x => x).ToList();
+            var ys = Origens.Select(x => x.Y).Distinct().ToList().OrderBy(x => x).ToList();
+            var origens = new List<P3d>();
+            for (int i = 0; i < ys.Count; i++)
+            {
+                origens.Add(new P3d(xs[xs.Count - 1], ys[i]));
+            }
+            return origens;
+        }
         public static List<P3d> Offset(this List<P3d> Origem, double offset, bool raio_cantos = false)
         {
 

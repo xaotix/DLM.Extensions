@@ -136,9 +136,6 @@ namespace Conexoes
                 }
             }
 
-
-
-
             foreach (var pc in pcsEM2)
             {
                 var igual = DBases.GetBancoRM().GetPeca(pc.Key);
@@ -184,12 +181,9 @@ namespace Conexoes
                                 _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
                         }
-
-
                     }
                     else
                     {
-
                     }
                 }
                 else
@@ -197,7 +191,6 @@ namespace Conexoes
                     _pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
                 }
             }
-
 
             foreach (var obj in ctv1)
             {
@@ -351,7 +344,7 @@ namespace Conexoes
             {
                 var ntrPOR = DBases.GetBancoRM().GetPorca(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
                 var ntrARR = DBases.GetBancoRM().GetArruela(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
-                var tiposTR = tirantes.GroupBy(x => x.Tipo).ToList();
+                var tiposTR = tirantes.GroupBy(x => $"{x.NomePadronizado}").ToList();
                 foreach(var tipoTR in tiposTR)
                 {
                     var nTR = DBases.GetBancoRM().GetRME($"{tipoTR.Key}{Cfg.Init.RM_SufixComp}");

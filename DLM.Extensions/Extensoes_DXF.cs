@@ -134,10 +134,10 @@ namespace DLM.desenho
         public static List<OrdinateDimension> CotasAcumuladas(List<P3d> Origens, double offset, Sentido sentido = Sentido.Horizontal, Layer Layer = null, DimensionStyle estilo = null, bool inverter = false)
         {
             List<OrdinateDimension> Retorno = new List<OrdinateDimension>();
-            Origens = Origens.Select(x => Trigonometria.Tratar(x)).ToList();
+            Origens = Origens.Select(x => x.Tratar()).ToList();
             if (sentido == Sentido.Horizontal)
             {
-                var ps = Trigonometria.GetHorizontaisTop(Origens);
+                var ps = Origens.GetHorizontaisTop();
                 if (inverter)
                 {
                     ps = ps.OrderByDescending(x => x.X).ToList();
@@ -161,7 +161,7 @@ namespace DLM.desenho
             }
             else if (sentido == Sentido.Vertical)
             {
-                var ps = Trigonometria.GetVerticaisRight(Origens);
+                var ps = Origens.GetVerticaisRight();
                 ps = ps.OrderByDescending(x => x.Y).ToList();
 
                 for (int i = 0; i < ps.Count; i++)
@@ -237,9 +237,8 @@ namespace DLM.desenho
 
         public static AlignedDimension Cota(P3d p0, P3d p1, double offset, Layer Layer = null, DimensionStyle estilo = null)
         {
-
-            p0 = Trigonometria.Tratar(p0);
-            p1 = Trigonometria.Tratar(p1);
+            p0 = p0.Tratar();
+            p1 = p1.Tratar();
             double dist = p0.Distancia(p1);
 
             if (dist == 0)
@@ -264,7 +263,7 @@ namespace DLM.desenho
         }
         public static Leader Leader(string Texto, double Tamanho, P3d Origem, Layer Layer = null, DimensionStyle estilo = null, int offset = 3)
         {
-            Origem = Trigonometria.Tratar(Origem);
+            Origem = Origem.Tratar();
 
             var p1 = Origem.Mover(45, Tamanho * offset);
             return Leader(Texto, Tamanho, new List<P3d> { new P3d(Origem.X, Origem.Y), new P3d(p1.X, p1.Y) }, Layer, estilo);
