@@ -677,7 +677,7 @@ namespace Conexoes
         }
         public static List<RME> GetCorrespondentes(this RME rme)
         {
-            return DBases.GetBancoRM().GetRMEs().FindAll(x => x.FAMILIA == rme.FAMILIA && x.SUBSTITUTO == "");
+            return DBases.GetBancoRM().GetRMEs().FindAll(x => x.TIPO == rme.TIPO && x.SUBSTITUTO == "");
         }
         public static bool CORRESPONDE(this RME rme, string valor)
         {
@@ -699,7 +699,11 @@ namespace Conexoes
             {
                 return true;
             }
-            else if (valor2 == rme.CHAVE)
+            else if (valor2 == $"{rme.TIPO}_{rme.COD_DB}")
+            {
+                return true;
+            }
+            else if (valor2 == $"{rme.TIPO}_{rme.CODIGOFIM}")
             {
                 return true;
             }
@@ -735,11 +739,11 @@ namespace Conexoes
         {
             if (rme.DESTINO == "RMU")
             {
-                return DBases.GetBancoRM().GetRMUs().FindAll(x => x.FAMILIA == rme.FAMILIA && x.VARIAVEL == rme.VARIAVEL);
+                return DBases.GetBancoRM().GetRMUs().FindAll(x => x.TIPO == rme.TIPO && x.VARIAVEL == rme.VARIAVEL);
             }
             else
             {
-                return DBases.GetBancoRM().GetRMEs().FindAll(x => x.FAMILIA == rme.FAMILIA && x.VARIAVEL == rme.VARIAVEL);
+                return DBases.GetBancoRM().GetRMEs().FindAll(x => x.TIPO == rme.TIPO && x.VARIAVEL == rme.VARIAVEL);
             }
         }
 
