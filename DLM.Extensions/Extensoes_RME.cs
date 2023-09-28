@@ -73,14 +73,11 @@ namespace Conexoes
             return retorno;
         }
 
-        public static void GetPecas(this List<RME_Macro> _lista, out List<object> _pecas)
+        public static List<object> GetPecas(this List<RME_Macro> _lista, out List<RME> retorno_purlins)
         {
-            _pecas = new List<object>();
 
-
-            var retorno_RMEs = new List<RME>();
-            var retorno_RMAs = new List<RMA>();
-            var retorno_RMUs = new List<RME>();
+            var retorno = new List<object>();
+            retorno_purlins = new List<RME>();
 
 
             var objetos = _lista.Select(x => x.GetObjeto()).ToList();
@@ -97,8 +94,8 @@ namespace Conexoes
             var pacoteEM2 = new DLM.macros.EM2Pacote(escadasEM2);
             var pacoteCTV = new DLM.macros.CTV2Pacote(ctv2);
 
-            retorno_RMAs.AddRange(pacoteEM1.getPecas().Get<RMA>());
-            retorno_RMEs.AddRange(pacoteEM1.getPecas().Get<RME>());
+            retorno.AddRange(pacoteEM1.getPecas().Get<RMA>());
+            retorno.AddRange(pacoteEM1.getPecas().Get<RME>());
 
 
             var txt_macro_medalux = "[MACRO ZENITAL]";
@@ -119,12 +116,12 @@ namespace Conexoes
                         var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento, pc.Nome);
                         nrm.OBSERVACOES = txt_macro_ctv2;
                         nrm.FICHA_PINTURA = pc.Tratamento;
-                        retorno_RMEs.Add(nrm);
+                        retorno.Add(nrm);
                     }
                     else if (igual is RMA)
                     {
                         var PAR = igual.As<RMA>().Clonar(pc.Quantidade, txt_macro_ctv2);
-                        retorno_RMAs.Add(PAR);
+                        retorno.Add(PAR);
                     }
                     else
                     {
@@ -132,7 +129,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _pecas.Add(new Report("Peça Não encontrada", $"CTV2 => {pc.Nome}", TipoReport.Critico));
+                    retorno.Add(new Report("Peça Não encontrada", $"CTV2 => {pc.Nome}", TipoReport.Critico));
                 }
             }
 
@@ -148,7 +145,7 @@ namespace Conexoes
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
                             nrm.OBSERVACOES = txt_macro_em2;
                             nrm.FICHA_PINTURA = p1.Tratamento;
-                            retorno_RMEs.Add(nrm);
+                            retorno.Add(nrm);
                         }
                     }
                     else if (igual is RMA)
@@ -157,28 +154,28 @@ namespace Conexoes
                         var qtd = pecas.Sum(x => x.Qtd);
 
                         var PAR = igual.As<RMA>().Clonar(qtd, txt_macro_em2);
-                        retorno_RMAs.Add(PAR);
+                        retorno.Add(PAR);
 
                         if (PAR.TIPO == "PAR")
                         {
                             var POR = PAR.GetPOR().Clonar(qtd, txt_macro_em2);
                             if (POR != null)
                             {
-                                retorno_RMAs.Add(POR);
+                                retorno.Add(POR);
                             }
                             else
                             {
-                                _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
+                                retorno.Add(new Report("Peça Não encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
 
                             var ARR = PAR.GetARR().Clonar(qtd, txt_macro_em2);
                             if (ARR != null)
                             {
-                                retorno_RMAs.Add(ARR);
+                                retorno.Add(ARR);
                             }
                             else
                             {
-                                _pecas.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
+                                retorno.Add(new Report("Peça Não encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
                         }
                     }
@@ -188,15 +185,16 @@ namespace Conexoes
                 }
                 else
                 {
-                    _pecas.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
+                    retorno.Add(new Report("Peça Não encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
                 }
             }
 
-            foreach (var obj in ctv1)
-            {
-                retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
-                retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
-            }
+            /*todo = é necessário melhorar essa parte.*/
+            retorno.AddRange(ctv1.SelectMany(x => x.getPecas().GetRMAs()).ToList().Juntar());
+            retorno.AddRange(ctv1.SelectMany(x => x.getPecas().GetRMEs()).ToList().Juntar());
+            retorno.AddRange(ctv1.SelectMany(x => x.getPecas().Get<Report>()));
+
+
 
             foreach (var purlin in purlins)
             {
@@ -230,20 +228,20 @@ namespace Conexoes
                             linhas[1].QTD_FUROS_Custom = furos;
                         }
                         linhas[1].ZPP_TIPOACO = purlin.Material;
-                        retorno_RMEs.Add(nova);
+                        retorno.Add(nova);
                     }
                 }
                 else
                 {
-                    _pecas.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
+                    retorno.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
                 }
             }
 
             foreach (var obj in medaluxes)
             {
-                retorno_RMAs.AddRange(obj.getPecas().GetRMAs());
-                retorno_RMEs.AddRange(obj.getPecas().GetRMEs());
-                retorno_RMUs.AddRange(obj.getPecas().GetRMUs());
+                retorno.AddRange(obj.getPecas().GetRMAs());
+                retorno.AddRange(obj.getPecas().GetRMEs());
+                retorno.AddRange(obj.getPecas().GetRMUs());
             }
 
             if (correntes.Sum(x => x.Quantidade) > 0)
@@ -257,97 +255,68 @@ namespace Conexoes
                         prCTR.OBSERVACOES = txt_macro_corrente;
                         if (prCTR.Quantidade > 0)
                         {
-                            retorno_RMAs.Add(prCTR);
-                            retorno_RMAs.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade, txt_macro_corrente));
-                            retorno_RMAs.Add(prCTR.GetARR().Clonar(prCTR.Quantidade, txt_macro_corrente));
+                            retorno.Add(prCTR);
+                            retorno.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade, txt_macro_corrente));
+                            retorno.Add(prCTR.GetARR().Clonar(prCTR.Quantidade, txt_macro_corrente));
                         }
                     }
                 }
-                var CrF46 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F46);
-                var CrF76 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F76);
-                var CrF156 = correntes.FindAll(x => x.Fixacao == Corrente_Fixacao.F156);
 
-                var qtdF46 = CrF46.Sum(X => X.Quantidade * 2);
-                var qtdF76 = CrF76.Sum(X => X.Quantidade * 2);
-                var qtdF156 = CrF156.Sum(X => X.Quantidade * 2);
-
-                if (CrF46.Count > 0 && qtdF46 > 0)
+                var fixacoes = correntes.GroupBy(x => $"{x.Fixacao}@{x.Tratamento}").ToList();
+                foreach (var fixacao in fixacoes)
                 {
-                    var supF46 = DBases.GetBancoRM().GetRME("F46");
-                    if (supF46 != null)
+                    var pcs = fixacao.ToList();
+                    var total = pcs.Sum(x => x.Quantidade * 2);
+                    if (total > 0)
                     {
-                        supF46.Quantidade = qtdF46;
-                        supF46.OBSERVACOES = txt_macro_corrente;
-                        retorno_RMEs.Add(supF46);
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F46", TipoReport.Critico));
-                    }
-                }
-
-                if (CrF76.Count > 0 && qtdF76 > 0)
-                {
-                    var supF76 = DBases.GetBancoRM().GetRME("F76");
-                    if (supF76 != null)
-                    {
-                        supF76.Quantidade = qtdF76;
-                        supF76.OBSERVACOES = txt_macro_corrente;
-                        retorno_RMEs.Add(supF76);
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F76", TipoReport.Critico));
-                    }
-                }
-
-                if (CrF156.Count > 0 && qtdF156 > 0)
-                {
-                    var supF156 = DBases.GetBancoRM().GetRME("F156");
-                    if (supF156 != null)
-                    {
-                        supF156.Quantidade = qtdF156;
-                        supF156.OBSERVACOES = txt_macro_corrente;
-                        retorno_RMEs.Add(supF156);
-                    }
-                    else
-                    {
-                        _pecas.Add(new Report("Peça não encontrada", $"Macro Correntes => F156", TipoReport.Critico));
-                    }
-                }
-
-
-                foreach (var corrente in correntes)
-                {
-                    if (corrente.GetDiagonal() != null)
-                    {
-                        if (corrente.CompCorrente >= corrente.GetDiagonal().COMP_MIN && corrente.CompCorrente <= corrente.GetDiagonal().COMP_MAX)
+                        var frs = pcs.First();
+                        var tipo = DBases.GetBancoRM().GetRME(frs.Fixacao.ToString());
+                        if (tipo != null)
                         {
-                            var rme = corrente.GetDiagonal().Clonar();
-                            rme.COMP = corrente.CompCorrente;
-                            rme.OBSERVACOES = txt_macro_corrente;
-                            rme.FICHA_PINTURA = corrente.Tratamento;
-                            rme.Quantidade = corrente.Quantidade;
-                            retorno_RMEs.Add(rme);
+                            var nf = tipo.Clonar(total);
+                            nf.OBSERVACOES = txt_macro_corrente;
+                            nf.FICHA_PINTURA = frs.Tratamento;
                         }
                         else
                         {
-                            _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para a diagonal: {corrente}", TipoReport.Critico));
+                            retorno.Add(new Report("Peça não encontrada", $"Macro Correntes => {frs.Fixacao.ToString()}", TipoReport.Critico));
                         }
                     }
+
                 }
+
+                var ctrs = correntes.GroupBy(x => $"{x.id_db}@{x.Tratamento}").ToList();
+                foreach (var ctr in ctrs)
+                {
+                    var frst = ctr.First();
+                    var diagonal = frst.GetDiagonal();
+                    if (diagonal != null)
+                    {
+                        var comps = ctr.ToList().GroupBy(x => x.CompCorrente).ToList();
+                        foreach (var comp in comps)
+                        {
+                            var nctr = diagonal.Clonar(comp.Sum(x => x.Quantidade), comp.Key);
+                            nctr.FICHA_PINTURA = frst.Tratamento;
+                            nctr.OBSERVACOES = txt_macro_corrente;
+                        }
+                    }
+                    else
+                    {
+                        retorno.Add(new Report("Peça não encontrada", $"Macro Correntes => RME id={frst.id_db}", TipoReport.Critico));
+                    }
+                }
+
+
             }
-
-
 
             if (tirantes.Sum(x => x.Quantidade) > 0)
             {
                 var ntrPOR = DBases.GetBancoRM().GetPorca(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
                 var ntrARR = DBases.GetBancoRM().GetArruela(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
                 var tiposTR = tirantes.GroupBy(x => $"{x.NomePadronizado}").ToList();
-                foreach(var tipoTR in tiposTR)
+                foreach (var tipoTR in tiposTR)
                 {
-                    var nTR = DBases.GetBancoRM().GetRME($"{tipoTR.Key}{Cfg.Init.RM_SufixComp}");
+                    var nTR = DBases.GetBancoRM().GetRME(tipoTR.Key);
                     var trrs = tipoTR.ToList();
 
                     var tipos_sft = new List<string>();
@@ -367,10 +336,11 @@ namespace Conexoes
                                 nsft.Quantidade = qtdSFT;
                                 nsft.OBSERVACOES = txt_macro_tirante;
                                 nsft.FICHA_PINTURA = txt[1];
+                                retorno.Add(nsft);
                             }
                             else
                             {
-                                _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
+                                retorno.Add(new Report("Peça não encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
                             }
                         }
                     }
@@ -381,20 +351,20 @@ namespace Conexoes
                     {
                         if (ntrPOR != null)
                         {
-                            retorno_RMAs.Add(new RMA(ntrPOR, qtdSftPorcas, txt_macro_tirante));
+                            retorno.Add(new RMA(ntrPOR, qtdSftPorcas, txt_macro_tirante));
                         }
                         else
                         {
-                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrPOR}", TipoReport.Critico));
+                            retorno.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrPOR}", TipoReport.Critico));
                         }
 
                         if (ntrARR != null)
                         {
-                            retorno_RMAs.Add(new RMA(ntrARR, qtdSftPorcas, txt_macro_tirante));
+                            retorno.Add(new RMA(ntrARR, qtdSftPorcas, txt_macro_tirante));
                         }
                         else
                         {
-                            _pecas.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrARR}", TipoReport.Critico));
+                            retorno.Add(new Report("Peça não encontrada", $"Macro Tirantes => {ntrARR}", TipoReport.Critico));
                         }
                     }
 
@@ -414,14 +384,18 @@ namespace Conexoes
                                     novo.FICHA_PINTURA = trat;
                                     novo.User = Global.UsuarioAtual;
                                     novo.OBSERVACOES = txt_macro_tirante;
-                                    retorno_RMEs.Add(novo);
+                                    retorno.Add(novo);
                                 }
                                 else
                                 {
-                                    _pecas.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
+                                    retorno.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        retorno.Add(new Report("Peça não encontrada", $"Macro Tirantes => {tipoTR.Key}", TipoReport.Critico));
                     }
                 }
             }
@@ -446,7 +420,7 @@ namespace Conexoes
                     var parMastic = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_MASTIC_CODIGO);
                     if (parMastic != null)
                     {
-                        retorno_RMAs.Add(new RMA(parMastic, qtd_MASTIC, txt_macro_medalux));
+                        retorno.Add(new RMA(parMastic, qtd_MASTIC, txt_macro_medalux));
                     }
                 }
 
@@ -455,7 +429,7 @@ namespace Conexoes
                     var parSelante = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_SELANTE_CODIGO);
                     if (parSelante != null)
                     {
-                        retorno_RMAs.Add(new RMA(parSelante, qtd_SELANTE, txt_macro_medalux));
+                        retorno.Add(new RMA(parSelante, qtd_SELANTE, txt_macro_medalux));
                     }
                 }
 
@@ -464,7 +438,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_REBITE_CODIGO);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_REBITE, txt_macro_medalux));
+                        retorno.Add(new RMA(par, qtd_REBITE, txt_macro_medalux));
                     }
                 }
 
@@ -476,7 +450,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_CABECA_INOX);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_CABECA_INOX, txt_macro_medalux));
+                        retorno.Add(new RMA(par, qtd_PARAFUSO_CABECA_INOX, txt_macro_medalux));
                     }
                 }
                 if (qtd_PARAFUSO_NORMAL > 0)
@@ -484,7 +458,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_NORMAL);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_NORMAL, txt_macro_medalux));
+                        retorno.Add(new RMA(par, qtd_PARAFUSO_NORMAL, txt_macro_medalux));
                     }
                 }
                 if (qtd_PARAFUSO_TODO_INOX > 0)
@@ -492,7 +466,7 @@ namespace Conexoes
                     var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_TODO_INOX);
                     if (par != null)
                     {
-                        retorno_RMAs.Add(new RMA(par, qtd_PARAFUSO_TODO_INOX, txt_macro_medalux));
+                        retorno.Add(new RMA(par, qtd_PARAFUSO_TODO_INOX, txt_macro_medalux));
                     }
                 }
 
@@ -506,7 +480,7 @@ namespace Conexoes
                         Quantidade = zenitais.Sum(X => X.Qtd),
                         OBSERVACOES = txt_macro_medalux
                     };
-                    retorno_RMUs.Add(T);
+                    retorno.Add(T);
                 }
                 if (PS4 != null)
                 {
@@ -516,7 +490,7 @@ namespace Conexoes
                         Quantidade = (zenitais.Sum(X => X.Qtd) * DBases.GetBancoRM().ZENITAL_PS4).Int(),
                         OBSERVACOES = txt_macro_medalux
                     };
-                    retorno_RMUs.Add(T);
+                    retorno.Add(T);
                 }
 
                 int qtd_Az1 = zenitais.Sum(x => x.Qtd_AZ1);
@@ -539,7 +513,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                         foreach (var bob in bobinas2)
                         {
@@ -547,7 +521,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                     }
                 }
@@ -567,7 +541,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                         foreach (var bob in bobinas2)
                         {
@@ -575,7 +549,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                     }
                 }
@@ -594,7 +568,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                         foreach (var bob in bobinas2)
                         {
@@ -602,7 +576,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                     }
                 }
@@ -621,7 +595,7 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                         foreach (var bob in bobinas2)
                         {
@@ -629,14 +603,12 @@ namespace Conexoes
                             npc.OBSERVACOES = txt_macro_medalux;
                             npc.Inverter_Cor = true;
                             npc.SetBobina(bob);
-                            retorno_RMUs.Add(npc);
+                            retorno.Add(npc);
                         }
                     }
                 }
             }
-            _pecas.AddRange(retorno_RMAs);
-            _pecas.AddRange(retorno_RMEs);
-            _pecas.AddRange(retorno_RMUs);
+            return retorno;
         }
         public static List<RMA> GetRMAs(this List<object> _lista)
         {
