@@ -143,5 +143,41 @@ namespace Conexoes
             }
             return retorno;
         }
+
+        public static List<List<double>> AgruparPorDistancia(this List<double> valores, double dist)
+        {
+            var lista = new List<double>();
+            lista.AddRange(valores);
+            lista = lista.OrderBy(x => x).ToList();
+
+            var pacotes = new List<List<double>>();
+
+            for (int i = 0; i < lista.Count; i++)
+            {
+                var pacote = new List<double>();
+                if(i==0)
+                {
+                    pacote.Add(lista[i]);
+                }
+                while(lista[i] - pacote.Last()>=dist)
+                {
+                    pacote.Add(lista[i]);
+                    i++;
+                    if(i==lista.Count)
+                    {
+                        goto fim;
+                    }
+                    else
+                    {
+                        i--;
+                        pacotes.Add(pacote);
+                        break;
+                    }
+                }
+            }
+        fim:
+
+            return pacotes;
+        }
     }
 }
