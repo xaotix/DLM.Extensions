@@ -155,25 +155,23 @@ namespace Conexoes
             for (int i = 0; i < lista.Count; i++)
             {
                 var pacote = new List<double>();
-                if(i==0)
-                {
-                    pacote.Add(lista[i]);
-                }
-                while(lista[i] - pacote.Last()>=dist)
+                double dist0 = 0;
+                while(dist0<=dist)
                 {
                     pacote.Add(lista[i]);
                     i++;
+
                     if(i==lista.Count)
                     {
                         goto fim;
                     }
                     else
                     {
-                        i--;
-                        pacotes.Add(pacote);
-                        break;
+                        dist0 = lista[i] - pacote[0];
                     }
                 }
+                i--;
+                pacotes.Add(pacote);
             }
         fim:
 
