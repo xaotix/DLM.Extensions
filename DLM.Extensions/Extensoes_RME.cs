@@ -83,11 +83,9 @@ namespace Conexoes
             var objetos = _lista.Select(x => x.GetObjeto()).ToList();
             var correntes = objetos.Get<DLM.macros.Corrente>();
             var tirantes = objetos.Get<DLM.macros.Tirante>();
-            var zenitais = objetos.Get<Macros.Zenital>();
             var purlins = objetos.Get<Macros.Purlin>();
             var ctv1 = objetos.Get<Macros.Contravento>();
             var ctv2 = objetos.Get<DLM.macros.CTV2>();
-            var medaluxes = objetos.Get<Macros.Medalux>();
             var escadasEM1 = objetos.Get<Marinheiro>();
             var pacoteEM1 = new PacoteMarinheiro(escadasEM1);
             var escadasEM2 = objetos.Get<DLM.macros.EM2>();
@@ -98,7 +96,6 @@ namespace Conexoes
             retorno.AddRange(pacoteEM1.getPecas().Get<RME>());
 
 
-            var txt_macro_medalux = "[MACRO ZENITAL]";
             var txt_macro_corrente = "[MACRO CORRENTE]";
             var txt_macro_tirante = "[MACRO TIRANTES]";
             var txt_macro_ctv2 = "[MACRO CTV2]";
@@ -235,13 +232,6 @@ namespace Conexoes
                 {
                     retorno.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
                 }
-            }
-
-            foreach (var obj in medaluxes)
-            {
-                retorno.AddRange(obj.getPecas().GetRMAs());
-                retorno.AddRange(obj.getPecas().GetRMEs());
-                retorno.AddRange(obj.getPecas().GetRMUs());
             }
 
             if (correntes.Sum(x => x.Quantidade) > 0)
@@ -400,214 +390,6 @@ namespace Conexoes
                 }
             }
 
-            if (zenitais.Sum(x => x.Qtd) > 0)
-            {
-                double qtd_MASTIC = zenitais.FindAll(x => x.Considerar_Selante_e_Mastic).Sum(x => x.Qtd * DBases.GetBancoRM().ZENITAL_MASTIC);
-                if (qtd_MASTIC > 0)
-                {
-                    qtd_MASTIC = Math.Round(qtd_MASTIC / DBases.GetBancoRM().ZENITAL_MASTIC_RENDIMENTO);
-                }
-                double qtd_SELANTE = zenitais.FindAll(x => x.Considerar_Selante_e_Mastic).Sum(x => x.Qtd * DBases.GetBancoRM().ZENITAL_SELANTE);
-                if (qtd_SELANTE > 0)
-                {
-                    qtd_SELANTE = Math.Round(qtd_MASTIC / DBases.GetBancoRM().ZENITAL_SELANTE_RENDIMENTO);
-                }
-
-                int qtd_REBITE = zenitais.Sum(x => x.Qtd_Rebite);
-
-                if (qtd_MASTIC > 0)
-                {
-                    var parMastic = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_MASTIC_CODIGO);
-                    if (parMastic != null)
-                    {
-                        retorno.Add(new RMA(parMastic, qtd_MASTIC, txt_macro_medalux));
-                    }
-                }
-
-                if (qtd_SELANTE > 0)
-                {
-                    var parSelante = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_SELANTE_CODIGO);
-                    if (parSelante != null)
-                    {
-                        retorno.Add(new RMA(parSelante, qtd_SELANTE, txt_macro_medalux));
-                    }
-                }
-
-                if (qtd_REBITE > 0)
-                {
-                    var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_REBITE_CODIGO);
-                    if (par != null)
-                    {
-                        retorno.Add(new RMA(par, qtd_REBITE, txt_macro_medalux));
-                    }
-                }
-
-                int qtd_PARAFUSO_CABECA_INOX = zenitais.FindAll(x => x.Tipo_Parafuso == Tipo_Parafuso.Cabeça_Inox && x.Considerar_Parafuso).Sum(x => x.Qtd_Parafusos);
-                int qtd_PARAFUSO_NORMAL = zenitais.FindAll(x => x.Tipo_Parafuso == Tipo_Parafuso.Normal && x.Considerar_Parafuso).Sum(x => x.Qtd_Parafusos);
-                int qtd_PARAFUSO_TODO_INOX = zenitais.FindAll(x => x.Tipo_Parafuso == Tipo_Parafuso.Todo_Inox && x.Considerar_Parafuso).Sum(x => x.Qtd_Parafusos);
-                if (qtd_PARAFUSO_CABECA_INOX > 0)
-                {
-                    var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_CABECA_INOX);
-                    if (par != null)
-                    {
-                        retorno.Add(new RMA(par, qtd_PARAFUSO_CABECA_INOX, txt_macro_medalux));
-                    }
-                }
-                if (qtd_PARAFUSO_NORMAL > 0)
-                {
-                    var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_NORMAL);
-                    if (par != null)
-                    {
-                        retorno.Add(new RMA(par, qtd_PARAFUSO_NORMAL, txt_macro_medalux));
-                    }
-                }
-                if (qtd_PARAFUSO_TODO_INOX > 0)
-                {
-                    var par = DBases.GetBancoRM().GetRMA(DBases.GetBancoRM().ZENITAL_PARAFUSOS_CODIGO_TODO_INOX);
-                    if (par != null)
-                    {
-                        retorno.Add(new RMA(par, qtd_PARAFUSO_TODO_INOX, txt_macro_medalux));
-                    }
-                }
-
-                var ZENITAL = DBases.GetBancoRM().GetRMU(DBases.GetBancoRM().ZENITAL_CODIGO);
-                var PS4 = DBases.GetBancoRM().GetRMU(DBases.GetBancoRM().ZENITAL_PS4_CODIGO);
-                if (ZENITAL != null)
-                {
-                    var T = new RME(ZENITAL)
-                    {
-                        User = Global.UsuarioAtual,
-                        Quantidade = zenitais.Sum(X => X.Qtd),
-                        OBSERVACOES = txt_macro_medalux
-                    };
-                    retorno.Add(T);
-                }
-                if (PS4 != null)
-                {
-                    var T = new RME()
-                    {
-                        User = Global.UsuarioAtual,
-                        Quantidade = (zenitais.Sum(X => X.Qtd) * DBases.GetBancoRM().ZENITAL_PS4).Int(),
-                        OBSERVACOES = txt_macro_medalux
-                    };
-                    retorno.Add(T);
-                }
-
-                int qtd_Az1 = zenitais.Sum(x => x.Qtd_AZ1);
-                int qtd_Az2 = zenitais.Sum(x => x.Qtd_AZ2);
-                int qtd_Az4_1840 = zenitais.Sum(x => x.Qtd_AZ4_1840);
-                int qtd_Az4_620 = zenitais.Sum(x => x.Qtd_AZ4_620);
-
-                if (qtd_Az1 > 0)
-                {
-                    var pc = DBases.GetBancoRM().GetRMU("AZ1");
-                    if (pc != null)
-                    {
-                        var pcs = zenitais.FindAll(x => x.Qtd_AZ1 > 0 && x.Inverter_Cores);
-                        var pcs2 = zenitais.FindAll(x => x.Qtd_AZ1 > 0 && !x.Inverter_Cores);
-                        var bobinas1 = pcs.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        var bobinas2 = pcs2.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        foreach (var bob in bobinas1)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ1));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                        foreach (var bob in bobinas2)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ1));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                    }
-                }
-
-                if (qtd_Az2 > 0)
-                {
-                    var pc = DBases.GetBancoRM().GetRMU("AZ2");
-                    if (pc != null)
-                    {
-                        var pcs = zenitais.FindAll(x => x.Qtd_AZ2 > 0 && x.Inverter_Cores);
-                        var pcs2 = zenitais.FindAll(x => x.Qtd_AZ2 > 0 && !x.Inverter_Cores);
-                        var bobinas1 = pcs.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        var bobinas2 = pcs2.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        foreach (var bob in bobinas1)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ2));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                        foreach (var bob in bobinas2)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ2));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                    }
-                }
-                if (qtd_Az4_1840 > 0)
-                {
-                    var pc = DBases.GetBancoRM().GetRMU("AZ4-1840P");
-                    if (pc != null)
-                    {
-                        var pcs = zenitais.FindAll(x => x.Qtd_AZ4_1840 > 0 && x.Inverter_Cores);
-                        var pcs2 = zenitais.FindAll(x => x.Qtd_AZ4_1840 > 0 && !x.Inverter_Cores);
-                        var bobinas1 = pcs.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        var bobinas2 = pcs2.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        foreach (var bob in bobinas1)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_1840));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                        foreach (var bob in bobinas2)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_1840));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                    }
-                }
-                if (qtd_Az4_620 > 0)
-                {
-                    var pc = DBases.GetBancoRM().GetRMU("AZ4-620P");
-                    if (pc != null)
-                    {
-                        var pcs = zenitais.FindAll(x => x.Qtd_AZ4_620 > 0 && x.Inverter_Cores);
-                        var pcs2 = zenitais.FindAll(x => x.Qtd_AZ4_620 > 0 && !x.Inverter_Cores);
-                        var bobinas1 = pcs.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        var bobinas2 = pcs2.Select(x => x.Bobina).ToList().GroupBy(x => x.ToString()).Select(g => g.First()).ToList();
-                        foreach (var bob in bobinas1)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_620));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                        foreach (var bob in bobinas2)
-                        {
-                            var npc = pc.Clonar(pcs.Sum(x => x.Qtd_AZ4_620));
-                            npc.OBSERVACOES = txt_macro_medalux;
-                            npc.Inverter_Cor = true;
-                            npc.SetBobina(bob);
-                            retorno.Add(npc);
-                        }
-                    }
-                }
-            }
             return retorno;
         }
         public static List<RMA> GetRMAs(this List<object> _lista)
