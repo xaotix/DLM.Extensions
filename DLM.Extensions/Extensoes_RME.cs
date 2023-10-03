@@ -246,8 +246,16 @@ namespace Conexoes
                         if (prCTR.Quantidade > 0)
                         {
                             retorno.Add(prCTR);
+
+
+
                             retorno.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade, txt_macro_corrente));
-                            retorno.Add(prCTR.GetARR().Clonar(prCTR.Quantidade, txt_macro_corrente));
+                            var qtd_arr = correntes.FindAll(x => x.Parafusos && x.Arruela).Sum(x => 4 * x.Quantidade);
+
+                            if(qtd_arr>0)
+                            {
+                                retorno.Add(prCTR.GetARR().Clonar(qtd_arr, txt_macro_corrente));
+                            }
                         }
                     }
                 }
