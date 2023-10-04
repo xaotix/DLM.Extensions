@@ -113,6 +113,7 @@ namespace Conexoes
                         var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento, pc.Nome);
                         nrm.OBSERVACOES = txt_macro_ctv2;
                         nrm.FICHA_PINTURA = pc.Tratamento;
+                        nrm.User = Global.UsuarioAtual;
                         retorno.Add(nrm);
                     }
                     else if (igual is RMA)
@@ -142,6 +143,8 @@ namespace Conexoes
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
                             nrm.OBSERVACOES = txt_macro_em2;
                             nrm.FICHA_PINTURA = p1.Tratamento;
+                            nrm.User = Global.UsuarioAtual;
+
                             retorno.Add(nrm);
                         }
                     }
@@ -243,6 +246,7 @@ namespace Conexoes
                     {
                         var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
                         prCTR.OBSERVACOES = txt_macro_corrente;
+                        prCTR.User = Global.UsuarioAtual;
                         if (prCTR.Quantidade > 0)
                         {
                             retorno.Add(prCTR);
@@ -296,6 +300,7 @@ namespace Conexoes
                             var nctr = diagonal.Clonar(comp.Sum(x => x.Quantidade), comp.Key);
                             nctr.FICHA_PINTURA = frst.Tratamento;
                             nctr.OBSERVACOES = txt_macro_corrente;
+                            nctr.User = Global.UsuarioAtual;
                         }
                     }
                     else
@@ -334,6 +339,7 @@ namespace Conexoes
                                 nsft.Quantidade = qtdSFT;
                                 nsft.OBSERVACOES = txt_macro_tirante;
                                 nsft.FICHA_PINTURA = txt[1];
+                                nsft.User = Global.UsuarioAtual;
                                 retorno.Add(nsft);
                             }
                             else
@@ -581,7 +587,7 @@ namespace Conexoes
                 N.Quantidade = Origem.FindAll(x => x.ToString() == t.ToString()).Sum(y => y.Quantidade);
                 retorno.Add(N);
             }
-            var lista_fim = retorno.GroupBy(x => x.NomeFim).ToList();
+            var lista_fim = retorno.GroupBy(x => x.CODIGOFIM).ToList();
             foreach (var pcs in lista_fim)
             {
                 for (int i = 1; i < pcs.ToList().Count; i++)
