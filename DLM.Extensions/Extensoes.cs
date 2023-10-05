@@ -34,6 +34,18 @@ namespace Conexoes
 
     public static class Extensoes
     {
+        public static DLM.cam.Header GetHeader(this SubEtapaTecnoMetal etapa)
+        {
+            var header = new DLM.cam.Header();
+            header.Cliente = etapa.GetPedido().GetObra().Cliente;
+            header.Data = DateTime.Now.ToShortDateString();
+            header.Equipe = etapa.GetPedido().Equipe;
+            header.Etapa = etapa.Nome;
+            header.Lugar = etapa.GetPedido().GetObra().Lugar;
+            header.NomeObra = etapa.GetPedido().GetObra().Nome;
+            header.Pedido = etapa.GetPedido().NomePedido;
+            return header;
+        }
         public static Lado Inverter(this Lado lado)
         {
             return lado == Lado.Direito ? Lado.Esquerdo : Lado.Direito;
