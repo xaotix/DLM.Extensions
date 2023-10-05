@@ -655,7 +655,7 @@ namespace Conexoes
                 while (arquivo.Exists())
                 {
                     c++;
-                    arquivo = $"{pasta}{nome}.R{c.ToString().PadLeft(2, '0')}{extensao}";
+                    arquivo = $"{pasta}{nome}.R{c.String(2)}{extensao}";
                 }
                 /*Cria uma cópia do arquivo atual*/
                 Arquivo.Copiar(arquivo);

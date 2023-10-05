@@ -106,7 +106,6 @@ namespace Conexoes
             }
             catch (Exception)
             {
-
                 return 0;
             }
 
@@ -123,7 +122,6 @@ namespace Conexoes
             }
             catch (Exception)
             {
-
                 return 0;
             }
         }

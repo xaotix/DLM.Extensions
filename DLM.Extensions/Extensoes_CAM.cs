@@ -510,9 +510,9 @@ namespace Conexoes
                     double acum = 0;
                     var c0 = lista_cam.First();
 
-                    var n_cam_1 = new Cam($"{destino_cam}I.{s.ToString().PadLeft(2, '0')}.{c.String(2)}_1.CAM", c0.Alma.Perfil, 1000);
-                    var n_cam_2 = new Cam($"{destino_cam}I.{s.ToString().PadLeft(2, '0')}.{c.String(2)}_2.CAM", c0.Mesa_S.Perfil, 1000);
-                    var n_cam_3 = new Cam($"{destino_cam}I.{s.ToString().PadLeft(2, '0')}.{c.String(2)}_3.CAM", c0.Mesa_I.Perfil, 1000);
+                    var n_cam_1 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_1.CAM", c0.Alma.Perfil, 1000);
+                    var n_cam_2 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_2.CAM", c0.Mesa_S.Perfil, 1000);
+                    var n_cam_3 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_3.CAM", c0.Mesa_I.Perfil, 1000);
 
                     var faces_1 = new List<Face>();
                     var faces_2 = new List<Face>();
@@ -629,7 +629,7 @@ namespace Conexoes
             int c = 1;
             foreach (var lista_cam in lista_cams)
             {
-                var n_cam = new Cam($"{destino_cam}.{c.ToString().PadLeft(2, '0')}.CAM", c0.Perfil, 1000);
+                var n_cam = new Cam($"{destino_cam}.{c.String(2)}.CAM", c0.Perfil, 1000);
                 double acum = 0;
                 var faces1 = new List<Face>();
                 var faces2 = new List<Face>();

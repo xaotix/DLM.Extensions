@@ -205,7 +205,7 @@ namespace Conexoes
                     nova.User = purlin.User;
                     nova.FICHA_PINTURA = purlin.Pintura;
                     nova.Quantidade = purlin.Quantidade;
-                    nova.PREFIX = purlin.Sequencia.ToString().PadLeft(3, '0');
+                    nova.PREFIX = purlin.Sequencia.String(3);
                     if (purlin.Material != nova.MATERIAL)
                     {
                         nova.TIPO_ACO_CUSTOM = purlin.Material;
