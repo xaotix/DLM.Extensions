@@ -54,15 +54,15 @@ namespace Conexoes
                                 .Replace(Cfg.Init.RM_SufixMaterial, _rme.MATERIAL)
                                 .Replace(Cfg.Init.RM_SufixPeso, _rme.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
                                 .Replace(Cfg.Init.RM_SufixComp, _rme.COMP.String(0, _rme.QTDCARACTCOMP))
-                                .Replace(Cfg.Init.RM_SufixEsp, _rme.ESP.String())
-                                .Replace(Cfg.Init.RM_SufixLarg, _rme.LARG.String())
-                                .Replace(Cfg.Init.RM_SufixAba, _rme.ABA.String())
-                                .Replace(Cfg.Init.RM_SufixAba2, _rme.ABA2.String())
-                                .Replace(Cfg.Init.RM_SufixAba3, _rme.ABA3.String())
-                                .Replace(Cfg.Init.RM_SufixAbaEspecial, _rme.ABA_ESPECIAL.String())
+                                .Replace(Cfg.Init.RM_SufixEsp, _rme.ESP.String(2))
+                                .Replace(Cfg.Init.RM_SufixLarg, _rme.LARG.String(2))
+                                .Replace(Cfg.Init.RM_SufixAba, _rme.ABA.String(2))
+                                .Replace(Cfg.Init.RM_SufixAba2, _rme.ABA2.String(2))
+                                .Replace(Cfg.Init.RM_SufixAba3, _rme.ABA3.String(2))
+                                .Replace(Cfg.Init.RM_SufixAbaEspecial, _rme.ABA_ESPECIAL.String(2))
 
-                                .Replace(Cfg.Init.RM_SufixSecao, _rme.SECAO.String())
-                                .Replace(Cfg.Init.RM_SufixCorte, _rme.CORTE.String())
+                                .Replace(Cfg.Init.RM_SufixSecao, _rme.SECAO.String(2))
+                                .Replace(Cfg.Init.RM_SufixCorte, _rme.CORTE.String(2))
 
                                 .Replace(Cfg.Init.RM_SufixFuracoes, _rme.QTD_FUROS.ToString())
 
@@ -205,7 +205,7 @@ namespace Conexoes
                     nova.User = purlin.User;
                     nova.FICHA_PINTURA = purlin.Pintura;
                     nova.Quantidade = purlin.Quantidade;
-                    nova.PREFIX = purlin.Sequencia.String(3);
+                    nova.PREFIX = purlin.Sequencia;
                     if (purlin.Material != nova.MATERIAL)
                     {
                         nova.TIPO_ACO_CUSTOM = purlin.Material;

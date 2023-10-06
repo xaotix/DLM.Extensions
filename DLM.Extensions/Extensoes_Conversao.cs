@@ -7,7 +7,7 @@ namespace Conexoes
 {
     public static class Extensoes_Conversao
     {
-        public static string String(this double Valor, int decimais = 2, int padleft = 0, char padding = '0')
+        public static string String(this double Valor, int decimais, int padleft = 0, char padding = '0')
         {
             return Valor.Round(decimais).ToString($"F{decimais}", CultureInfo.InvariantCulture).PadLeft(padleft, padding);
         }
