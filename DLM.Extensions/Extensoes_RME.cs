@@ -225,7 +225,7 @@ namespace Conexoes
                             linhas[1].MAKTX = purlin.Perfil_Dobrado;
                             linhas[1].NORMT = TAB_NORMT.PERFIL_DOBRADO;
                             linhas[1].ZPP_CORTE = purlin.Corte;
-                            linhas[1].QTD_FUROS_Custom = furos;
+                            linhas[1].QTD_FUROS_CUSTOM = furos;
                         }
                         linhas[1].ZPP_TIPOACO = purlin.Material;
                         retorno.Add(nova);
