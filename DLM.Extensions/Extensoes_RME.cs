@@ -53,7 +53,7 @@ namespace Conexoes
                                 .Replace(Cfg.Init.RM_SufixFicha, _rme.FICHA_PINTURA)
                                 .Replace(Cfg.Init.RM_SufixMaterial, _rme.MATERIAL)
                                 .Replace(Cfg.Init.RM_SufixPeso, _rme.PESOUNIT.String(Cfg.Init.DECIMAIS_Peso))
-                                .Replace(Cfg.Init.RM_SufixComp, _rme.COMP.String(0, _rme.QTDCARACTCOMP))
+                                .Replace(Cfg.Init.RM_SufixComp, _rme.COMP_USER.String(0, _rme.QTDCARACTCOMP))
                                 .Replace(Cfg.Init.RM_SufixEsp, _rme.ESP.String(2))
                                 .Replace(Cfg.Init.RM_SufixLarg, _rme.LARG.String(2))
                                 .Replace(Cfg.Init.RM_SufixAba, _rme.ABA.String(2))
@@ -219,7 +219,7 @@ namespace Conexoes
                     {
                         nova.PDF_CUSTOM = true;
                         int furos = purlin.GetFurosVista(false).Count;
-                        if (nova.COMP <= purlin.Comp_Min)
+                        if (nova.COMP_USER <= purlin.Comp_Min)
                         {
                             linhas[0].MAKTX = "PERFIL DOBRADO";
                             linhas[1].MAKTX = purlin.Perfil_Dobrado;
@@ -439,7 +439,7 @@ namespace Conexoes
             if (_valor < _rme.COMP_MIN) { $"Comprimento menor que o mínimo [{_rme.COMP_MIN}]".Alerta(); return false; }
             if (_setar)
             {
-                _rme.COMP = _valor;
+                _rme.SetComprimento(_valor);
             }
             return true;
         }
