@@ -19,7 +19,7 @@ namespace Conexoes
                 rme.Carregar_Codigo(false);
             }
 
-            var tipos = _lista.GroupBy(x => x.id_codigo).ToList();
+            var tipos = _lista.GroupBy(x => x.id_db).ToList();
             foreach (var tipo in tipos)
             {
                 var igual = Conexoes.DBases.GetBancoRM().GetRME(tipo.Key);
@@ -111,7 +111,7 @@ namespace Conexoes
                     if (igual is RME)
                     {
                         var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento, pc.Nome);
-                        nrm.OBSERVACOES = txt_macro_ctv2;
+                        nrm.Observacoes = txt_macro_ctv2;
                         nrm.FICHA_PINTURA = pc.Tratamento;
                         nrm.User = Global.UsuarioAtual;
                         retorno.Add(nrm);
@@ -141,7 +141,7 @@ namespace Conexoes
                         foreach (var p1 in pc.ToList())
                         {
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
-                            nrm.OBSERVACOES = txt_macro_em2;
+                            nrm.Observacoes = txt_macro_em2;
                             nrm.FICHA_PINTURA = p1.Tratamento;
                             nrm.User = Global.UsuarioAtual;
 
@@ -211,23 +211,23 @@ namespace Conexoes
                         nova.TIPO_ACO_CUSTOM = purlin.Material;
                     }
 
-                    nova.OBSERVACOES = purlin.Observacoes;
+                    nova.Observacoes = purlin.Observacoes;
                     nova.TIPO_ACO_CUSTOM = purlin.Material;
 
-                    var linhas = nova.Linhas;
-                    if (linhas.Count == 2)
+             
+                    if (nova.Posicoes.Count == 1)
                     {
                         nova.PDF_CUSTOM = true;
                         int furos = purlin.GetFurosVista(false).Count;
                         if (nova.COMP_USER <= purlin.Comp_Min)
                         {
-                            linhas[0].MAKTX = "PERFIL DOBRADO";
-                            linhas[1].MAKTX = purlin.Perfil_Dobrado;
-                            linhas[1].NORMT = TAB_NORMT.PERFIL_DOBRADO;
-                            linhas[1].ZPP_CORTE = purlin.Corte;
-                            linhas[1].QTD_FUROS_CUSTOM = furos;
+                            nova.Marca.MAKTX = "PERFIL DOBRADO";
+                            nova.Posicoes[0].MAKTX = purlin.Perfil_Dobrado;
+                            nova.Posicoes[0].NORMT = TAB_NORMT.PERFIL_DOBRADO;
+                            nova.Posicoes[0].ZPP_CORTE = purlin.Corte;
+                            nova.Posicoes[0].QTD_FUROS_CUSTOM = furos;
                         }
-                        linhas[1].ZPP_TIPOACO = purlin.Material;
+                        nova.Posicoes[0].ZPP_TIPOACO = purlin.Material;
                         retorno.Add(nova);
                     }
                 }
@@ -239,13 +239,13 @@ namespace Conexoes
 
             if (correntes.Sum(x => x.Quantidade) > 0)
             {
-                var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, "GALVANIZADO");
+                var par_corrente = DBases.GetBancoRM().GetParafuso(12, 38, Cfg.Init.CTR_TRAT);
                 if (par_corrente != null)
                 {
                     if (par_corrente.GetPOR() != null && par_corrente.GetARR() != null)
                     {
                         var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
-                        prCTR.OBSERVACOES = txt_macro_corrente;
+                        prCTR.Observacoes = txt_macro_corrente;
                         prCTR.User = Global.UsuarioAtual;
                         if (prCTR.Quantidade > 0)
                         {
@@ -276,7 +276,7 @@ namespace Conexoes
                         if (tipo != null)
                         {
                             var nf = tipo.Clonar(total);
-                            nf.OBSERVACOES = txt_macro_corrente;
+                            nf.Observacoes = txt_macro_corrente;
                             nf.FICHA_PINTURA = frs.Tratamento;
                         }
                         else
@@ -299,7 +299,7 @@ namespace Conexoes
                         {
                             var nctr = diagonal.Clonar(comp.Sum(x => x.Quantidade), comp.Key);
                             nctr.FICHA_PINTURA = frst.Tratamento;
-                            nctr.OBSERVACOES = txt_macro_corrente;
+                            nctr.Observacoes = txt_macro_corrente;
                             nctr.User = Global.UsuarioAtual;
                         }
                     }
@@ -314,8 +314,8 @@ namespace Conexoes
 
             if (tirantes.Sum(x => x.Quantidade) > 0)
             {
-                var ntrPOR = DBases.GetBancoRM().GetPorca(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
-                var ntrARR = DBases.GetBancoRM().GetArruela(Cfg.CTV2.TRR03DIAM, "GALVANIZADO");
+                var ntrPOR = DBases.GetBancoRM().GetPorca(Cfg.CTV2.TRR03DIAM, Cfg.CTV2.TRR03TRAT);
+                var ntrARR = DBases.GetBancoRM().GetArruela(Cfg.CTV2.TRR03DIAM, Cfg.CTV2.TRR03TRAT);
                 var tiposTR = tirantes.GroupBy(x => $"{x.NomePadronizado}").ToList();
                 foreach (var tipoTR in tiposTR)
                 {
@@ -337,7 +337,7 @@ namespace Conexoes
                             if (nsft != null)
                             {
                                 nsft.Quantidade = qtdSFT;
-                                nsft.OBSERVACOES = txt_macro_tirante;
+                                nsft.Observacoes = txt_macro_tirante;
                                 nsft.FICHA_PINTURA = txt[1];
                                 nsft.User = Global.UsuarioAtual;
                                 retorno.Add(nsft);
@@ -387,7 +387,7 @@ namespace Conexoes
                                     var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Quantidade), tr_comp);
                                     novo.FICHA_PINTURA = trat;
                                     novo.User = Global.UsuarioAtual;
-                                    novo.OBSERVACOES = txt_macro_tirante;
+                                    novo.Observacoes = txt_macro_tirante;
                                     retorno.Add(novo);
                                 }
                                 else
@@ -421,9 +421,9 @@ namespace Conexoes
         public static RME GetRMDB(this RME _rme)
         {
             RME _RMDB = null;
-            if (_rme.id_codigo > 0)
+            if (_rme.id_db > 0)
             {
-                _RMDB = DBases.GetBancoRM().GetRME(_rme.id_codigo);
+                _RMDB = DBases.GetBancoRM().GetRME(_rme.id_db);
             }
             if (_RMDB == null)
             {
@@ -497,7 +497,7 @@ namespace Conexoes
             pp.Espessura = rme.ESP;
             pp.Largura = rme.CORTE;
             pp.Marca = rme.CODIGOFIM;
-            pp.Quantidade = rme.Quantidade;
+            pp.Quantidade = rme.Quantidade.Int();
             pp.Peso = rme.PESOUNIT;
 
             return pp;
@@ -564,8 +564,8 @@ namespace Conexoes
                 {
                     nrma.SetQuantidadeMultipla(nrma.Quantidade);
                 }
-                List<string> OBS = Origem.FindAll(x => x != null).FindAll(X => X.SAP == rm.SAP).Select(x => x.OBSERVACOES).Distinct().ToList().FindAll(x => x.Replace(" ", "") != "");
-                nrma.OBSERVACOES = string.Join(", ", iguais.Select(x => x.OBSERVACOES).Distinct().ToList()).CortarString(50);
+                List<string> OBS = Origem.FindAll(x => x != null).FindAll(X => X.SAP == rm.SAP).Select(x => x.Observacoes).Distinct().ToList().FindAll(x => x.Replace(" ", "") != "");
+                nrma.Observacoes = string.Join(", ", iguais.Select(x => x.Observacoes).Distinct().ToList()).CortarString(50);
 
 
                 retorno.Add(nrma);
@@ -580,7 +580,7 @@ namespace Conexoes
                                 Origem
                                              .GroupBy(x => x.ToString())
                                              .Select(g => g.First())
-                                             .ToList().OrderBy(x => x.Nome).ToList();
+                                             .ToList().OrderBy(x => x.COD_DB).ToList();
             foreach (RMT t in distinct)
             {
                 RMT N = new RMT(t, t.Bobina, t.GetLinha_RMT_User());
@@ -605,10 +605,10 @@ namespace Conexoes
                                                 .GroupBy(x => x.ToString() + "@@@@" + string.Join("|", x.Programa))
                                                 .Select(g => g.First())
                                                 .ToList().OrderBy(x => x.CODIGOFIM).ToList();
-            foreach (RME rm in distinct)
+            foreach (var rm in distinct)
             {
                 var nPeca = rm.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade));
-                nPeca.OBSERVACOES = rm.OBSERVACOES;
+                nPeca.Observacoes = rm.Observacoes;
                 retorno.Add(nPeca);
             }
             var lista_fim = retorno.GroupBy(x => x.CODIGOFIM).ToList();
