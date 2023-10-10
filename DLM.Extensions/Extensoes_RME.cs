@@ -36,6 +36,48 @@ namespace Conexoes
                 }
             }
         }
+        public static void SincronizarDB(this List<RMT> _lista)
+        {
+            var erros = new List<Report>();
+
+            var tipos = _lista.GroupBy(x => x.id_db).ToList();
+            foreach (var tipo in tipos)
+            {
+                var igual = Conexoes.DBases.GetBancoRM().GetRMT(tipo.Key);
+                if (igual != null)
+                {
+                    foreach (var pc in tipo.ToList())
+                    {
+                        pc.SincronizarDB(igual);
+                    }
+                }
+                else
+                {
+                    erros.Add(tipo.First().ToString(), "Peça não encontrada no banco de dados");
+                }
+            }
+        }
+        public static void SincronizarDB(this List<RMA> _lista)
+        {
+            var erros = new List<Report>();
+
+            var tipos = _lista.GroupBy(x => x.id_db).ToList();
+            foreach (var tipo in tipos)
+            {
+                var igual = Conexoes.DBases.GetBancoRM().GetRMA(tipo.Key);
+                if (igual != null)
+                {
+                    foreach (var pc in tipo.ToList())
+                    {
+                        pc.SincronizarDB(igual);
+                    }
+                }
+                else
+                {
+                    erros.Add(tipo.First().ToString(), "Peça não encontrada no banco de dados");
+                }
+            }
+        }
         public static double GetPesoTotal(this List<object> _objetos)
         {
             double peso = 0;
@@ -602,15 +644,27 @@ namespace Conexoes
             var retorno = new List<RME>();
             /*11.06.2021 - botei ele considerar o programa, para diferenciar peças com Nomes iguais, mas com coordenadas diferentes.*/
             var distinct = Origem.FindAll(x => x != null)
-                                                .GroupBy(x => x.ToString() + "@@@@" + string.Join("|", x.Programa))
-                                                .Select(g => g.First())
-                                                .ToList().OrderBy(x => x.CODIGOFIM).ToList();
-            foreach (var rm in distinct)
+                                                .GroupBy(x => x.ToString() + "@@@@" + string.Join("|", x.Programa));
+
+            foreach(var p in distinct)
             {
-                var nPeca = rm.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade));
-                nPeca.Observacoes = rm.Observacoes;
-                retorno.Add(nPeca);
+                var frst = p.First();
+                var qtd = p.ToList().Sum(x => x.Quantidade);
+
+                var clone = frst.Clonar(qtd, frst.COMP_USER, frst.Bobina);
+                clone.PREFIX = frst.PREFIX;
+                clone.SUFIX = frst.SUFIX;
+                clone.Observacoes = frst.Observacoes;
+
+                retorno.Add(clone);
             }
+            //foreach (var rm in distinct)
+            //{
+             
+            //    var nPeca = rm.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade));
+            //    nPeca.Observacoes = rm.Observacoes;
+            //    retorno.Add(nPeca);
+            //}
             var lista_fim = retorno.GroupBy(x => x.CODIGOFIM).ToList();
             foreach (var pcs in lista_fim)
             {
