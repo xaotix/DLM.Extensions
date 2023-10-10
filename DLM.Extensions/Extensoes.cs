@@ -3,6 +3,7 @@ using DLM.cam.Addons;
 using DLM.db;
 using DLM.desenho;
 using DLM.encoder;
+using DLM.macros;
 using DLM.vars;
 using Ionic.Zip;
 using iTextSharp.text.pdf;
@@ -34,6 +35,22 @@ namespace Conexoes
 
     public static class Extensoes
     {
+        public static void OtimizarComprimentos(this List<Tirante> Tirantes)
+        {
+            var comps = Tirantes.Select(x => x.CompCalculado).ToList();
+            var comps_otimizados = comps.AgruparPorDistancia(Cfg.CTV2.Tirante_Multiplo_Otimizar);
+            foreach (var cmps in comps_otimizados)
+            {
+                foreach (var cmp in cmps)
+                {
+                    var tirs = Tirantes.FindAll(x => x.CompCalculado == cmp);
+                    foreach (var tr in tirs)
+                    {
+                        tr.CompUser = cmps.Max();
+                    }
+                }
+            }
+        }
         public static DLM.cam.Header GetHeader(this SubEtapaTecnoMetal etapa)
         {
             var header = new DLM.cam.Header();
