@@ -16,7 +16,8 @@ namespace Conexoes
             var erros = new List<Report>();
             foreach (var rme in _lista)
             {
-                rme.Carregar_Codigo(false);
+                if (rme.id_db <= 0)
+                    rme.Carregar_Codigo(false);
             }
 
             var tipos = _lista.GroupBy(x => x.id_db).ToList();
@@ -256,7 +257,7 @@ namespace Conexoes
                     nova.Observacoes = purlin.Observacoes;
                     nova.TIPO_ACO_CUSTOM = purlin.Material;
 
-             
+
                     if (nova.Posicoes.Count == 1)
                     {
                         nova.PDF_CUSTOM = true;
@@ -298,7 +299,7 @@ namespace Conexoes
                             retorno.Add(prCTR.GetPOR().Clonar(prCTR.Quantidade, txt_macro_corrente));
                             var qtd_arr = correntes.FindAll(x => x.Parafusos && x.Arruela).Sum(x => 4 * x.Quantidade);
 
-                            if(qtd_arr>0)
+                            if (qtd_arr > 0)
                             {
                                 retorno.Add(prCTR.GetARR().Clonar(qtd_arr, txt_macro_corrente));
                             }
@@ -320,6 +321,7 @@ namespace Conexoes
                             var nf = tipo.Clonar(total);
                             nf.Observacoes = txt_macro_corrente;
                             nf.FICHA_PINTURA = frs.Tratamento;
+                            retorno.Add(nf);
                         }
                         else
                         {
@@ -343,6 +345,7 @@ namespace Conexoes
                             nctr.FICHA_PINTURA = frst.Tratamento;
                             nctr.Observacoes = txt_macro_corrente;
                             nctr.User = Global.UsuarioAtual;
+                            retorno.Add(nctr);
                         }
                     }
                     else
@@ -642,25 +645,34 @@ namespace Conexoes
         public static List<RME> Juntar(this List<RME> Origem)
         {
             var retorno = new List<RME>();
-            /*11.06.2021 - botei ele considerar o programa, para diferenciar peças com Nomes iguais, mas com coordenadas diferentes.*/
             var distinct = Origem.FindAll(x => x != null)
-                                                .GroupBy(x => x.ToString() + "@@@@" + string.Join("|", x.Programa));
+                                                .GroupBy(x => x.ToString());
 
-            foreach(var p in distinct)
+            foreach (var p in distinct)
             {
-                var frst = p.First();
-                var qtd = p.ToList().Sum(x => x.Quantidade);
+                if(p.Count()==1)
+                {
+                    retorno.Add(p.First());
+                }
+                else
+                {
+                    var frst = p.First();
 
-                var clone = frst.Clonar(qtd, frst.COMP_USER, frst.Bobina);
-                clone.PREFIX = frst.PREFIX;
-                clone.SUFIX = frst.SUFIX;
-                clone.Observacoes = frst.Observacoes;
 
-                retorno.Add(clone);
+                    var qtd = p.ToList().Sum(x => x.Quantidade);
+
+                    var clone = frst.Clonar(qtd, frst.COMP_USER, frst.Bobina);
+                    clone.PREFIX = frst.PREFIX;
+                    clone.SUFIX = frst.SUFIX;
+                    clone.Observacoes = frst.Observacoes;
+
+                    retorno.Add(clone);
+                }
+                
             }
             //foreach (var rm in distinct)
             //{
-             
+
             //    var nPeca = rm.Clonar(Origem.FindAll(x => x != null).FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade));
             //    nPeca.Observacoes = rm.Observacoes;
             //    retorno.Add(nPeca);

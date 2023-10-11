@@ -37,16 +37,23 @@ namespace Conexoes
     {
         public static void OtimizarComprimentos(this List<Tirante> Tirantes)
         {
+            foreach(var tr in Tirantes)
+            {
+                tr.CompUser = 0;
+            }
             var comps = Tirantes.Select(x => x.CompCalculado).ToList();
             var comps_otimizados = comps.AgruparPorDistancia(Cfg.CTV2.Tirante_Multiplo_Otimizar);
             foreach (var cmps in comps_otimizados)
             {
-                foreach (var cmp in cmps)
+                if(cmps.Count>0)
                 {
-                    var tirs = Tirantes.FindAll(x => x.CompCalculado == cmp);
-                    foreach (var tr in tirs)
+                    foreach (var cmp in cmps)
                     {
-                        tr.CompUser = cmps.Max();
+                        var tirs = Tirantes.FindAll(x => x.CompCalculado == cmp);
+                        foreach (var tr in tirs)
+                        {
+                            tr.CompUser = cmps.Max();
+                        }
                     }
                 }
             }

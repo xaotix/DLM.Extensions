@@ -163,6 +163,7 @@ namespace Conexoes
 
                     if(i==lista.Count)
                     {
+                        pacotes.Add(pacote);
                         goto fim;
                     }
                     else
