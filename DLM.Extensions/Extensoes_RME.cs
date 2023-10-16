@@ -148,25 +148,19 @@ namespace Conexoes
 
             foreach (var pc in pacoteCTV.Pecas)
             {
-                var igual = DBases.GetBancoRM().GetPeca(pc.NomePadronizado);
-                if (igual != null)
+                object igual = DBases.GetBancoRM().GetPeca(pc.NomePadronizado);
+                if (igual is RME)
                 {
-                    if (igual is RME)
-                    {
-                        var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento, pc.Nome);
-                        nrm.Observacoes = txt_macro_ctv2;
-                        nrm.FICHA_PINTURA = pc.Tratamento;
-                        nrm.User = Global.UsuarioAtual;
-                        retorno.Add(nrm);
-                    }
-                    else if (igual is RMA)
-                    {
-                        var PAR = igual.As<RMA>().Clonar(pc.Quantidade, txt_macro_ctv2);
-                        retorno.Add(PAR);
-                    }
-                    else
-                    {
-                    }
+                    var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento);
+                    nrm.Observacoes = txt_macro_ctv2;
+                    nrm.FICHA_PINTURA = pc.Tratamento;
+                    nrm.User = Global.UsuarioAtual;
+                    retorno.Add(nrm);
+                }
+                else if (igual is RMA)
+                {
+                    var PAR = igual.As<RMA>().Clonar(pc.Quantidade, txt_macro_ctv2);
+                    retorno.Add(PAR);
                 }
                 else
                 {
@@ -646,7 +640,7 @@ namespace Conexoes
         {
             var retorno = new List<RME>();
             var distinct = Origem.FindAll(x => x != null)
-                                                .GroupBy(x => x.ToString());
+                                                .GroupBy(x => x.ToString()).ToList();
 
             foreach (var p in distinct)
             {
