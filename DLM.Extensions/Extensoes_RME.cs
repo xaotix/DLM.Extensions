@@ -416,26 +416,27 @@ namespace Conexoes
 
                     if (nTR != null)
                     {
-                        foreach (var tr_comp in tr_comps)
+                        var trts = trrs.GroupBy(x => $"{x.Comprimento}@{x.Tratamento}");
+                        foreach(var trt in trts)
                         {
-                            var corr = trrs.FindAll(x => x.Comprimento == tr_comp);
-                            var tr_trats = trrs.Select(x => x.Tratamento).Distinct().ToList();
-                            foreach (var trat in tr_trats)
+                            var tr_comp = trt.Key.Split('@')[0].Double();
+                            var trat = trt.Key.Split('@')[1];
+
+                            if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
                             {
-                                if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
-                                {
-                                    var novo = nTR.Clonar(corr.FindAll(x => x.Tratamento == trat).Sum(x => x.Quantidade), tr_comp);
-                                    novo.FICHA_PINTURA = trat;
-                                    novo.User = Global.UsuarioAtual;
-                                    novo.Observacoes = txt_macro_tirante;
-                                    retorno.Add(novo);
-                                }
-                                else
-                                {
-                                    retorno.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
-                                }
+                                var novo = nTR.Clonar(trt.ToList().Sum(x=>x.Quantidade), tr_comp);
+                                novo.FICHA_PINTURA = trat;
+                                novo.User = Global.UsuarioAtual;
+                                novo.Observacoes = txt_macro_tirante;
+                                retorno.Add(novo);
                             }
+                            else
+                            {
+                                retorno.Add(new Report("Comprimento inválido", $"Vão digitado é maior ou menor que possível para o Tirante: {tr_comp}", TipoReport.Critico));
+                            }
+
                         }
+    
                     }
                     else
                     {
