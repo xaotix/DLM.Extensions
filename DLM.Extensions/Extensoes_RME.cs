@@ -369,7 +369,8 @@ namespace Conexoes
                     foreach (var sftNome in tipos_sft)
                     {
                         var txt = sftNome.Split('@').ToList();
-                        var qtdSFT = trrs.FindAll(x => x.Fixacao_1 == txt[0]).Sum(x => x.Quantidade) + trrs.FindAll(x => x.Fixacao_2 == txt[0]).Sum(x => x.Quantidade);
+                        var qtdSFT = trrs.FindAll(x => x.Fixacao_1 == txt[0] && x.Tratamento == txt[1]).Sum(x => x.Quantidade) +
+                                     trrs.FindAll(x => x.Fixacao_2 == txt[0] && x.Tratamento == txt[1]).Sum(x => x.Quantidade);
                         if (qtdSFT > 0)
                         {
                             var nsft = DBases.GetBancoRM().GetRME(txt[0]);
@@ -644,7 +645,7 @@ namespace Conexoes
 
             foreach (var p in distinct)
             {
-                if(p.Count()==1)
+                if (p.Count() == 1)
                 {
                     retorno.Add(p.First());
                 }
@@ -662,7 +663,7 @@ namespace Conexoes
 
                     retorno.Add(clone);
                 }
-                
+
             }
             //foreach (var rm in distinct)
             //{
