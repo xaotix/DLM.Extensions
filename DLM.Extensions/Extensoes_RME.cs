@@ -657,7 +657,7 @@ namespace Conexoes
 
                     var qtd = p.ToList().Sum(x => x.Quantidade);
 
-                    var clone = frst.Clonar(qtd, frst.COMP_USER, frst.Bobina);
+                    var clone = frst.Clonar(qtd, frst.COMP_USER,null, frst.Bobina);
                     clone.PREFIX = frst.PREFIX;
                     clone.SUFIX = frst.SUFIX;
                     clone.Observacoes = frst.Observacoes;
