@@ -343,7 +343,7 @@ namespace Conexoes
             return novo_dir;
         }
 
-        public static void CriarPastas(this string Raiz, List<string> Pastas)
+        public static void CriarPastas(this string Raiz, params string[] Pastas)
         {
             foreach (string Pasta in Pastas)
             {
