@@ -274,6 +274,11 @@ namespace Conexoes
         {
             return new P3d(p3d.X.Round(decimais), p3d.Y.Round(decimais), p3d.Z.Round(decimais));
         }
+
+        public static List<P3d> Round(this List<P3d> p3Ds,int decimais)
+        {
+            return p3Ds.Select(x => x.Round(decimais)).ToList();
+        }
         public static P3d Escala(this P3d p3d, double valor)
         {
             return new P3d(p3d.X * valor, p3d.Y * valor, p3d.Z * valor);
