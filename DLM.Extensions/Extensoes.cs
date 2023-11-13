@@ -706,7 +706,7 @@ namespace Conexoes
         //}
 
 
-        public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null)
+        public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
         {
             if(objeto == null)
             {
@@ -723,7 +723,7 @@ namespace Conexoes
             {
                 s.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
-            s.Topmost = true;
+            s.Topmost = topmost;
 
             s.ShowDialog();
 

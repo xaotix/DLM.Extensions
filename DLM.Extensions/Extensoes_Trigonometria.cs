@@ -42,6 +42,7 @@ namespace Conexoes
         {
 
             while (Grau < 0) Grau += max;
+
             while (Grau > max) Grau -= max;
 
             return Grau;

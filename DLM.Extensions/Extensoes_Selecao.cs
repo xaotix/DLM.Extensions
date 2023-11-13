@@ -8,6 +8,12 @@ namespace Conexoes
 {
     public static class Extensoes_Selecao
     {
+        public static void Propriedades<T>(this List<T> objetos)
+        {
+            var menu = new  DLM.WPF.DatagridProps();
+            menu.Lista.ItemsSource = objetos;
+            menu.ShowDialog();
+        }
         public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo = "Selecione")
         {
             if (Objetos.Count == 0 | Objetos == null)
