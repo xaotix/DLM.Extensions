@@ -513,6 +513,28 @@ namespace Conexoes
             return lista;
         }
 
+        public static List<P3d> RemoverDistMinX(this List<P3d>pts, double distx)
+        {
+            var retorno = new List<P3d>();
+            var ps = pts.OrderBy(x => x.X).ToList().Aninhar();
+            for (int i = 0; i < ps.Count; i++)
+            {
+                if(i==0)
+                {
+                    retorno.Add(ps[i]);
+                }
+                else
+                {
+                   if(ps[i].Distancia(retorno.Last())>=distx)
+                    {
+                        retorno.Add(ps[i]);
+                    }
+                }
+            }
+
+            return retorno;
+        }
+
         /// <summary>
         /// Normaliza as coordenadas pelo menor ponto no canto superior esquerdo
         /// </summary>

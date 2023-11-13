@@ -35,6 +35,14 @@ namespace Conexoes
 
     public static class Extensoes
     {
+        public static System.Windows.Media.Color GetColor(this System.Drawing.Color color)
+        {
+           return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
+        public static System.Drawing.Color GetColor(this System.Windows.Media.Color color)
+        {
+            return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
         public static void OtimizarComprimentos(this List<Tirante> Tirantes)
         {
             foreach(var tr in Tirantes)
