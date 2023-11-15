@@ -170,7 +170,8 @@ namespace Conexoes
                 {
                     y0 = 4;
                 }
-                Retorno.Add(new Furo(Chaves[2].Double(), Chaves[y0].Double(), Chaves[1].Double(), Chaves[5].Double(), Chaves[6].Double()));
+                /*arredondamento*/
+                Retorno.Add(new Furo(Chaves[2].Double(0), Chaves[y0].Double(0), Chaves[1].Double(), Chaves[5].Double(), Chaves[6].Double()));
             }
             return Retorno;
         }

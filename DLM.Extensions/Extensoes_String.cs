@@ -8,6 +8,10 @@ namespace Conexoes
 {
     public static class Extensoes_String
     {
+        public static bool StartsW(this string txt, string valor)
+        {
+            return txt.TrimStart().StartsWith(valor);
+        }
         public static string getLetra(this int indice)
         {
             return getLetra((long)indice);

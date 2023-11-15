@@ -417,14 +417,14 @@ namespace Conexoes
                     if (nTR != null)
                     {
                         var trts = trrs.GroupBy(x => $"{x.Comprimento}@{x.Tratamento}");
-                        foreach(var trt in trts)
+                        foreach (var trt in trts)
                         {
                             var tr_comp = trt.Key.Split('@')[0].Double();
                             var trat = trt.Key.Split('@')[1];
 
                             if (tr_comp <= nTR.COMP_MAX && tr_comp >= nTR.COMP_MIN)
                             {
-                                var novo = nTR.Clonar(trt.ToList().Sum(x=>x.Quantidade), tr_comp);
+                                var novo = nTR.Clonar(trt.ToList().Sum(x => x.Quantidade), tr_comp);
                                 novo.FICHA_PINTURA = trat;
                                 novo.User = Global.UsuarioAtual;
                                 novo.Observacoes = txt_macro_tirante;
@@ -436,7 +436,7 @@ namespace Conexoes
                             }
 
                         }
-    
+
                     }
                     else
                     {
@@ -593,24 +593,15 @@ namespace Conexoes
         {
             var retorno = new List<RMA>();
             var distinct =
-                                Origem.FindAll(x => x != null).GroupBy(x => x.ToString())
-                                        .Select(g => g.First())
+                                Origem.FindAll(x => x != null).GroupBy(x => x.SAP)
+                                        .Select(g =>
+                                        g.Count() > 1 ?
+                                        (g.First()
+                                        .Clonar(
+                                            g.Sum(x => x.Quantidade),
+                                            string.Join(",", g.Select(y => y.Observacoes).Distinct().ToList()).CortarString(50))
+                                            ) : g.First())
                                         .ToList();
-            foreach (RMA rm in distinct)
-            {
-                var nrma = new RMA(rm);
-                var iguais = Origem.FindAll(x => x.SAP == rm.SAP);
-                nrma.Quantidade = iguais.Sum(x => x.Quantidade);
-                if (arredondar_multiplo && nrma.MULTIPLO > 0)
-                {
-                    nrma.SetQuantidadeMultipla(nrma.Quantidade);
-                }
-                List<string> OBS = Origem.FindAll(x => x != null).FindAll(X => X.SAP == rm.SAP).Select(x => x.Observacoes).Distinct().ToList().FindAll(x => x.Replace(" ", "") != "");
-                nrma.Observacoes = string.Join(", ", iguais.Select(x => x.Observacoes).Distinct().ToList()).CortarString(50);
-
-
-                retorno.Add(nrma);
-            }
             return retorno;
         }
 
@@ -657,7 +648,7 @@ namespace Conexoes
 
                     var qtd = p.ToList().Sum(x => x.Quantidade);
 
-                    var clone = frst.Clonar(qtd, frst.COMP_USER,null, frst.Bobina);
+                    var clone = frst.Clonar(qtd, frst.COMP_USER, null, frst.Bobina);
                     clone.PREFIX = frst.PREFIX;
                     clone.SUFIX = frst.SUFIX;
                     clone.Observacoes = frst.Observacoes;

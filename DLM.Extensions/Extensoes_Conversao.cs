@@ -39,7 +39,7 @@ namespace Conexoes
                     negativo = true;
 
                 }
-                else if (str.StartsWith("-"))
+                else if (str.StartsW("-"))
                 {
                     str = str.TrimStart('-');
                     negativo = true;

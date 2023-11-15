@@ -598,7 +598,7 @@ namespace Conexoes
             {
                 var script = TecnoMetalVars.GetScriptTecnoMetal();
                 TecnoMetalVars.MatarExecutavelChato();
-                if (arq.Endereco.StartsWith(Cfg.Init.DIR_RAIZ_OBRAS))
+                if (arq.Endereco.StartsW(Cfg.Init.DIR_RAIZ_OBRAS))
                 {
                     Open(Cfg_User.Init.AcadApp, $"{script} {Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
                 }
