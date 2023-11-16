@@ -73,6 +73,10 @@ namespace Conexoes
             {
                 return (objeto as ListView).Selecao<T>();
             }
+            else if(objeto is ComboBox)
+            {
+                return (objeto as ComboBox).Selecao<T>();
+            }
 
 
             return (T)Convert.ChangeType(null, typeof(T));
@@ -89,6 +93,22 @@ namespace Conexoes
                 try
                 {
                     return lista.SelectedItems.Cast<T>().ToList().First();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return (T)Convert.ChangeType(null, typeof(T));
+        }
+        public static T Selecao<T>(this System.Windows.Controls.ComboBox lista)
+        {
+
+            if (lista.SelectedItem!=null)
+            {
+                try
+                {
+                    return lista.SelectedItem.As<T>();
                 }
                 catch (Exception)
                 {

@@ -399,7 +399,7 @@ namespace Conexoes
             else if (faces.Count > 1)
             {
                 //não pode vir aqui.
-                Conexoes.Utilz.Alerta($"Erro ao tentar desmembrar.");
+                //Conexoes.Utilz.Alerta($"Erro ao tentar desmembrar.");
                 return faces[0];
             }
 

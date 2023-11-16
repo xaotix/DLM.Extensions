@@ -593,15 +593,18 @@ namespace Conexoes
         {
             var retorno = new List<RMA>();
             var distinct =
-                                Origem.FindAll(x => x != null).GroupBy(x => x.SAP)
-                                        .Select(g =>
-                                        g.Count() > 1 ?
-                                        (g.First()
-                                        .Clonar(
-                                            g.Sum(x => x.Quantidade),
-                                            string.Join(",", g.Select(y => y.Observacoes).Distinct().ToList()).CortarString(50))
-                                            ) : g.First())
-                                        .ToList();
+                                Origem.FindAll(x => x != null).GroupBy(x => x.SAP);
+            foreach(var p in distinct)
+            {
+                if(p.ToList().Count>1)
+                {
+                    retorno.Add(p.First().Clonar(p.Sum(x => x.Quantidade), string.Join(", ", p.Select(x => x.Observacoes)).CortarString(30)));
+                }
+                else
+                {
+                    retorno.Add(p.First());
+                }
+            }
             return retorno;
         }
 
