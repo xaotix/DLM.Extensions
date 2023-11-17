@@ -23,7 +23,7 @@ namespace Conexoes
             var tipos = _lista.GroupBy(x => x.id_db).ToList();
             foreach (var tipo in tipos)
             {
-                var igual = Conexoes.DBases.GetBancoRM().GetRME(tipo.Key);
+                var igual = Conexoes.DBases.GetBancoRM().GetRM(tipo.Key);
                 if (igual != null)
                 {
                     foreach (var pc in tipo.ToList())
@@ -464,13 +464,8 @@ namespace Conexoes
             RME _RMDB = null;
             if (_rme.id_db > 0)
             {
-                _RMDB = DBases.GetBancoRM().GetRME(_rme.id_db);
+                _RMDB = DBases.GetBancoRM().GetRM(_rme.id_db);
             }
-            if (_RMDB == null)
-            {
-                _RMDB = DBases.GetBancoRM().GetRME(_rme.CODIGOFIM);
-            }
-
             return _RMDB;
         }
         public static bool Comprimento_Pode(this RME _rme, double _valor, bool _setar = true)
