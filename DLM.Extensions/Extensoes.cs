@@ -35,6 +35,7 @@ namespace Conexoes
 
     public static class Extensoes
     {
+
         public static System.Windows.Media.Color GetColor(this System.Drawing.Color color)
         {
            return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
