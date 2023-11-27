@@ -243,6 +243,8 @@ namespace Conexoes
                     nova.FICHA_PINTURA = purlin.Pintura;
                     nova.Quantidade = purlin.Quantidade;
                     nova.PREFIX = purlin.Sequencia;
+                    nova.MARCA_CUSTOM = pcPurlin.MARCA_CUSTOM;
+                    nova.PDF_CUSTOM = pcPurlin.PDF_CUSTOM;
                     if (purlin.Material != nova.MATERIAL)
                     {
                         nova.TIPO_ACO_CUSTOM = purlin.Material;
