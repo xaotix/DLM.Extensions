@@ -87,10 +87,12 @@ namespace Conexoes
             return _Marcas;
         }
 
-        public static void Show(this Tabela tabela)
+        public static Linha Show(this Tabela tabela)
         {
             var mm = new WPF.VerTabela(tabela);
-            mm.Show();
+            mm.ShowDialog();
+
+            return mm._grid.Selecao<Linha>();
         }
         public static List<DLM.db.Linha> Selecionar(this Tabela tabela, bool multiplas_linhas = true)
         {
