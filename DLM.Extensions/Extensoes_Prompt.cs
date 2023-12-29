@@ -99,7 +99,7 @@ namespace Conexoes
         public static int Prompt(this int valor, string titulo = "Digite")
         {
             var status = false;
-            var retorno = valor.Prompt(out status);
+            var retorno = valor.Prompt(out status, titulo);
             return retorno;
         }
         public static int Prompt(this int valor, out bool status, string titulo = "Digite")
