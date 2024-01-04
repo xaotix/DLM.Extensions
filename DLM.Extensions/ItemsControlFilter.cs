@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,12 +39,35 @@ namespace Conexoes
         {
             try
             {
-                if (_list.ItemsSource != null)
+                if(_filter.Text == Msg | _filter.Text.Length < 3)
                 {
-                    var view = CollectionViewSource.GetDefaultView(_list.ItemsSource);
-                    view.Filter = null;
-                    view.Filter = _run_filter;
-                    view.Refresh();
+                    return;
+                }
+                else if (_list.ItemsSource != null)
+                {
+                  
+                    if (_list.ItemsSource is DataView)
+                    {
+                        var dt = _list.ItemsSource as DataView;
+                        var chave = $"";
+                        foreach(DataColumn c in dt.Table.Columns)
+                        {
+                            if(chave.Length > 0)
+                            {
+                                chave += " or ";
+                            }
+                            chave += $"({c.ColumnName} like '*{_filter.Text}*')";
+                        }
+                        dt.RowFilter = chave;
+                    }
+                    else
+                    {
+                        var view = CollectionViewSource.GetDefaultView(_list.ItemsSource);
+                        view.Filter = null;
+                        view.Filter = _run_filter;
+                        view.Refresh();
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -53,17 +77,7 @@ namespace Conexoes
 
         private void _text_changed(object sender, TextChangedEventArgs e)
         {
-            try
-            {
-                if (_filter.Text == Msg)
-                {
-                    return;
-                }
-                SetFilter();
-            }
-            catch (Exception ex)
-            {
-            }
+            SetFilter();
         }
         private void _loaded(object sender, RoutedEventArgs e)
         {
