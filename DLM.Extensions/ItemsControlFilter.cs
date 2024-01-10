@@ -39,7 +39,7 @@ namespace Conexoes
         {
             try
             {
-                if(_filter.Text == Msg | _filter.Text.Length < 3)
+                if(_filter.Text == Msg)
                 {
                     return;
                 }
@@ -70,7 +70,7 @@ namespace Conexoes
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

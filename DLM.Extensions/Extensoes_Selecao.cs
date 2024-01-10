@@ -10,7 +10,7 @@ namespace Conexoes
     {
         public static void Propriedades<T>(this List<T> objetos)
         {
-            var menu = new  DLM.WPF.DatagridProps();
+            var menu = new DLM.WPF.DatagridProps();
             menu.Lista.ItemsSource = objetos;
             menu.ShowDialog();
         }
@@ -43,8 +43,11 @@ namespace Conexoes
         }
         public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione")
         {
-
-            if (Objetos.Count == 0 | Objetos == null)
+            if (Objetos == null)
+            {
+                return (T)Convert.ChangeType(null, typeof(T));
+            }
+            else if (Objetos.Count == 0)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }

@@ -521,7 +521,7 @@ namespace DLM.desenho
                     var n_ent = (EntityObject)ent.Clone();
                     block.Entities.Add(n_ent);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -884,7 +884,7 @@ namespace DLM.desenho
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return null;
@@ -914,7 +914,7 @@ namespace DLM.desenho
                         return ndxf;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     try
                     {
