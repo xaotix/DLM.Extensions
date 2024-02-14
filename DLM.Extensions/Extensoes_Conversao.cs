@@ -157,7 +157,9 @@ namespace Conexoes
             {
                 try
                 {
-                    return Convert.ToDateTime(Data);
+                    var vlr = Data.ToString();
+                    if (!vlr.Contains("0000"))
+                        return Convert.ToDateTime(Data.ToString());
                 }
                 catch (Exception)
                 {
