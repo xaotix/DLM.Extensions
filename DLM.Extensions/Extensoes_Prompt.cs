@@ -30,7 +30,7 @@ namespace Conexoes
             }
             if (multilinha)
             {
-                Janelas.Texto mm = new Janelas.Texto(Valor);
+                var mm = new Janelas.Texto(Valor);
                 mm.Title = titulo;
                 mm.ShowDialog();
 
