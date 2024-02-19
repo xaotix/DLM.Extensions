@@ -12,6 +12,10 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
+        public static List<Material_Peca> GetMateriaPrima(this List<PGO_Peca> pcs)
+        {
+            return pcs.SelectMany(x => x.GetMateriaPrima()).ToList();
+        }
         public static List<Material_Peca> GetMateriaPrima(this PGO_Peca pc)
         {
             var retorno = new List<Material_Peca>();
