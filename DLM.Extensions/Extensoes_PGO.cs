@@ -1,5 +1,7 @@
 ﻿using Conexoes;
 using DLM.orc;
+using DLM.orc.Peca;
+using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,47 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
+        public static List<Material_Peca> GetMateriaPrima(this PGO_Peca pc)
+        {
+            var retorno = new List<Material_Peca>();
+            if (pc.ItemRM is RMA)
+            {
+                var p = pc.ItemRM as RMA;
+                var novo = new Material_Peca(p);
+                retorno.Add(novo);
+            }
+            else if (pc.ItemRM is RME)
+            {
+                var p = pc.ItemRM as RME;
+                foreach (var pos in p.Posicoes)
+                {
+                    if (pos.NORMT != TAB_NORMT.PERFIL_I_SOLDADO)
+                    {
+                        try
+                        {
+                            var novo = new Material_Peca(pos, p);
+                            retorno.Add(novo);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+                    }
+                }
+            }
+            else if (pc.ItemRM is RMT)
+            {
+                var p = pc.ItemRM as RMT;
+                var novo = new Material_Peca(p);
+                retorno.Add(novo);
+            }
+            else
+            {
+
+            }
+            return retorno;
+        }
         public static List<PGO_Peca> GetPecas(this List<Range> ranges)
         {
             var pcs = ranges.SelectMany(x => x.Pecas).ToList();
