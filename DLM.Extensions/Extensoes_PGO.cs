@@ -53,6 +53,32 @@ namespace DLM
             }
             return retorno;
         }
+        public static void GetDescricaoSAP(this List<Material_Peca> materiais)
+        {
+            var codigos_sap = DLM.SAP.GetMateriasPrimas();
+
+            foreach (var mat in materiais.GroupBy(x => x.Codigo).ToList())
+            {
+                if (mat.Key.Length == 7)
+                {
+                    var cod = codigos_sap.Filtrar(true, "MATNR", mat.Key);
+                    if (cod.Linhas.Count > 0)
+                    {
+                        foreach (var m in mat.ToList())
+                        {
+                            m.Descricao_SAP = cod[0]["MAKTX"].Valor;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var m in mat.ToList())
+                        {
+                            m.Descricao_SAP = $"Código SAP não encontrado.";
+                        }
+                    }
+                }
+            }
+        }
         public static List<PGO_Peca> GetPecas(this List<Range> ranges)
         {
             var pcs = ranges.SelectMany(x => x.Pecas).ToList();
