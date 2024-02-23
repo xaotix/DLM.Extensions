@@ -181,7 +181,35 @@ namespace Conexoes
 
             return false;
         }
- 
+        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null)
+        {
+            if (destino == null)
+            {
+                destino = "xlsx".SalvarArquivo();
+            }
+            if (destino == null) { return false; }
+            if (destino.Length == 0) { return false; }
+
+
+            var pasta = destino.getPasta();
+            pasta.CreateDirectory();
+
+            if (destino.Delete())
+            {
+                if (tabelas.Count > 0)
+                {
+                    Utilz.Excel.GerarExcel(destino, tabelas, template, cabecalho, zerar_se_null, congelar);
+                    if (abrir)
+                    {
+                        destino.Abrir();
+                    }
+                    return destino.Exists();
+                }
+            }
+
+            return false;
+        }
+
 
         public static Tabela GetTabela(this string arquivo)
         {

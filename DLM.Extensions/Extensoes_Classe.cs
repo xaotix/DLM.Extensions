@@ -352,7 +352,7 @@ namespace Conexoes
         public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write = false)
         {
 
-            DLM.db.Tabela retorno = new DLM.db.Tabela();
+            var retorno = new DLM.db.Tabela();
             if (lista.Count > 0)
             {
                 List<PropertyInfo> todos = lista[0].GetPropriedades().Filter();
