@@ -27,33 +27,30 @@ namespace DLM
             }
             else if (pc.ItemRM is RME)
             {
-                var p = pc.ItemRM as RME;
-                foreach (var pos in p.Posicoes)
+                var m = pc.ItemRM as RME;
+                foreach (var pos in m.Posicoes)
                 {
                     if (pos.NORMT != TAB_NORMT.PERFIL_I_SOLDADO)
                     {
                         try
                         {
-                            var novo = new Material_Peca(pos, p);
+                            var novo = new Material_Peca(pos, m);
                             retorno.Add(novo);
                         }
                         catch (Exception ex)
                         {
-
                         }
-
                     }
                 }
             }
             else if (pc.ItemRM is RMT)
             {
-                var p = pc.ItemRM as RMT;
-                var novo = new Material_Peca(p);
+                var m = pc.ItemRM as RMT;
+                var novo = new Material_Peca(m);
                 retorno.Add(novo);
             }
             else
             {
-
             }
             return retorno;
         }
