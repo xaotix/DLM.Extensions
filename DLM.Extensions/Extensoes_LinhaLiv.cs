@@ -255,17 +255,24 @@ namespace DLM.cam
                 var left = new List<Point>();
                 var right = new List<Point>();
                 var lastPt = tranform.Transform(figure.StartPoint);
-                foreach (PolyLineSegment segment in figure.Segments)
+                try
                 {
-                    foreach (var currentPtOrig in segment.Points)
+                    foreach (PolyLineSegment segment in figure.Segments)
                     {
-                        var currentPt = tranform.Transform(currentPtOrig);
-                        ProcessarLinha(lastPt, currentPt, left, right);
-                        lastPt = currentPt;
+                        foreach (var currentPtOrig in segment.Points)
+                        {
+                            var currentPt = tranform.Transform(currentPtOrig);
+                            ProcessarLinha(lastPt, currentPt, left, right);
+                            lastPt = currentPt;
+                        }
                     }
+                    ProcessarFigura(left, inverse, PedacoEsq);
+                    ProcessarFigura(right, inverse, PedacoDir);
                 }
-                ProcessarFigura(left, inverse, PedacoEsq);
-                ProcessarFigura(right, inverse, PedacoDir);
+                catch (Exception)
+                {
+                }
+
             }
         }
         public static List<Liv> ToLiv(this PathGeometry Geometria, bool ajustaCoords = true)
