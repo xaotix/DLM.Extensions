@@ -41,7 +41,7 @@ namespace Conexoes
                 return Objetos[0];
             }
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione")
+        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "")
         {
             if (Objetos == null)
             {
@@ -54,6 +54,7 @@ namespace Conexoes
             var selecionar = new JanelaSelecionar(false);
             selecionar.Title = titulo;
             selecionar._lista.ItemsSource = Objetos;
+            selecionar._filtro.Text = pesquisa;
             selecionar.ShowDialog();
 
             if (selecionar.DialogResult.HasValue && selecionar.DialogResult.Value)

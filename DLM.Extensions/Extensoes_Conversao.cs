@@ -1,6 +1,7 @@
 ﻿using DLM.vars;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Conexoes
@@ -153,19 +154,39 @@ namespace Conexoes
         }
         public static DateTime Data<T>(this T Data)
         {
-            if (Data != null && Data.ToString().Length > 0)
+            if (Data != null)
             {
-                try
+                var vlr = Data.ToString();
+                if(vlr.Length>0)
                 {
-                    var vlr = Data.ToString();
-                    if (!vlr.Contains("0000"))
-                        return Convert.ToDateTime(Data.ToString());
+                    try
+                    {
+                        if (!vlr.Contains("0000") && !vlr.Contains("0001"))
+                        {
+                            if (vlr.Contains(@"/") | vlr.Contains("-"))
+                            {
+                                var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
+                                if (pcs.Count() >= 3)
+                                {
+                                    if (pcs[0] > 1000)
+                                    {
+                                        return new DateTime(pcs[0], pcs[1], pcs[2]);
+                                    }
+                                    else
+                                    {
+                                        return new DateTime(pcs[2], pcs[1], pcs[0]);
+                                    }
+                                }
+                            }
+                            return Convert.ToDateTime(vlr);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        DLM.log.Log(ex);
+                    }
                 }
-                catch (Exception)
-                {
-
-                }
-                return Cfg.Init.DataDummy();
+                
             }
 
             return Cfg.Init.DataDummy();

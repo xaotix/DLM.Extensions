@@ -337,7 +337,17 @@ namespace Conexoes
             return (T)Convert.ChangeType(null, typeof(T));
         }
 
-
+        public static DLM.db.Linha GetLinha<T>(this T obj, params string[] remover)
+        {
+            var tbl = GetTabela<T>(new List<T> { obj });
+            var linha = tbl.Linhas[0];
+            foreach(var r in remover)
+            {
+                var cel = linha[r];
+                linha.Celulas.Remove(cel);
+            }
+            return linha;
+        }
         public static DLM.db.Linha GetLinha<T>(this T obj)
         {
             var tbl = GetTabela<T>(new List<T> { obj });

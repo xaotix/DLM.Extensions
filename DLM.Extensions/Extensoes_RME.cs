@@ -154,7 +154,7 @@ namespace Conexoes
                     var nrm = igual.As<RME>().Clonar(pc.Quantidade, pc.Comprimento);
                     nrm.Observacoes = txt_macro_ctv2;
                     nrm.FICHA_PINTURA = pc.Tratamento;
-                    nrm.User = Global.UsuarioAtual;
+                    nrm.User = Cfg.Init.GetUser().Alias;
                     retorno.Add(nrm);
                 }
                 else if (igual is RMA)
@@ -180,7 +180,7 @@ namespace Conexoes
                             var nrm = igual.As<RME>().Clonar(p1.Qtd, p1.Comp, p1.Nome);
                             nrm.Observacoes = txt_macro_em2;
                             nrm.FICHA_PINTURA = p1.Tratamento;
-                            nrm.User = Global.UsuarioAtual;
+                            nrm.User = Cfg.Init.GetUser().Alias;
 
                             retorno.Add(nrm);
                         }
@@ -285,7 +285,7 @@ namespace Conexoes
                     {
                         var prCTR = new RMA(par_corrente, correntes.FindAll(x => x.Parafusos).Sum(x => 4 * x.Quantidade), txt_macro_corrente);
                         prCTR.Observacoes = txt_macro_corrente;
-                        prCTR.User = Global.UsuarioAtual;
+                        prCTR.User = Cfg.Init.GetUser().Alias;
                         if (prCTR.Quantidade > 0)
                         {
                             retorno.Add(prCTR);
@@ -340,7 +340,7 @@ namespace Conexoes
                             var nctr = diagonal.Clonar(comp.Sum(x => x.Quantidade), comp.Key);
                             nctr.FICHA_PINTURA = frst.Tratamento;
                             nctr.Observacoes = txt_macro_corrente;
-                            nctr.User = Global.UsuarioAtual;
+                            nctr.User = Cfg.Init.GetUser().Alias;
                             retorno.Add(nctr);
                         }
                     }
@@ -381,7 +381,7 @@ namespace Conexoes
                                 nsft.Quantidade = qtdSFT;
                                 nsft.Observacoes = txt_macro_tirante;
                                 nsft.FICHA_PINTURA = txt[1];
-                                nsft.User = Global.UsuarioAtual;
+                                nsft.User = Cfg.Init.GetUser().Alias;
                                 retorno.Add(nsft);
                             }
                             else
@@ -428,7 +428,7 @@ namespace Conexoes
                             {
                                 var novo = nTR.Clonar(trt.ToList().Sum(x => x.Quantidade), tr_comp);
                                 novo.FICHA_PINTURA = trat;
-                                novo.User = Global.UsuarioAtual;
+                                novo.User = Cfg.Init.GetUser().Alias;
                                 novo.Observacoes = txt_macro_tirante;
                                 retorno.Add(novo);
                             }
