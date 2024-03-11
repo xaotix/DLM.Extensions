@@ -761,10 +761,6 @@ namespace Conexoes
                         return t;
                     }
                 }
-
-
-                // T retorno = (T)Enum.Parse(typeof(T), Nome, true);
-                // return retorno;
             }
             catch (Exception)
             {
