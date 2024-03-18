@@ -12,17 +12,17 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
-        public static List<Material_Peca> GetMateriaPrima(this List<PGO_Peca> pcs)
+        public static List<PGO_Material_Peca> GetMateriaPrima(this List<PGO_Peca> pcs)
         {
             return pcs.SelectMany(x => x.GetMateriaPrima()).ToList();
         }
-        public static List<Material_Peca> GetMateriaPrima(this PGO_Peca pc)
+        public static List<PGO_Material_Peca> GetMateriaPrima(this PGO_Peca pc)
         {
-            var retorno = new List<Material_Peca>();
+            var retorno = new List<PGO_Material_Peca>();
             if (pc.ItemRM is RMA)
             {
                 var p = pc.ItemRM as RMA;
-                var novo = new Material_Peca(p);
+                var novo = new PGO_Material_Peca(p);
                 retorno.Add(novo);
             }
             else if (pc.ItemRM is RME)
@@ -34,7 +34,7 @@ namespace DLM
                     {
                         try
                         {
-                            var novo = new Material_Peca(pos, m);
+                            var novo = new PGO_Material_Peca(pos, m);
                             retorno.Add(novo);
                         }
                         catch (Exception ex)
@@ -46,7 +46,7 @@ namespace DLM
             else if (pc.ItemRM is RMT)
             {
                 var m = pc.ItemRM as RMT;
-                var novo = new Material_Peca(m);
+                var novo = new PGO_Material_Peca(m);
                 retorno.Add(novo);
             }
             else
