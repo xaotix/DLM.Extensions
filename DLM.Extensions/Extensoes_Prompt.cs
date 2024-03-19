@@ -118,10 +118,10 @@ namespace Conexoes
         }
 
 
-        public static double Prompt(this double valor, string titulo = "Digite", int decimais = 0)
+        public static double Prompt(this double valor, string titulo = "Digite", int decimais = 5)
         {
             var status = false;
-            var retorno = valor.Prompt(out status, decimais);
+            var retorno = valor.Prompt(out status, decimais,titulo);
             return retorno;
         }
         public static double Prompt(this double valor, out bool status, int decimais = -1, string titulo = "Digite")
