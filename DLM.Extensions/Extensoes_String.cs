@@ -105,7 +105,7 @@ namespace Conexoes
         {
             return txt.Replace(@"""", "");
         }
-        public static string CortarString(this string Origem, int MaxComp, bool pontilhado = true)
+        public static string CortarString(this string Origem, int MaxComp, bool pontilhado = false)
         {
             string txt = Origem;
             if (txt.Length > MaxComp)
