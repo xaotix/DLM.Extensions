@@ -8,6 +8,17 @@ namespace Conexoes
 {
     public static class Extensoes_String
     {
+        public static string GetKey(this string txt)
+        {
+            if(txt !=null)
+            {
+                if(txt.Length>0)
+                {
+                    return txt.ToUpper().Replace(" ", "").Replace(".", "");
+                }
+            }
+            return txt;
+        }
         public static bool StartsW(this string txt, params string[] valores)
         {
             foreach(var valor in valores)
