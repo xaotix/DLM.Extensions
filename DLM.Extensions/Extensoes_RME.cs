@@ -595,7 +595,7 @@ namespace Conexoes
             {
                 if(p.ToList().Count>1)
                 {
-                    retorno.Add(p.First().Clonar(p.Sum(x => x.Quantidade), string.Join(", ", p.Select(x => x.Observacoes)).CortarString(30)));
+                    retorno.Add(p.First().Clonar(p.Sum(x => x.Quantidade), string.Join(", ", p.Select(x => x.Observacoes)).Esquerda(30)));
                 }
                 else
                 {

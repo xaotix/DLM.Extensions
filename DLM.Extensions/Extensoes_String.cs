@@ -116,7 +116,7 @@ namespace Conexoes
         {
             return txt.Replace(@"""", "");
         }
-        public static string CortarString(this string Origem, int MaxComp, bool pontilhado = false)
+        public static string Esquerda(this string Origem, int MaxComp, bool pontilhado = false)
         {
             string txt = Origem;
             if (txt.Length > MaxComp)
@@ -125,24 +125,18 @@ namespace Conexoes
             }
             return txt;
         }
-        public static string CortarString(this string Origem, int inicio, int Comprimento)
+
+        public static string Direita(this string Origem, int Comp)
         {
             string txt = Origem;
-            if (Origem.Count() >= inicio + Comprimento)
+            if(Comp<txt.Length)
             {
-                try
-                {
-                    txt = Origem.Substring(inicio, Comprimento);
-
-                }
-                catch (System.Exception)
-                {
-
-                    txt = "";
-                }
+                return txt.Substring(txt.Length - Comp, Comp);
             }
-            return txt;
+
+            return Origem;
         }
+
 
         public static string RemoverNumeros(this string Nome)
         {

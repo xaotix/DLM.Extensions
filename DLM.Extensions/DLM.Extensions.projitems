@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Classe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Clipper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Conversao.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Data.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Datagrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_DataTable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Double.cs" />

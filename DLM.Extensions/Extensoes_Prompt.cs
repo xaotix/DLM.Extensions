@@ -36,7 +36,7 @@ namespace Conexoes
 
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
-                    retorno = mm.Input.Text.CortarString(maxlenght, false);
+                    retorno = mm.Input.Text.Esquerda(maxlenght, false);
                 }
             }
             else
