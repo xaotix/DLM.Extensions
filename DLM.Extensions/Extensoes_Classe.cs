@@ -139,32 +139,41 @@ namespace Conexoes
         private static void SetValor<T>(T Objeto, PropertyInfo Propriedade, string Valor)
         {
             if (Valor == null) { return; }
-            if (Propriedade.CanWrite && Propriedade.CanRead && (Propriedade.PropertyType.IsEnum | Propriedade.PropertyType.IsPrimitive | Propriedade.PropertyType.Name.ToLower() == "string" | Propriedade.PropertyType.Name.ToLower() == "datetime"))
+            var prop = Propriedade.PropertyType.Name.ToLower();
+
+            if (Propriedade.CanWrite && Propriedade.CanRead && 
+                (
+                Propriedade.PropertyType.IsEnum | 
+                Propriedade.PropertyType.IsPrimitive | 
+                prop == "string" | 
+                prop == "datetime" |
+                prop == "nullable`1"
+                )
+                )
             {
-                var name = Propriedade.PropertyType.Name.ToLower();
-                if (name == "string")
+                if (prop == "string")
                 {
                     Propriedade.SetValue(Objeto, Valor);
                 }
-                else if (name == "double")
+                else if (prop == "double")
                 {
                     Propriedade.SetValue(Objeto, Valor.Double(20));
                 }
-                else if (name == "boolean")
+                else if (prop == "boolean")
                 {
                     Propriedade.SetValue(Objeto, Valor.Boolean());
                 }
-                else if (name.StartsWith("int"))
+                else if (prop.StartsWith("int"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Int());
                 }
-                else if (name.StartsWith("long"))
+                else if (prop.StartsWith("long"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Long());
                 }
-                else if (name == "datetime")
+                else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contains("System.DateTime")))
                 {
-                    Propriedade.SetValue(Objeto, Valor.Data());
+                    Propriedade.SetValue(Objeto, Valor.DataNull());
                 }
                 else if (Propriedade.PropertyType.IsEnum)
                 {
@@ -184,6 +193,7 @@ namespace Conexoes
 
                 }
             }
+           
 
         }
 
@@ -451,14 +461,21 @@ namespace Conexoes
         /// <returns></returns>
         public static List<PropertyInfo> Filter(this List<PropertyInfo> lista)
         {
-            List<PropertyInfo> retorno = new List<PropertyInfo>();
+            var retorno = new List<PropertyInfo>();
 
             foreach (var l in lista)
             {
                 var prop = l.PropertyType.Name.ToLower();
-                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | l.PropertyType.Name.ToLower() == "string" | l.PropertyType.Name.ToLower() == "datetime")
+                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime")
                 {
                     retorno.Add(l);
+                }
+                else if(prop == "nullable`1")
+                {
+                    if(l.PropertyType.FullName.Contains("System.DateTime"))
+                    {
+                        retorno.Add(l);
+                    }
                 }
             }
             return retorno;

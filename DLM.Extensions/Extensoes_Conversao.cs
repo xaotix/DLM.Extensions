@@ -152,6 +152,45 @@ namespace Conexoes
             }
             return false;
         }
+        public static DateTime? DataNull<T>(this T Data)
+        {
+            if (Data != null)
+            {
+                var vlr = Data.ToString();
+                if (vlr.Length > 0)
+                {
+                    try
+                    {
+                        if (!vlr.Contains("0000") && !vlr.Contains("0001"))
+                        {
+                            if (vlr.Contains(@"/") | vlr.Contains("-"))
+                            {
+                                var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
+                                if (pcs.Count() >= 3)
+                                {
+                                    if (pcs[0] > 1000)
+                                    {
+                                        return new DateTime(pcs[0], pcs[1], pcs[2]);
+                                    }
+                                    else
+                                    {
+                                        return new DateTime(pcs[2], pcs[1], pcs[0]);
+                                    }
+                                }
+                            }
+                            return Convert.ToDateTime(vlr);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        DLM.log.Log(ex);
+                    }
+                }
+
+            }
+
+            return null;
+        }
         public static DateTime Data<T>(this T Data)
         {
             if (Data != null)
