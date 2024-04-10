@@ -168,11 +168,11 @@ namespace Conexoes
                                 var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
                                 if (pcs.Count() >= 3)
                                 {
-                                    if (pcs[0] > 1000)
+                                    if (pcs[0] > 1001)
                                     {
                                         return new DateTime(pcs[0], pcs[1], pcs[2]);
                                     }
-                                    else
+                                    else if(pcs[2] > 1988)
                                     {
                                         return new DateTime(pcs[2], pcs[1], pcs[0]);
                                     }
