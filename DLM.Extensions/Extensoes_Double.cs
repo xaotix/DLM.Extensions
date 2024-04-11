@@ -112,25 +112,56 @@ namespace Conexoes
 
         public static double ArredondarMultiplo(this double valor, double multiplo)
         {
+            var valor_fim = valor;
             if (multiplo <= 0)
             {
-                return valor;
+                valor_fim = valor;
             }
             else if (multiplo == 1)
             {
-                return valor.Round(0);
+                valor_fim = valor.Round(0);
             }
-            if (valor % multiplo == 0) return valor;
-            var diferenca = ((multiplo + valor % multiplo) - multiplo);
-            if (diferenca / multiplo > 0.5)
+            else if (valor % multiplo == 0)
             {
-                return (multiplo - valor % multiplo) + valor;
+                valor_fim = valor;
+            }
+            else if(valor<multiplo)
+            {
+                valor_fim = multiplo;
             }
             else
             {
-                var valor_fim = valor - ((multiplo + valor % multiplo) - multiplo);
-                return valor_fim;
+                var diferenca = ((multiplo + valor % multiplo) - multiplo);
+                if (diferenca > 0)
+                {
+                    if (diferenca / multiplo > 0.5)
+                    {
+                        valor_fim = (multiplo - valor % multiplo) + valor;
+                    }
+                    else
+                    {
+                        valor_fim = valor - ((multiplo + valor % multiplo) - multiplo);
+                    }
+
+                    if (valor_fim < 0)
+                    {
+
+                    }
+                }
             }
+
+            
+            if(valor_fim == 0)
+            {
+                valor_fim = multiplo;
+            }
+            if (valor_fim < valor.Round(1) && multiplo>1)
+            {
+                valor_fim = valor_fim + multiplo;
+            }
+
+
+            return valor_fim;
         }
         public static double ArredondarMultiplo(this double valor, int multiplo)
         {
@@ -161,12 +192,12 @@ namespace Conexoes
             {
                 var pacote = new List<double>();
                 double dist0 = 0;
-                while(dist0<=dist)
+                while (dist0 <= dist)
                 {
                     pacote.Add(lista[i]);
                     i++;
 
-                    if(i==lista.Count)
+                    if (i == lista.Count)
                     {
                         pacotes.Add(pacote);
                         goto fim;
