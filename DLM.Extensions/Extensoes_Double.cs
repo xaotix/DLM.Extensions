@@ -157,7 +157,7 @@ namespace Conexoes
             }
             if (valor_fim < valor.Round(1) && multiplo>1)
             {
-                valor_fim = valor_fim + multiplo;
+                valor_fim += multiplo;
             }
 
 
