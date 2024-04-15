@@ -6,6 +6,30 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static List<double> GetRange(this double max, double comp, double min = 0)
+        {
+            var retorno = new List<double>();
+            var valor = min;
+
+            if(comp>0)
+            {
+                while (valor < max)
+                {
+                    retorno.Add(valor);
+                    valor += comp;
+                }
+
+                if(retorno.Count>0)
+                {
+                    retorno.Add(max);
+                }
+            }
+
+            
+
+
+            return retorno;
+        }
         public static List<double> Quebrar(this double Comp, double Comp_Max, double Comp_Min, double Transpasse)
         {
             var Retorno = new List<double>();
