@@ -122,7 +122,7 @@ namespace Conexoes
             {
                 decimais = Decimais;
             }
-            var retorno = MainPrompt(titulo, valor, gravar_carregar, chave, false, 15);
+            var retorno = MainPrompt(titulo, valor, gravar_carregar, chave, false, 15,string_format);
             if (retorno == null)
             {
                 return null;

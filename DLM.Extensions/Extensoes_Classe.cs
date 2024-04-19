@@ -488,6 +488,8 @@ namespace Conexoes
             return props;
         }
 
+
+
         public static string GetPropriedade<T>(this T obj, string propriedade)
         {
             string valor = "";

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLM.encoder;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,6 +9,47 @@ namespace Conexoes
 {
     public static class Extensoes_Selecao
     {
+
+        public static void Show(this List<Report> reports)
+        {
+            if (reports.Count > 0)
+            {
+                var m = new Conexoes.Janelas.VerReports(reports);
+                m.ShowDialog();
+            }
+        }
+        public static void Show<T>(this T objeto)
+        {
+            var objs = objeto.GetLinha().Celulas;
+            var menu = new DLM.WPF.DatagridProps();
+            menu.Title = $"Propriedades {objeto.ToString()}";
+            menu.Lista.ItemsSource = objs;
+            menu.ShowDialog();
+        }
+        public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
+        {
+            if (objeto == null)
+            {
+                return false;
+            }
+            bool status = false;
+            var s = new Janelas.PromptProps(objeto);
+            if (owner != null)
+            {
+                s.Owner = owner;
+                s.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                s.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            s.Topmost = topmost;
+
+            s.ShowDialog();
+
+            status = (bool)s.DialogResult;
+            return status;
+        }
         public static void Propriedades<T>(this List<T> objetos)
         {
             var menu = new DLM.WPF.DatagridProps();

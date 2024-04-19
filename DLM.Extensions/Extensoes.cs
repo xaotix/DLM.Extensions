@@ -707,30 +707,7 @@ namespace Conexoes
         //}
 
 
-        public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
-        {
-            if(objeto == null)
-            {
-                return false;
-            }
-            bool status = false;
-            var s = new Janelas.PromptProps(objeto);
-            if (owner != null)
-            {
-                s.Owner = owner;
-                s.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            }
-            else
-            {
-                s.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            }
-            s.Topmost = topmost;
-
-            s.ShowDialog();
-
-            status = (bool)s.DialogResult;
-            return status;
-        }
+   
         public static void Add(this ObservableCollection<Report> Objetos, string propriedades = "", string mensagem = "", TipoReport report = TipoReport.Status)
         {
             Objetos.Add(new Report(propriedades, mensagem, report));
