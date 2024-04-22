@@ -14,17 +14,17 @@ namespace Conexoes
         {
             if (reports.Count > 0)
             {
-                var m = new Conexoes.Janelas.VerReports(reports);
-                m.ShowDialog();
+                var mm = new Conexoes.Janelas.VerReports(reports);
+                mm.ShowDialog();
             }
         }
         public static void Show<T>(this T objeto)
         {
             var objs = objeto.GetLinha().Celulas;
-            var menu = new DLM.WPF.DatagridProps();
-            menu.Title = $"Propriedades {objeto.ToString()}";
-            menu.Lista.ItemsSource = objs;
-            menu.ShowDialog();
+            var mm = new DLM.WPF.DatagridProps();
+            mm.Title = $"Propriedades {objeto.ToString()}";
+            mm.Lista.ItemsSource = objs;
+            mm.ShowDialog();
         }
         public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
         {

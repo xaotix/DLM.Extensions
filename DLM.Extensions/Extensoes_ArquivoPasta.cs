@@ -645,6 +645,34 @@ namespace Conexoes
             }
         }
 
+        public static void AbrirAsAdmin(this string arquivo, string argumentos = "")
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = arquivo,
+                Arguments = argumentos,
+                UserName = "med.admin",
+                Password = ConvertToSecureString("K@$p3rsk1@2023!@"),
+                Domain = "medabil.com.br",
+                UseShellExecute = false,
+            };
+
+            using (var process = new Process { StartInfo = startInfo })
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+        }
+        static System.Security.SecureString ConvertToSecureString(string password)
+        {
+            var securePassword = new System.Security.SecureString();
+            foreach (char c in password)
+            {
+                securePassword.AppendChar(c);
+            }
+            return securePassword;
+        }
+
         private static bool Open(string arquivo, string argumentos = "", bool wait = false)
         {
             if (!arquivo.Exists())
