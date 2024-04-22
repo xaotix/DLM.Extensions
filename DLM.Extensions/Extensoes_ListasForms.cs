@@ -163,7 +163,7 @@ namespace Conexoes
                 {
                     var destino = "xlsx".SalvarArquivo();
                     if (destino == null) { return; }
-                    itens.GetTabela().GerarExcel(destino, true, true);
+                    itens.GetTabela(true).GerarExcel(destino, true, true);
                 }
 
             }

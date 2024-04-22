@@ -347,9 +347,9 @@ namespace Conexoes
             return (T)Convert.ChangeType(null, typeof(T));
         }
 
-        public static DLM.db.Linha GetLinha<T>(this T obj, bool only_can_write = false, params string[] remover)
+        public static DLM.db.Linha GetLinha<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, params string[] remover)
         {
-            var tbl = GetTabela<T>(new List<T> { obj }, only_can_write);
+            var tbl = GetTabela<T>(new List<T> { obj }, only_can_write, only_browsable, only_simple_properties);
             var linha = tbl.Linhas[0];
             foreach(var r in remover)
             {
@@ -358,26 +358,35 @@ namespace Conexoes
             }
             return linha;
         }
-        public static DLM.db.Linha GetLinha<T>(this T obj)
-        {
-            var tbl = GetTabela<T>(new List<T> { obj });
-            return tbl.Linhas[0];
-        }
+        //public static DLM.db.Linha GetLinha<T>(this T obj)
+        //{
+        //    var tbl = GetTabela<T>(new List<T> { obj });
+        //    return tbl.Linhas[0];
+        //}
         /// <summary>
         /// Extrai uma tabela com todas as propriedades da lista
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="lista"></param>
         /// <returns></returns>
-        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write = false)
+        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool can_write, bool only_browsable = true, bool simple_properties = true)
         {
 
             var retorno = new DLM.db.Tabela();
             if (lista.Count > 0)
             {
-                List<PropertyInfo> todos = lista[0].GetPropriedades().Filter();
-                List<PropertyInfo> listagem = todos.FindAll(x => x.Browsable());
-                if (only_can_write)
+               var listagem = new List<PropertyInfo>();
+                listagem.AddRange(lista[0].GetPropriedades());
+
+                if(simple_properties)
+                {
+                    listagem = listagem.Filter();
+                }
+                if(only_browsable)
+                {
+                    listagem = listagem.FindAll(x => x.Browsable());
+                }
+                if (can_write)
                 {
                     listagem = listagem.FindAll(x => x.CanWrite);
                 }
@@ -455,7 +464,7 @@ namespace Conexoes
 
 
         /// <summary>
-        /// Filtra, removendo XmlIgnore & !CanWrite
+        /// Filtra, mantendo somente objetos simples
         /// </summary>
         /// <param name="lista"></param>
         /// <returns></returns>

@@ -319,7 +319,6 @@ namespace Conexoes
         }
         public static int GetDobras(this CAM_PERFIL_TIPO Tipo)
         {
-
             switch (Tipo)
             {
                 case CAM_PERFIL_TIPO.Z_Purlin:

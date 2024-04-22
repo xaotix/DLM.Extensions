@@ -56,6 +56,11 @@ namespace Conexoes
                             INI.Set(arq, "Prompt", chave, retorno);
                         }
                     }
+                    else
+                    {
+                        retorno = null;
+                    }
+
                 }
                 else
                 {
