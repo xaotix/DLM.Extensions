@@ -24,7 +24,7 @@ namespace Conexoes
             var mm = new DLM.WPF.DatagridProps();
             mm.Title = $"Propriedades {objeto.ToString()}";
             mm.Lista.ItemsSource = objs;
-            mm.ShowDialog();
+            mm.Show();
         }
         public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
         {
