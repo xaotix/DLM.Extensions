@@ -90,7 +90,7 @@ namespace Conexoes
         }
         public static T CopiarVars<T>(this T Para, DLM.ini.INISec De, int sufix = 0)
         {
-            var props_para = Para.GetPropriedades().Filter();
+            var props_para = Para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
             foreach (var prop in props_para)
             {
                 var valor = sufix < 1 ? De.Values.Find((Predicate<DLM.ini.INIField>)(x => x.Key == prop.Name)) : De.Values.Find((Predicate<DLM.ini.INIField>)(x => x.Key == $"{prop.Name}{sufix}"));
@@ -103,14 +103,18 @@ namespace Conexoes
         }
         public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "")
         {
-            var props_para = Para.GetPropriedades().Filter();
+            var props_para = Para.GetPropriedades().Filter().FindAll(x=>x.CanWrite);
             foreach (var prop_para in props_para)
             {
-                var valor = De[$"{prefix}{prop_para.Name}"];
+                var valor = De[$"{prefix}{prop_para.Name}",true];
 
                 if (valor != null)
                 {
                     SetValor(Para, prop_para, valor.Valor);
+                }
+                else
+                {
+
                 }
             }
         }
