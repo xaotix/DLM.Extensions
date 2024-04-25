@@ -64,16 +64,16 @@ namespace Conexoes
                 if (prop.CanWrite)
                 {
                     var valor = prop.GetValue(De);
-                    var igual = props_para.Find(x => x.Name == prop.Name);
-                    if (igual != null)
+                    var igual_para = props_para.Find(x => x.Name == prop.Name);
+                    if (igual_para != null)
                     {
-                        if (igual.CanWrite)
+                        if (igual_para.CanWrite)
                         {
 
                             try
                             {
                                 if ((valor.ToString().Length > 0 && somente_preenchido) | !somente_preenchido)
-                                    igual.SetValue(Para, valor);
+                                    igual_para.SetValue(Para, valor);
 
                             }
                             catch (Exception ex)
@@ -396,15 +396,15 @@ namespace Conexoes
                 }
                 var colunas = listagem.Select(x => x.Name).ToList();
                 var display = listagem.Select(x => x.GetDisplayName()).ToList();
-                foreach (var L in lista)
+                foreach (var item in lista)
                 {
                     //pula itens que são diferentes do primeiro item da lista
-                    if (L.GetType() != lista[0].GetType())
+                    if (item.GetType() != lista[0].GetType())
                     {
                         continue;
                     }
                     var linha = new DLM.db.Linha();
-                    var props = L.GetPropriedades().Filter();
+                    var props = item.GetPropriedades().Filter();
 
                     for (int c = 0; c < colunas.Count; c++)
                     {
@@ -412,7 +412,8 @@ namespace Conexoes
 
                         if (igual != null)
                         {
-                            var valor = igual.GetValue(L);
+                            var valor = igual.GetValue(item);
+                            
                             linha.Add(colunas[c], valor);
                         }
                         else
