@@ -767,6 +767,19 @@ namespace Conexoes
         {
             return data > Cfg.Init.DataDummy();
         }
+        public static bool Valido(this DateTime? data)
+        {
+            return data > Cfg.Init.DataDummy();
+        }
+        public static DateTime GetValue(this DateTime? data)
+        {
+            if(data==null)
+            {
+                return Cfg.Init.DataDummy();
+            }
+            return data.Value;
+        }
+
         public static void SalvarLista(this List<string> linhas, string arquivo, bool substituir = true)
         {
             Conexoes.Utilz.Arquivo.Gravar(arquivo, linhas, null, substituir);

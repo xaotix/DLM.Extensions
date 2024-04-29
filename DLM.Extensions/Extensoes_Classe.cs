@@ -64,16 +64,16 @@ namespace Conexoes
                 if (prop.CanWrite)
                 {
                     var valor = prop.GetValue(De);
-                    var igual = props_para.Find(x => x.Name == prop.Name);
-                    if (igual != null)
+                    var igual_para = props_para.Find(x => x.Name == prop.Name);
+                    if (igual_para != null)
                     {
-                        if (igual.CanWrite)
+                        if (igual_para.CanWrite)
                         {
 
                             try
                             {
                                 if ((valor.ToString().Length > 0 && somente_preenchido) | !somente_preenchido)
-                                    igual.SetValue(Para, valor);
+                                    igual_para.SetValue(Para, valor);
 
                             }
                             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace Conexoes
         }
         public static T CopiarVars<T>(this T Para, DLM.ini.INISec De, int sufix = 0)
         {
-            var props_para = Para.GetPropriedades().Filter();
+            var props_para = Para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
             foreach (var prop in props_para)
             {
                 var valor = sufix < 1 ? De.Values.Find((Predicate<DLM.ini.INIField>)(x => x.Key == prop.Name)) : De.Values.Find((Predicate<DLM.ini.INIField>)(x => x.Key == $"{prop.Name}{sufix}"));
@@ -103,14 +103,18 @@ namespace Conexoes
         }
         public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "")
         {
-            var props_para = Para.GetPropriedades().Filter();
+            var props_para = Para.GetPropriedades().Filter().FindAll(x=>x.CanWrite);
             foreach (var prop_para in props_para)
             {
-                var valor = De[$"{prefix}{prop_para.Name}"];
+                var valor = De[$"{prefix}{prop_para.Name}",true];
 
                 if (valor != null)
                 {
                     SetValor(Para, prop_para, valor.Valor);
+                }
+                else
+                {
+
                 }
             }
         }
@@ -392,15 +396,15 @@ namespace Conexoes
                 }
                 var colunas = listagem.Select(x => x.Name).ToList();
                 var display = listagem.Select(x => x.GetDisplayName()).ToList();
-                foreach (var L in lista)
+                foreach (var item in lista)
                 {
                     //pula itens que são diferentes do primeiro item da lista
-                    if (L.GetType() != lista[0].GetType())
+                    if (item.GetType() != lista[0].GetType())
                     {
                         continue;
                     }
                     var linha = new DLM.db.Linha();
-                    var props = L.GetPropriedades().Filter();
+                    var props = item.GetPropriedades().Filter();
 
                     for (int c = 0; c < colunas.Count; c++)
                     {
@@ -408,7 +412,8 @@ namespace Conexoes
 
                         if (igual != null)
                         {
-                            var valor = igual.GetValue(L);
+                            var valor = igual.GetValue(item);
+                            
                             linha.Add(colunas[c], valor);
                         }
                         else
