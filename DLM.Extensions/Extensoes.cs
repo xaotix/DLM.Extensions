@@ -543,8 +543,17 @@ namespace Conexoes
     
         public static List<T> GetChildren<T>(this Window window)
         {
-            var panel = window.Content as Panel;
-            return GetChildren<T>(panel);
+            if(window.Content is Panel)
+            {
+                var item = window.Content as Panel;
+                return GetChildren<T>(item);
+            }
+            else if(window.Content is Grid)
+            {
+                var item = window.Content as Grid;
+                return GetChildren<T>(item);
+            }
+            return new List<T>();
         }
         public static List<T> GetChildren<T>(this Panel panel)
         {
