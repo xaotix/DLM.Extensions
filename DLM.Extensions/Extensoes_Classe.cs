@@ -69,12 +69,17 @@ namespace Conexoes
                     {
                         if (igual_para.CanWrite)
                         {
-
                             try
                             {
-                                if ((valor.ToString().Length > 0 && somente_preenchido) | !somente_preenchido)
+                                if(valor!=null && somente_preenchido)
+                                {
+                                    if ((valor.ToString().Length > 0 && somente_preenchido))
+                                        igual_para.SetValue(Para, valor);
+                                }
+                                else if(!somente_preenchido)
+                                {
                                     igual_para.SetValue(Para, valor);
-
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -119,17 +124,6 @@ namespace Conexoes
             }
         }
 
-        public static void SetValor<T>(this T objeto, string Propriedade, string valor)
-        {
-            var props = objeto.GetPropriedades().Filter().Find(x => x.Name == Propriedade);
-            if (props != null)
-            {
-                if (props.CanWrite)
-                {
-                    SetValor(objeto, props, valor);
-                }
-            }
-        }
         public static string GetValor<T>(this T objeto, string Propriedade)
         {
             var props = objeto.GetPropriedades().Filter().Find(x => x.Name == Propriedade);
@@ -270,16 +264,7 @@ namespace Conexoes
 
             return RetornaNull<T>();
         }
-        public static List<T> Mirror<T>(this List<T> Origem)
-        {
-            List<T> retorno = new List<T>();
-            for (int i = Origem.Count - 1; i >= 0; i--)
-            {
-                retorno.Add(Origem[i]);
-            }
 
-            return retorno;
-        }
 
         private static T Novo<T>()
         {
@@ -362,11 +347,7 @@ namespace Conexoes
             }
             return linha;
         }
-        //public static DLM.db.Linha GetLinha<T>(this T obj)
-        //{
-        //    var tbl = GetTabela<T>(new List<T> { obj });
-        //    return tbl.Linhas[0];
-        //}
+
         /// <summary>
         /// Extrai uma tabela com todas as propriedades da lista
         /// </summary>

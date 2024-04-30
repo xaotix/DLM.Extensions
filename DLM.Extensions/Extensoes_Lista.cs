@@ -7,6 +7,16 @@ namespace Conexoes
 {
     public static class Extensoes_Lista
     {
+        public static List<T> Mirror<T>(this List<T> Origem)
+        {
+            List<T> retorno = new List<T>();
+            for (int i = Origem.Count - 1; i >= 0; i--)
+            {
+                retorno.Add(Origem[i]);
+            }
+
+            return retorno;
+        }
         public static List<T> Get<T>(this List<object> items)
         {
             return items.FindAll(x => x is T).Cast<T>().ToList();
