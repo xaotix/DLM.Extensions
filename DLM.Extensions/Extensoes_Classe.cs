@@ -393,9 +393,16 @@ namespace Conexoes
 
                         if (igual != null)
                         {
-                            var valor = igual.GetValue(item);
-                            
-                            linha.Add(colunas[c], valor);
+                            try
+                            {
+                                var valor = igual.GetValue(item);
+
+                                linha.Add(colunas[c], valor);
+                            }
+                            catch (Exception)
+                            {
+                                linha.Add(colunas[c], null);
+                            }
                         }
                         else
                         {
