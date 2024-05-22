@@ -354,7 +354,7 @@ namespace Conexoes
         /// <typeparam name="T"></typeparam>
         /// <param name="lista"></param>
         /// <returns></returns>
-        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool can_write, bool only_browsable = true, bool simple_properties = true)
+        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true)
         {
 
             var retorno = new DLM.db.Tabela();
@@ -371,7 +371,7 @@ namespace Conexoes
                 {
                     listagem = listagem.FindAll(x => x.Browsable());
                 }
-                if (can_write)
+                if (only_can_write)
                 {
                     listagem = listagem.FindAll(x => x.CanWrite);
                 }
