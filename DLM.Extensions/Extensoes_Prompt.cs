@@ -40,6 +40,29 @@ namespace Conexoes
                     retorno = mm.Input.Text.Esquerda(maxlenght, false);
                 }
             }
+            else if(Valor is string)
+            {
+                var mm = new Digita_Texto(titulo, maxlenght, Valor, titulo);
+                mm.caixa_texto.TextWrapping = System.Windows.TextWrapping.WrapWithOverflow;
+                mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+                mm.caixa_texto.AcceptsReturn = true;
+                mm.caixa_texto.MaxLength = maxlenght;
+                mm.caixa_texto.Height = 150;
+                mm.caixa_texto.Width = 450;
+                mm.ShowDialog();
+                if (mm.DialogResult.HasValue && mm.DialogResult.Value)
+                {
+                    retorno = mm.caixa_texto.Text;
+                    if (gravar_carregar && retorno != null)
+                    {
+                        INI.Set(arq, "Prompt", chave, retorno);
+                    }
+                }
+                else
+                {
+                    retorno = null;
+                }
+            }
             else
             {
                 if (Valor is double)
