@@ -12,17 +12,83 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
-        public static List<PGO_Material_Peca> GetMateriaPrima(this List<PGO_Peca> pcs)
+        public static List<LT_PMP> Explodir(this List<LT_PMP> materiais)
+        {
+            var mats = materiais.GroupBy(x => x.SAP).ToList();
+            var kanbans = mats.FindAll(x => x.Key.Length == 12).ToList();
+            var skanban = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(kanbans.Select(x => new DLM.db.Linha("MATERIAL", x.Key, "WERKS", "1202")).ToList()));
+
+            var sub_bobinas = mats.FindAll(x => x.Key.Int() > 1100000 && x.Key.Int() < 9000000).ToList();
+            var s_sub_bobinas = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(sub_bobinas.Select(x => new DLM.db.Linha("MATERIAL", x.Key, "WERKS", "1202")).ToList()));
+
+            foreach (var sap in kanbans)
+            {
+                var sks = skanban.FindAll(x => x.Pai == sap.Key && x.Codigo != "");
+                if (sks.Count > 0)
+                {
+                    foreach (var mat in sap)
+                    {
+                        mat.SAP_SubMateriais = sks;
+                    }
+                }
+                else
+                {
+                    foreach (var mat in sap)
+                    {
+                        mat.SAP_Descricao = "Código de material não encontrado no SAP.";
+                    }
+                }
+            }
+
+            foreach (var sap in sub_bobinas)
+            {
+                var sks = s_sub_bobinas.FindAll(x => x.Pai == sap.Key && x.Codigo != "");
+                if (sks.Count > 0)
+                {
+                    foreach (var mat in sap)
+                    {
+                        mat.SAP_SubMateriais = sks;
+                    }
+                }
+                else
+                {
+                    foreach (var mat in sap)
+                    {
+                        mat.SAP_Descricao = "Código de material não encontrado no SAP.";
+                    }
+                }
+            }
+
+            DLM.SAP.SetInfosSAP(materiais);
+
+            var retorno = new List<LT_PMP>();
+            foreach (var material in materiais)
+            {
+                var ms = new List<LT_PMP>();
+                ms.Add(material);
+                if (material.SAP_SubMateriais.Count > 0)
+                {
+                    foreach (var sub in material.SAP_SubMateriais)
+                    {
+                        var nmat = new LT_PMP(sub, material);
+                        ms.Add(nmat);
+                    }
+                }
+                retorno.AddRange(ms);
+            }
+            return retorno;
+        }
+        public static List<LT_PMP> GetMateriaPrima(this List<PGO_Peca> pcs)
         {
             return pcs.SelectMany(x => x.GetMateriaPrima()).ToList();
         }
-        public static List<PGO_Material_Peca> GetMateriaPrima(this PGO_Peca pc)
+        public static List<LT_PMP> GetMateriaPrima(this PGO_Peca pc)
         {
-            var retorno = new List<PGO_Material_Peca>();
+            var retorno = new List<LT_PMP>();
             if (pc.ItemRM is RMA)
             {
                 var p = pc.ItemRM as RMA;
-                var novo = new PGO_Material_Peca(p);
+                var novo = new LT_PMP(p);
                 retorno.Add(novo);
             }
             else if (pc.ItemRM is RME)
@@ -34,7 +100,7 @@ namespace DLM
                     {
                         try
                         {
-                            var novo = new PGO_Material_Peca(pos, m);
+                            var novo = new LT_PMP(pos, m);
                             retorno.Add(novo);
                         }
                         catch (Exception ex)
@@ -46,7 +112,7 @@ namespace DLM
             else if (pc.ItemRM is RMT)
             {
                 var m = pc.ItemRM as RMT;
-                var novo = new PGO_Material_Peca(m);
+                var novo = new LT_PMP(m);
                 retorno.Add(novo);
             }
             else

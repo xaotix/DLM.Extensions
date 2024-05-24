@@ -20,6 +20,7 @@ namespace Conexoes
         }
         public static void Show<T>(this T objeto)
         {
+            if(objeto == null) { return; }
             var objs = objeto.GetLinha(false,false,false).Celulas;
             var mm = new DLM.WPF.DatagridProps();
             mm.Title = $"Propriedades {objeto.ToString()}";
