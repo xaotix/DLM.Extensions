@@ -12,6 +12,41 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
+        public static List<LT_PMP> GetPMP(this RME m)
+        {
+            var retorno = new List<LT_PMP>();
+            foreach (var pos in m.Posicoes)
+            {
+                if (pos.NORMT != TAB_NORMT.PERFIL_I_SOLDADO)
+                {
+                    try
+                    {
+                        var novo = new LT_PMP(pos, m);
+                        retorno.Add(novo);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+            retorno = retorno.Explodir();
+
+            return retorno;
+        }
+
+        public static List<LT_PMP> GetPMP(this RMA m)
+        {
+            var retorno = new List<LT_PMP>();
+            var novo = new LT_PMP(m);
+            retorno.Add(novo);
+            retorno = retorno.Explodir();
+
+            return retorno;
+        }
+        public static List<LT_PMP> Explodir(this LT_PMP material)
+        {
+            return Explodir(new List<LT_PMP> { material });
+        }
         public static List<LT_PMP> Explodir(this List<LT_PMP> materiais)
         {
             var mats = materiais.GroupBy(x => x.SAP).ToList();
