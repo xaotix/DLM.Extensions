@@ -29,23 +29,24 @@ namespace DLM
                     }
                 }
             }
-            retorno = retorno.Explodir();
 
             return retorno;
         }
-
         public static List<LT_PMP> GetPMP(this RMA m)
         {
             var retorno = new List<LT_PMP>();
             var novo = new LT_PMP(m);
             retorno.Add(novo);
-            retorno = retorno.Explodir();
 
             return retorno;
         }
-        public static List<LT_PMP> Explodir(this LT_PMP material)
+        public static List<LT_PMP> GetPMP(this RMT m)
         {
-            return Explodir(new List<LT_PMP> { material });
+            var retorno = new List<LT_PMP>();
+            var novo = new LT_PMP(m);
+            retorno.Add(novo);
+
+            return retorno;
         }
         public static List<LT_PMP> Explodir(this List<LT_PMP> materiais)
         {
@@ -100,7 +101,7 @@ namespace DLM
             foreach (var material in materiais)
             {
                 var ms = new List<LT_PMP>();
-                ms.Add(material);
+              
                 if (material.SAP_SubMateriais.Count > 0)
                 {
                     foreach (var sub in material.SAP_SubMateriais)
@@ -109,15 +110,20 @@ namespace DLM
                         ms.Add(nmat);
                     }
                 }
+                else
+                {
+                    ms.Add(material);
+                }
                 retorno.AddRange(ms);
             }
             return retorno;
         }
-        public static List<LT_PMP> GetMateriaPrima(this List<PGO_Peca> pcs)
+
+        public static List<LT_PMP> GetPMP(this List<PGO_Peca> pcs)
         {
-            return pcs.SelectMany(x => x.GetMateriaPrima()).ToList();
+            return pcs.SelectMany(x => x.GetPMP()).ToList();
         }
-        public static List<LT_PMP> GetMateriaPrima(this PGO_Peca pc)
+        public static List<LT_PMP> GetPMP(this PGO_Peca pc)
         {
             var retorno = new List<LT_PMP>();
             if (pc.ItemRM is RMA)
@@ -156,7 +162,7 @@ namespace DLM
             return retorno;
         }
 
-        public static List<PGO_Peca> GetPecas(this List<Range> ranges)
+        public static List<PGO_Peca> JuntarPecas(this List<Range> ranges)
         {
             var pcs = ranges.SelectMany(x => x.Pecas).ToList();
             return pcs.Juntar();
@@ -166,9 +172,8 @@ namespace DLM
             var peso_antes = Pecas.Sum(x => x.PesoTotal);
 
 
-            var Agrupada = Pecas.GroupBy(x => x.Chave).ToList().Select(x => x.ToList()).ToList();
-            List<DLM.orc.PGO_Peca> Retorno = new List<DLM.orc.PGO_Peca>();
-            var grps = Pecas.GroupBy(x => x.ToString()).ToList().Select(x => x.ToList()).ToList();
+            var Retorno = new List<DLM.orc.PGO_Peca>();
+            var grps = Pecas.GroupBy(x => x.Chave).ToList().Select(x => x.ToList()).ToList();
             foreach (var lista in grps)
             {
                 if (lista.Count == 1)
