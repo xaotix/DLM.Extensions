@@ -47,8 +47,12 @@ namespace Conexoes
                 mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
                 mm.caixa_texto.AcceptsReturn = true;
                 mm.caixa_texto.MaxLength = maxlenght;
-                mm.caixa_texto.Height = 150;
-                mm.caixa_texto.Width = 450;
+                if(maxlenght > 100)
+                {
+                    mm.caixa_texto.Height = 150;
+                    mm.caixa_texto.Width = 450;
+                }
+     
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
