@@ -95,6 +95,15 @@ namespace Conexoes
                 mm.Show();
             }
         }
+        public static void Show(this List<Linha> linhas)
+        {
+
+            if (linhas.Count > 0)
+            {
+                var mm = new WPF.VerTabela(new Tabela(linhas));
+                mm.Show();
+            }
+        }
         public static Linha ListaSelecionar(this Tabela tabela)
         {
             var mm = new WPF.VerTabela(tabela);
