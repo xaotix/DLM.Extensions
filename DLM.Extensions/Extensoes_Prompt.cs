@@ -52,6 +52,10 @@ namespace Conexoes
                     mm.caixa_texto.Height = 150;
                     mm.caixa_texto.Width = 450;
                 }
+                else
+                {
+                    mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled;
+                }
      
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
