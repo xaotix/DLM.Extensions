@@ -127,7 +127,7 @@ namespace Conexoes
         }
 
 
-        public static string Prompt(this string valor, string titulo = "Digite", int max_lenght = 0, bool multilinha = false, bool salvar_carregar = false, [CallerMemberName] string salvar_carregar_chave = "")
+        public static string Prompt(this string valor, string titulo = "Digite", int max_lenght = 50, bool multilinha = false, bool salvar_carregar = false, [CallerMemberName] string salvar_carregar_chave = "")
         {
             var retorno = MainPrompt(titulo, valor, salvar_carregar, "", multilinha, max_lenght);
             if (retorno == null)
