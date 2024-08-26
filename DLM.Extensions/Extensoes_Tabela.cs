@@ -14,6 +14,34 @@ namespace Conexoes
 {
     public static class Extensoes_Tabela
     {
+        public static string GetJSON(this Celula celula)
+        {
+            //"localidade": "São Paulo"
+            return Utilz._Aspas + celula.Coluna + Utilz._Aspas + ": " + Utilz._Aspas + celula.Valor + Utilz._Aspas;
+        }
+        public static string GetJSON(this Linha linha)
+        {
+            string p = "    {\n";
+            for (int i = 0; i < linha.Celulas.Count; i++)
+            {
+                p = p + (i > 0 ? ",\n" : "") + "      " + linha.Celulas[i].GetJSON();
+            }
+            p = p + "\n    }";
+
+            return p;
+        }
+        public static string GetJSON(this Tabela tabela)
+        {
+            string p = "{" +
+                "\n  " + Utilz._Aspas + "Nome" + Utilz._Aspas + ":" + Utilz._Aspas + tabela.Nome + Utilz._Aspas + "," +
+               "\n  " + Utilz._Aspas + "Valores" + Utilz._Aspas + ": \n  [\n";
+            for (int i = 0; i < tabela.Linhas.Count; i++)
+            {
+                p = p + (i > 0 ? ",\n" : "") + tabela.Linhas[i].GetJSON();
+            }
+            p = p + "\n  ]\n}";
+            return p;
+        }
         public static List<List<object>> ToList(this DLM.db.Tabela tabela)
         {
             return tabela.Linhas.Select(x => x.GetValores()).ToList();
