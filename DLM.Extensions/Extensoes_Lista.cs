@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Web.UI;
 
 namespace Conexoes
 {
@@ -73,14 +74,50 @@ namespace Conexoes
         }
         public static int GetPosition<T>(this T objeto, List<T> objetos)
         {
-            for (int i = 0; i < objetos.Count; i++)
+            return objetos.IndexOf(objeto);
+        }
+        public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
+        {
+            var item = list[oldIndex];
+
+            list.RemoveAt(oldIndex);
+
+            list.Insert(newIndex, item);
+        }
+        public static List<T> MoveUP<T>(this List<T> list, List<T> mover)
+        {
+            var nlist = new List<T>();
+            nlist.AddRange(list);
+            if (mover.First().GetPosition(nlist) > 0)
             {
-                if (EqualityComparer<T>.Default.Equals(objetos[i], objeto))
+                foreach (var item in mover)
                 {
-                    return i;
+                    var indx = item.GetPosition(nlist);
+                    nlist.Move(indx, indx - 1);
                 }
             }
-            return -1;
+
+            return nlist;
         }
+        public static List<T> MoveDown<T>(this List<T> list, List<T> mover)
+        {
+            var indexes = new List<int>();
+            var nlist = new List<T>();
+            nlist.AddRange(list);
+            foreach(var item  in mover)
+            {
+                indexes.Add(item.GetPosition(nlist));
+            }
+            if(mover.Last().GetPosition(nlist) < nlist.Count-1)
+            {
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    nlist.Move(mover[i].GetPosition(nlist), indexes[i] + 1);
+                }
+            }
+
+            return nlist;
+        }
+
     }
 }
