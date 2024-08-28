@@ -76,14 +76,18 @@ namespace Conexoes
         {
             return objetos.IndexOf(objeto);
         }
-        public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
+
+        public static List<T> MoveTop<T>(this List<T> list, List<T> mover)
         {
-            var item = list[oldIndex];
-
-            list.RemoveAt(oldIndex);
-
-            list.Insert(newIndex, item);
+            var valor = mover.Last().GetPosition(list);
+            return list.Move(mover, -valor +1);
         }
+        public static List<T> MoveBottom<T>(this List<T> list, List<T> mover)
+        {
+            var valor = mover.Last().GetPosition(list);
+            return list.Move(mover, list.Count - valor);
+        }
+
         public static List<T> MoveUP<T>(this List<T> list, List<T> mover)
         {
             return list.Move(mover, -1);
@@ -101,11 +105,16 @@ namespace Conexoes
             {
                 indexes.Add(item.GetPosition(nlist));
             }
-            if(mover.Last().GetPosition(nlist) < nlist.Count-1)
+            if((places < 0 && indexes.Last() < nlist.Count - places) | (places > 0 && indexes.First() > places))
             {
+                for (int i = 0; i < mover.Count; i++)
+                {
+                    nlist.Remove(mover[i]);
+                }
                 for (int i = 0; i < indexes.Count; i++)
                 {
-                    nlist.Move(mover[i].GetPosition(nlist), indexes[i] + places);
+                    var n_idx = indexes[i] + places;                 
+                    nlist.Insert(n_idx, mover[i]);
                 }
             }
 
