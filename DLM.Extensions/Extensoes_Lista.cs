@@ -86,20 +86,13 @@ namespace Conexoes
         }
         public static List<T> MoveUP<T>(this List<T> list, List<T> mover)
         {
-            var nlist = new List<T>();
-            nlist.AddRange(list);
-            if (mover.First().GetPosition(nlist) > 0)
-            {
-                foreach (var item in mover)
-                {
-                    var indx = item.GetPosition(nlist);
-                    nlist.Move(indx, indx - 1);
-                }
-            }
-
-            return nlist;
+            return list.Move(mover, -1);
         }
         public static List<T> MoveDown<T>(this List<T> list, List<T> mover)
+        {
+            return list.Move(mover, 1);
+        }
+        public static List<T> Move<T>(this List<T> list, List<T> mover, int places)
         {
             var indexes = new List<int>();
             var nlist = new List<T>();
@@ -112,7 +105,7 @@ namespace Conexoes
             {
                 for (int i = 0; i < indexes.Count; i++)
                 {
-                    nlist.Move(mover[i].GetPosition(nlist), indexes[i] + 1);
+                    nlist.Move(mover[i].GetPosition(nlist), indexes[i] + places);
                 }
             }
 
