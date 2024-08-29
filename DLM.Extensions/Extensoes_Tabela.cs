@@ -107,7 +107,7 @@ namespace Conexoes
                 var diferencas = posicao.ToList().GroupBy(x => x.GetChave()).ToList();
                 if (diferencas.Count > 1)
                 {
-                    erros.Add(new Report($"{posicao.Key} => Posição com divergências", string.Join("\n", diferencas.Select(x => x.Key)), DLM.vars.TipoReport.Critico));
+                    erros.Add(new Report($"Posição com divergências", $"{posicao.Key}\n {string.Join("\n", diferencas.Select(x => x.Key))}", DLM.vars.TipoReport.Critico));
                 }
             }
 
