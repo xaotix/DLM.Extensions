@@ -20,8 +20,8 @@ namespace Conexoes
         }
         public static void Show<T>(this T objeto)
         {
-            if(objeto == null) { return; }
-            var objs = objeto.GetLinha(false,false,false).Celulas;
+            if (objeto == null) { return; }
+            var objs = objeto.GetLinha(false, false, false).Celulas;
             var mm = new DLM.WPF.DatagridProps();
             mm.Title = $"Propriedades {objeto.ToString()}";
             mm.Lista.ItemsSource = objs;
@@ -240,11 +240,12 @@ namespace Conexoes
         }
 
 
-        public static void Selecionar(this System.Windows.Controls.ListView view, object objeto)
+        public static void Selecionar<T>(this System.Windows.Controls.ListView view, T objeto)
         {
             if (objeto == null) { return; }
             try
             {
+                view.SelectedItems.Clear();
                 view.SelectedItem = objeto;
                 view.UpdateLayout();
                 if (view.SelectedItem != null)
@@ -256,16 +257,59 @@ namespace Conexoes
             {
             }
         }
-        public static void Selecionar(this System.Windows.Controls.DataGrid view, object objeto)
+        public static void Selecionar<T>(this System.Windows.Controls.DataGrid view, T objeto)
         {
             if (objeto == null) { return; }
             try
             {
+                view.SelectedItems.Clear();
                 view.SelectedItem = objeto;
                 view.UpdateLayout();
                 if (view.SelectedItem != null)
                 {
                     view.ScrollIntoView(view.SelectedItem);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        public static void Selecionar<T>(this System.Windows.Controls.DataGrid view, List<T> objeto)
+        {
+            if (objeto == null) { return; }
+            try
+            {
+                view.SelectedItems.Clear();
+                foreach (T item in objeto)
+                {
+                    view.SelectedItems.Add(item);
+                }
+
+                view.UpdateLayout();
+                if (view.SelectedItems.Count> 0)
+                {
+                    view.ScrollIntoView(view.SelectedItems[0]);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        public static void Selecionar<T>(this System.Windows.Controls.ListView view, List<T> objeto)
+        {
+            if (objeto == null) { return; }
+            try
+            {
+                view.SelectedItems.Clear();
+                foreach (T item in objeto)
+                {
+                    view.SelectedItems.Add(item);
+                }
+
+                view.UpdateLayout();
+                if (view.SelectedItems.Count > 0)
+                {
+                    view.ScrollIntoView(view.SelectedItems[0]);
                 }
             }
             catch (Exception)
