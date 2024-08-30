@@ -79,13 +79,31 @@ namespace Conexoes
 
         public static List<T> MoveTop<T>(this List<T> list, List<T> mover)
         {
-            var valor = mover.Last().GetPosition(list);
-            return list.Move(mover, -valor +1);
+           var retorno = new List<T>();
+            retorno.AddRange(list);
+            foreach (var item in mover)
+            {
+                retorno.Remove(item);
+            }
+            for (int i = 0; i < mover.Count; i++)
+            {
+                retorno.Insert(i, mover[i]);
+            }
+            return retorno;
         }
         public static List<T> MoveBottom<T>(this List<T> list, List<T> mover)
         {
-            var valor = mover.Last().GetPosition(list);
-            return list.Move(mover, list.Count - valor);
+            var retorno = new List<T>();
+            retorno.AddRange(list);
+            foreach (var item in mover)
+            {
+                retorno.Remove(item);
+            }
+            foreach(var item in mover)
+            {
+                retorno.Add(item);
+            }
+            return retorno;
         }
 
         public static List<T> MoveUP<T>(this List<T> list, List<T> mover)
