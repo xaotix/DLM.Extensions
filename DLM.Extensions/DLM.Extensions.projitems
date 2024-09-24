@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_LinhaLiv.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Lista.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_ListasForms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_MDJ.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXFMBS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Node.cs" />
