@@ -363,9 +363,8 @@ namespace Conexoes
             {
                 Nomelayer = "BANZOS";
             }
-            var layer = retorno.GetLayer(Nomelayer, netDxf.AciColor.Yellow, netDxf.Tables.Linetype.ByLayer);
-            var cotas = retorno.GetLayer("COTAS", netDxf.AciColor.Cyan, netDxf.Tables.Linetype.ByLayer);
-            var Nome_banzos = retorno.GetLayer("BANZOS", netDxf.AciColor.Red, netDxf.Tables.Linetype.ByLayer);
+            var lay_banz = retorno.GetLayer(Nomelayer, netDxf.AciColor.Yellow, netDxf.Tables.Linetype.ByLayer);
+            var lay_txt = retorno.GetLayer("TEXTOS", netDxf.AciColor.Cyan, netDxf.Tables.Linetype.ByLayer);
 
 
 
@@ -384,8 +383,8 @@ namespace Conexoes
 
 
 
-            var rect_alma = DLM.desenho.Dxf.Retangulo(bnz.Comprimento, larg_alma, p0.X, p0.Y + (inverter ? 0 : -larg_alma), layer, cor);
-            var txt = DLM.desenho.Dxf.Texto(new P3d(p0.X + bnz.Comprimento / 2, p0.Y - (esc * 15 * (inverter ? 1 : -1))), texto, esc * 5, Nome_banzos);
+            var rect_alma = DLM.desenho.Dxf.Retangulo(bnz.Comprimento, larg_alma, p0.X, p0.Y + (inverter ? 0 : -larg_alma), lay_banz, cor);
+            var txt = DLM.desenho.Dxf.Texto(new P3d(p0.X + bnz.Comprimento / 2, p0.Y - (esc * 15 * (inverter ? 1 : -1))), texto, esc * 5, lay_txt);
 
             var furosDXF = new List<netDxf.Entities.EntityObject>();
 
@@ -419,13 +418,13 @@ namespace Conexoes
                 }
                 foreach (var fr in grp.GetFuros(bnz.Comprimento, 0, 0, !inverter))
                 {
-                    var frDXF = DLM.desenho.Dxf.Furo(new P3d(p0.X + fr.Origem.X, p0.Y + fr.Origem.Y), MB.Diam, 0, 0, layer, corfr);
+                    var frDXF = DLM.desenho.Dxf.Furo(new P3d(p0.X + fr.Origem.X, p0.Y + fr.Origem.Y), MB.Diam, 0, 0, lay_banz, corfr);
                     furosDXF.AddRange(frDXF);
                 }
                 if (leg_nos)
                 {
                     retorno.Entities.Add(DLM.desenho.Dxf.Texto(new P3d(p0.X + grp.X, p0.Y + ((larg_alma + (5 * esc)) * (inverter ? -1 : 1))),
-                    $"{grp.X.String(0)} - {grp.Tipo.ToString()}", esc * 5, cotas, null, inverter ? -90 : 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft));
+                    $"{grp.X.String(0)} - {grp.Tipo.ToString()}", esc * 5, lay_txt, null, inverter ? -90 : 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft));
                 }
             }
 
