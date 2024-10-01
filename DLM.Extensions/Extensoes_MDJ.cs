@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Conexoes
 {
-   public static class Extensoes_MDJ
+    public static class Extensoes_MDJ
     {
         public static List<double> XS(this List<MDJ_Furo> furos)
         {
@@ -281,7 +281,7 @@ namespace Conexoes
             return retorno.GroupBy(x => x.GetLinha()).Select(x => x.First()).ToList();
         }
 
-        public static List<MDJ_Furo> GetDiferencas(this MDJ_Programa atual , MDJ_Programa programa, bool verificar_rebatido = false)
+        public static List<MDJ_Furo> GetDiferencas(this MDJ_Programa atual, MDJ_Programa programa, bool verificar_rebatido = false)
         {
             var frs = new List<MDJ_Furo>();
             var s1 = atual.GetFuros();
@@ -349,14 +349,16 @@ namespace Conexoes
             return frs;
         }
 
-        public static netDxf.DxfDocument GetVista(this MB_Banzo programa, Point p0, double escala, netDxf.DxfDocument retorno = null, netDxf.AciColor cor = null, bool inverter_acumuladas = false, string texto = "", bool criar_bloco = true)
+        public static netDxf.DxfDocument GetVista(this MB_Banzo bnz, P3d p0, double esc, bool inverter = false, netDxf.DxfDocument retorno = null, bool leg_nos = true, bool blk = true)
         {
+            netDxf.AciColor cor = netDxf.AciColor.ByLayer;
+            string texto = bnz.ToString();
             if (retorno == null)
             {
                 retorno = new netDxf.DxfDocument();
             }
 
-            var Nomelayer = programa.Marca;
+            var Nomelayer = texto;
             if (Nomelayer == "")
             {
                 Nomelayer = "BANZOS";
@@ -365,32 +367,29 @@ namespace Conexoes
             var cotas = retorno.GetLayer("COTAS", netDxf.AciColor.Cyan, netDxf.Tables.Linetype.ByLayer);
             var Nome_banzos = retorno.GetLayer("BANZOS", netDxf.AciColor.Red, netDxf.Tables.Linetype.ByLayer);
 
-            if (cor == null)
-            {
-                cor = netDxf.AciColor.ByLayer;
-            }
+
 
 
 
 
             double larg_alma = 128;
 
-   
-            var furos = programa.Furos.SelectMany(x=>x.GetFuros(programa.Comprimento)).ToList();
+
+            var furos = bnz.Furos.SelectMany(x => x.GetFuros(bnz.Comprimento)).ToList();
 
 
-            var estilo = DLM.desenho.Dxf.GetEstilo("COTAS", escala);
+            var estilo = DLM.desenho.Dxf.GetEstilo("COTAS", esc);
 
 
 
 
 
-            var rect_alma = DLM.desenho.Dxf.Retangulo(p0.X + programa.Comprimento, larg_alma, p0.X, p0.Y, layer, cor);
-            var txt = DLM.desenho.Dxf.Texto(new P3d(p0.X + programa.Comprimento/2, p0.Y - (escala * 15)), (texto != "" ? texto + " - " : "") + programa.Marca, escala * 5, Nome_banzos);
+            var rect_alma = DLM.desenho.Dxf.Retangulo(bnz.Comprimento, larg_alma, p0.X, p0.Y + (inverter ? 0 : -larg_alma), layer, cor);
+            var txt = DLM.desenho.Dxf.Texto(new P3d(p0.X + bnz.Comprimento / 2, p0.Y - (esc * 15 * (inverter ? 1 : -1))), texto, esc * 5, Nome_banzos);
 
             var furosDXF = new List<netDxf.Entities.EntityObject>();
 
-            foreach (var grp in programa.Furos)
+            foreach (var grp in bnz.Furos)
             {
                 var corfr = cor = netDxf.AciColor.ByLayer;
 
@@ -400,7 +399,7 @@ namespace Conexoes
                         corfr = netDxf.AciColor.DarkGray;
                         break;
                     case MB_Tipo_Puncao.Vertical:
-                        corfr = netDxf.AciColor.Red;
+                        corfr = netDxf.AciColor.Cyan;
                         break;
                     case MB_Tipo_Puncao.No_Padrao:
                         corfr = netDxf.AciColor.Green;
@@ -418,24 +417,27 @@ namespace Conexoes
                         corfr = netDxf.AciColor.Yellow;
                         break;
                 }
-                foreach (var fr in grp.GetFuros(programa.Comprimento))
+                foreach (var fr in grp.GetFuros(bnz.Comprimento, 0, 0, !inverter))
                 {
-                    var frDXF = DLM.desenho.Dxf.Furo(new P3d(p0.X + fr.Origem.X, p0.Y + fr.Origem.Y), 13, 0, 0, layer, corfr);
+                    var frDXF = DLM.desenho.Dxf.Furo(new P3d(p0.X + fr.Origem.X, p0.Y + fr.Origem.Y), MB.Diam, 0, 0, layer, corfr);
                     furosDXF.AddRange(frDXF);
                 }
-                retorno.Entities.Add(DLM.desenho.Dxf.Texto(new P3d(p0.X + grp.X, p0.Y + larg_alma + (5*escala)), 
-                    $"{grp.X.String(0)} - {grp.Tipo.ToString()}", escala * 5, cotas, null, 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft));
+                if (leg_nos)
+                {
+                    retorno.Entities.Add(DLM.desenho.Dxf.Texto(new P3d(p0.X + grp.X, p0.Y + ((larg_alma + (5 * esc)) * (inverter ? -1 : 1))),
+                    $"{grp.X.String(0)} - {grp.Tipo.ToString()}", esc * 5, cotas, null, inverter ? -90 : 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft));
+                }
             }
 
 
             try
             {
                 /*verifica se ja existe um bloco com mesmo Nome e cria o bloco*/
-                string Nome = programa.Marca;
+                string Nome = bnz.Marca;
                 int c = 0;
                 if (Nome == "")
                 {
-                    Nome = programa.ToString();
+                    Nome = bnz.ToString();
                 }
 
                 bool continuar = true;
@@ -452,7 +454,7 @@ namespace Conexoes
                     }
                 }
 
-                if (criar_bloco)
+                if (blk)
                 {
                     var bloco = new netDxf.Blocks.Block(Nome + (c > 0 ? "_" + c.String(2) : ""));
 
@@ -483,16 +485,10 @@ namespace Conexoes
                         retorno.Entities.Add(f);
                     }
                 }
-
-
-
             }
             catch (Exception)
             {
-
             }
-
-
 
             return retorno;
         }

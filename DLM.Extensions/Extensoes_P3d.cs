@@ -291,7 +291,7 @@ namespace Conexoes
 
 
 
-        public static P3d Mover(this P3d p3d, double Angulo, double Distancia, int decimais = 10)
+        public static P3d Mover(this P3d p3d, double Angulo, double Distancia, int decimais = 4)
         {
             double angleRadians = Angulo.GrausParaRadianos();
             P3d ret = new P3d();
