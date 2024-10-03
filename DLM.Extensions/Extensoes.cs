@@ -532,15 +532,15 @@ namespace Conexoes
                 case TAB_MAKTX.VENEZIANA_FIXA:
                 case TAB_MAKTX.VENEZIANA_MOVEL:
                     return TAB_FAMILIA_GRP_MERCADORIA.VENEZIANA;
-
-
+                case TAB_MAKTX.SIE_RM:
+                    break;
             }
 
 
             return TAB_FAMILIA_GRP_MERCADORIA._DESCONHECIDO;
         }
 
-    
+
         public static List<T> GetChildren<T>(this Window window)
         {
             if(window.Content is Panel)
