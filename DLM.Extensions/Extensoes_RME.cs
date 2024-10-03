@@ -1,4 +1,5 @@
 ﻿using Conexoes.Macros.Escada;
+using DLM.db;
 using DLM.encoder;
 using DLM.vars;
 using System;
@@ -673,6 +674,90 @@ namespace Conexoes
                 }
             }
             return retorno;
+        }
+
+        public static void GerarReport(this List<RME> rmes, string Arquivo)
+        {
+            var Linhas = new List<Linha>();
+            Linhas.AddRange(rmes.SelectMany(x => x.GetLinhasSap()).ToList());
+            var tb = new Tabela(Linhas, Cfg.Init.SufixSAP_RME);
+            tb.GerarExcel(Arquivo, true, false);
+        }
+        public static List<Report> GerarCAMsDiagonais(this List<RME> rmes, string Destino_CAM)
+        {
+            var erros = new List<Report>();
+            var fbus = rmes.FindAll(x => x.TIPO.Contains("FLANGE BRACE"));
+            var diags_mdj = rmes
+                .FindAll(x => x.TIPO.StartsW("DSD")
+                            | x.TIPO.StartsW("MTD")
+                            | x.TIPO.StartsW("DLD")
+                            | x.TIPO.StartsW("MTE")
+                            | x.TIPO.StartsW("MTI"))
+                ;
+
+            var diags_medabar = rmes.FindAll(x => x.TIPO == "MD");
+
+            var w = Utilz.Wait(rmes.Count, "Gerando CAMs...");
+            var grupos_fb = fbus.GroupBy(x => x.COD_DB);
+            foreach (var fbgrp in grupos_fb)
+            {
+                var igual = DBases.GetFBsConfig().Find(x => x.Prefixo == fbgrp.Key);
+                if (igual == null)
+                {
+                    erros.Add(new Report("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Não há configuração para este tipo de flange brace. Consulte padronização.", TipoReport.Critico));
+                }
+                else
+                {
+                    foreach (var fb in fbgrp.ToList())
+                    {
+                        var ncam = igual.Clonar();
+                        ncam.Comprimento = fb.COMP_USER;
+                        ncam.Quantidade = fb.Quantidade.Int();
+                        var fp = ncam.GetCAM(Destino_CAM, false, fb.GetInfo(), fb.COMP_USER, fb.CODIGOFIM);
+                        if (!fp)
+                        {
+                            erros.Add(new Report("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Há algo de errado na configuração padrão. Consulte padronização.", TipoReport.Critico));
+                        }
+                        w.somaProgresso();
+                    }
+                }
+
+            }
+
+            foreach (var diag in diags_mdj)
+            {
+                var arqDiagonal = $"{Destino_CAM}{diag.CODIGOFIM}.{Cfg.Init.EXT_CAM}";
+                var nDiagonal = Utilz.Medajoist.GetCamDiagonalMedajoist(arqDiagonal, diag);
+                if (nDiagonal != null)
+                {
+                    nDiagonal.CopiarInfo(diag.GetInfo());
+                    nDiagonal.Cabecalho.Marca = diag.CODIGOFIM;
+                    nDiagonal.Gerar();
+                }
+                else
+                {
+                    erros.Add(new Report($"Não foi possível gerar o {Cfg.Init.EXT_CAM}", diag.COD_DB, TipoReport.Critico));
+                }
+                w.somaProgresso();
+            }
+            foreach (var diag in diags_medabar)
+            {
+                var arqDiagonal = $"{Destino_CAM}{diag.CODIGOFIM}.{Cfg.Init.EXT_CAM}";
+                var nDiagonal = Utilz.Medabar.GetCamDiagonalMedabar(arqDiagonal, diag);
+                if (nDiagonal != null)
+                {
+                    nDiagonal.CopiarInfo(diag.GetInfo());
+                    nDiagonal.Cabecalho.Marca = diag.CODIGOFIM;
+                    nDiagonal.Gerar();
+                }
+                else
+                {
+                    erros.Add(new Report($"Não foi possível gerar o {Cfg.Init.EXT_CAM}", diag.COD_DB, TipoReport.Critico));
+                }
+                w.somaProgresso();
+            }
+            w.Close();
+            return erros;
         }
     }
 }
