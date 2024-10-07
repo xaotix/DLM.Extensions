@@ -106,7 +106,7 @@ namespace DLM.desenho
             retorno.ExtLineOffset = 2.5;
             retorno.ArrowSize = 1;
             retorno.TextHeight = 2;
-            retorno.TextStyle = new TextStyle("ROMANS","romans__.ttf");
+            retorno.TextStyle = new TextStyle("ROMANS", "romans__.ttf");
             retorno.TextStyle.Height = 0;
             retorno.TextStyle.WidthFactor = 0.7;
             retorno.TextColor = AciColor.Cyan;
@@ -549,6 +549,18 @@ namespace DLM.desenho
             }
 
             return poly;
+        }
+
+        public static AciColor ToAciColor(this System.Windows.Media.SolidColorBrush mediacolor)
+        {
+            var dColor = System.Drawing.Color.FromArgb(
+                                     mediacolor.Color.A,
+                                     mediacolor.Color.R, 
+                                     mediacolor.Color.G, 
+                                     mediacolor.Color.B
+                                     );
+            var retorno = new AciColor(dColor);
+            return retorno;
         }
     }
 }

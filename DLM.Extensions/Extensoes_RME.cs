@@ -592,9 +592,9 @@ namespace Conexoes
             var retorno = new List<RMA>();
             var distinct =
                                 Origem.FindAll(x => x != null).GroupBy(x => x.SAP);
-            foreach(var p in distinct)
+            foreach (var p in distinct)
             {
-                if(p.ToList().Count>1)
+                if (p.ToList().Count > 1)
                 {
                     retorno.Add(p.First().Clonar(p.Sum(x => x.Quantidade), string.Join(", ", p.Select(x => x.Observacoes)).Esquerda(30)));
                 }
@@ -678,10 +678,27 @@ namespace Conexoes
 
         public static void GerarReport(this List<RME> rmes, string Arquivo)
         {
-            var Linhas = new List<Linha>();
-            Linhas.AddRange(rmes.SelectMany(x => x.GetLinhasSap()).ToList());
-            var tb = new Tabela(Linhas, Cfg.Init.SufixSAP_RME);
-            tb.GerarExcel(Arquivo, true, false);
+            if (rmes.Count > 0)
+            {
+                var Linhas = new List<Linha>();
+                Linhas.AddRange(rmes.SelectMany(x => x.GetLinhasSap()).ToList());
+                var tb = new Tabela(Linhas, Cfg.Init.SufixSAP_RME);
+                tb.GerarExcel(Arquivo, true, false);
+            }
+        }
+        public static void GerarReport(this List<RMA> rmas, string Arquivo, string nome_pdf)
+        {
+            if (rmas.Count > 0)
+            {
+                var Linhas_RMA = new List<Linha>();
+                Linhas_RMA.AddRange(rmas.Select(x => x.GetLinhaSAP(nome_pdf)).ToList());
+
+                if (Linhas_RMA.Count > 0)
+                {
+                    var tb = new Tabela(Linhas_RMA, Cfg.Init.SufixSAP_RMA);
+                    tb.GerarExcel(Arquivo, true, false, true, true);
+                }
+            }
         }
         public static List<Report> GerarCAMsDiagonais(this List<RME> rmes, string Destino_CAM)
         {
