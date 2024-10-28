@@ -7,6 +7,31 @@ namespace Conexoes
 {
     public static class Extensoes_Data
     {
+        public static DateTime LastDay(this DateTime data)
+        {
+            int diasNoMes = DateTime.DaysInMonth(data.Year, data.Month);
+            var last = new DateTime(data.Year, data.Month, diasNoMes);
+            return last;
+        }
+        public static DateTime FirstDay(this DateTime data)
+        {
+            var ret = new DateTime(data.Year, data.Month, 1);
+
+            return ret;
+        }
+        public static List<string> GetRangeMeses(this DateTime inicio, DateTime fim)
+        {
+            var retorno = new List<string>();
+
+            var dt = inicio.FirstDay();
+            while(dt<fim)
+            {
+                retorno.Add(dt.ToString("MM/yyyy"));
+                dt = dt.AddMonths(1);
+            }
+            
+            return retorno;
+        }
         public static double GetPorcentagem(this DateTime data, DateTime inicio, DateTime fim)
         {
             if(data<inicio)

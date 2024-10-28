@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -783,6 +784,16 @@ namespace Conexoes
         public static void SalvarLista(this List<string> linhas, string arquivo, bool substituir = true)
         {
             Conexoes.Utilz.Arquivo.Gravar(arquivo, linhas, null, substituir);
+        }
+
+
+        public static void SetPtBr(this System.Windows.Window window)
+        {
+            window.Language = XmlLanguage.GetLanguage(Conexoes.Utilz._BR.IetfLanguageTag);
+        }
+        public static void SetEnUs(this System.Windows.Window window)
+        {
+            window.Language = XmlLanguage.GetLanguage(Conexoes.Utilz._US.IetfLanguageTag);
         }
     }
 }

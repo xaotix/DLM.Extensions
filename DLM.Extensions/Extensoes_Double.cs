@@ -1,11 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static string ToKMB(this double num)
+        {
+            if (num > 999999999 || num < -999999999)
+            {
+                return num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
+            }
+            else if (num > 999999 || num < -999999)
+            {
+                return num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
+            }
+            else if (num > 999 || num < -999)
+            {
+                return num.ToString("0,.# K", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                return num.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+        public static string ToKg(this double num)
+        {
+            if(num > 999 | num < -999)
+            {
+                num = num / 1000;
+
+                return num.ToString("N0") + " Ton";
+            }
+
+            return num.ToString("N0") + " Kg";
+        }
+        public static List<double> MediaMovel(this List<double> valores)
+        {
+            var mediaMovel = new List<double>();
+
+            // Calcula a média móvel para cada período
+            for (int i = 0; i < valores.Count; i++)
+            {
+                // Calcula a média para o período atual
+                double media = valores.Take(i + 1).Average();
+
+                // Adiciona a média ao resultado
+                mediaMovel.Add(media);
+            }
+
+            return mediaMovel;
+        }
         public static List<double> GetRange(this double max, double comp, double min = 0)
         {
             var retorno = new List<double>();
@@ -137,6 +184,12 @@ namespace Conexoes
         public static double ArredondarMultiplo(this double valor, double multiplo)
         {
             var valor_fim = valor;
+
+            var neg = valor_fim < 0;
+            if(neg)
+            {
+                valor_fim = valor_fim.Abs();
+            }
             if (multiplo <= 0)
             {
                 valor_fim = valor;
@@ -184,7 +237,10 @@ namespace Conexoes
                 valor_fim += multiplo;
             }
 
-
+            if(neg)
+            {
+                valor_fim *= -1;
+            }
             return valor_fim;
         }
         public static double ArredondarMultiplo(this double valor, int multiplo)

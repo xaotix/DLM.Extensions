@@ -121,7 +121,7 @@ namespace Conexoes
             string txt = Origem;
             if (txt.Length > MaxComp)
             {
-                txt = Origem.Substring(0, MaxComp) + (pontilhado ? ".." : "");
+                txt = Origem.Substring(0, MaxComp) + (pontilhado ? "..." : "");
             }
             return txt;
         }
