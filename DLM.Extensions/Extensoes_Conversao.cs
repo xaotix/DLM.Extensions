@@ -12,6 +12,7 @@ namespace Conexoes
         {
             return Valor.Round(decimais).ToString($"F{decimais}", CultureInfo.InvariantCulture).PadLeft(padleft, padding);
         }
+
         public static string String(this int Valor, int padleft = 0, char padding = '0')
         {
             return Valor.ToString().PadLeft(padleft, padding);
