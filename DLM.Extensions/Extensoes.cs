@@ -766,17 +766,17 @@ namespace Conexoes
 
         public static bool Valido(this DateTime data)
         {
-            return data > Cfg.Init.DataDummy();
+            return data > Cfg.Init.DataDummy;
         }
         public static bool Valido(this DateTime? data)
         {
-            return data > Cfg.Init.DataDummy();
+            return data > Cfg.Init.DataDummy;
         }
         public static DateTime GetValue(this DateTime? data)
         {
             if(data==null)
             {
-                return Cfg.Init.DataDummy();
+                return Cfg.Init.DataDummy;
             }
             return data.Value;
         }

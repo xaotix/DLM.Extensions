@@ -24,6 +24,10 @@ namespace Conexoes
             }
             return null;
         }
+        public static string AbrirString(this string extensao)
+        {
+            return Conexoes.Utilz.Abrir_String(extensao);
+        }
         public static void Gravar(this List<List<string>> linhas, string extensao = "csv")
         {
             linhas.Select(x => string.Join(";", x)).ToList().Gravar(extensao);

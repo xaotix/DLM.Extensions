@@ -474,7 +474,8 @@ namespace Conexoes
                 }
                 else if(prop == "nullable`1")
                 {
-                    if(l.PropertyType.FullName.Contains("System.DateTime"))
+                    var full = l.PropertyType.FullName;
+                    if (full.Contains("System.DateTime") | full.Contains("System.Double"))
                     {
                         retorno.Add(l);
                     }

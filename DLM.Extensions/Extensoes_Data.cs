@@ -19,6 +19,33 @@ namespace Conexoes
 
             return ret;
         }
+        public static List<DateTime> GetDatasMes(this DateTime data)
+        {
+            return GetRangeDatas(data.FirstDay(), data.LastDay());
+        }
+        public static List<DateTime> GetRangeDatas(this DateTime startDate, DateTime endDate)
+        {
+            if (endDate < startDate)
+            {
+                var ssstart = new DateTime(startDate.Ticks);
+                var ssend = new DateTime(endDate.Ticks);
+                endDate = ssstart;
+                startDate = ssend;
+            }
+            if ((endDate - startDate).Days < 1)
+            {
+                return new List<DateTime>();
+            }
+            var allDates = new List<DateTime>();
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                allDates.Add(date);
+
+
+
+            return allDates;
+
+        }
         public static List<string> GetRangeMeses(this DateTime inicio, DateTime fim)
         {
             var retorno = new List<string>();
@@ -52,7 +79,7 @@ namespace Conexoes
         }
         public static DateTime? GetMin(this List<DateTime> dateTimes)
         {
-            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy());
+            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
             if(datas.Count>0)
             {
                 return datas.Min();
@@ -61,7 +88,7 @@ namespace Conexoes
         }
         public static DateTime? GetMin(this List<DateTime?> dateTimes)
         {
-            var datas = dateTimes.FindAll(x=>x!=null).FindAll(x => x > DLM.vars.Cfg.Init.DataDummy());
+            var datas = dateTimes.FindAll(x=>x!=null).FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
             if (datas.Count > 0)
             {
                 return datas.Min();
@@ -70,7 +97,7 @@ namespace Conexoes
         }
         public static DateTime? GetMax(this List<DateTime> dateTimes)
         {
-            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy());
+            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
             if (datas.Count > 0)
             {
                 return datas.Max();
@@ -79,7 +106,7 @@ namespace Conexoes
         }
         public static DateTime? GetMax(this List<DateTime?> dateTimes)
         {
-            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy());
+            var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
             if (datas.Count > 0)
             {
                 return datas.Max();

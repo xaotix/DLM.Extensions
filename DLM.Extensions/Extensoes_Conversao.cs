@@ -229,7 +229,7 @@ namespace Conexoes
                 
             }
 
-            return Cfg.Init.DataDummy();
+            return Cfg.Init.DataDummy;
         }
         public static double Double(this XElement x, int decimais = 9)
         {

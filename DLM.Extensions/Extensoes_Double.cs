@@ -7,6 +7,27 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static string ToPCT(this double num, int decimais = 2)
+        {
+            return num.ToString($"P{decimais}");
+        }
+        public static string ToFin(this double num, int decimais = 3)
+        {
+            bool neg = false;
+            if(num<0)
+            {
+                neg = true;
+                num = num.Abs();
+            }
+
+            var ret = num.ToString($"N{decimais}");
+
+            if(neg)
+            {
+                ret = $"({ret})";
+            }
+            return ret;
+        }
         public static string ToKMB(this double num)
         {
             if (num > 999999999 || num < -999999999)
@@ -19,7 +40,7 @@ namespace Conexoes
             }
             else if (num > 999 || num < -999)
             {
-                return num.ToString("0,.# K", CultureInfo.InvariantCulture);
+                return num.ToString("0,.K", CultureInfo.InvariantCulture);
             }
             else
             {

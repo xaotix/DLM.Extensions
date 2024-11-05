@@ -18,6 +18,51 @@ namespace Conexoes
                 }
             }
             return txt;
+        } 
+        public static string FirstCharToUpper(this string text)
+        {
+
+            if(text==null)
+            {
+                return null;
+            }
+            else if (text.Length == 0)
+            {
+                return "";
+            }
+            else if (text.Length == 1)
+            {
+                return text.ToUpper();
+            }
+            else
+            {
+                var str_join = "";
+                var strs = text.Split(' ').ToList();
+                for (int i = 0; i < strs.Count; i++)
+                {
+                    var st = strs[i];
+                    if(i>0)
+                    {
+                        str_join += " ";
+                    }
+                    if(st.Length>0)
+                    {
+                        if(st.Length == 1)
+                        {
+                            str_join += st.ToUpper();
+                        }
+                        else
+                        {
+                            str_join += char.ToUpper(st[0]) + st.Substring(1).ToLower();
+                        }
+                    }
+                    else
+                    {
+                        str_join += " ";
+                    }
+                }
+                return str_join;
+            }
         }
         public static bool StartsW(this string txt, params string[] valores)
         {
