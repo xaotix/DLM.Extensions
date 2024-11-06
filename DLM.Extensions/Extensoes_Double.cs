@@ -9,6 +9,10 @@ namespace Conexoes
     {
         public static string ToPCT(this double num, int decimais = 2)
         {
+            if (num == 0)
+            {
+                return "";
+            }
             return num.ToString($"P{decimais}");
         }
         public static string ToFin(this double num, int decimais = 3)

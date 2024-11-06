@@ -59,6 +59,22 @@ namespace Conexoes
             
             return retorno;
         }
+        public static List<int> GetRangeAnos(this DateTime inicio, DateTime fim)
+        {
+            var retorno = new List<int>();
+
+            var ff = new DateTime(fim.Year,01,01);
+            var ii = new DateTime(inicio.Year, 01, 01);
+            while (ff > ii)
+            {
+                retorno.Add(ff.Year);
+                ff = ff.AddYears(-1);
+            }
+            retorno.Add(fim.Year);
+            retorno = retorno.Distinct().ToList();
+
+            return retorno;
+        }
         public static double GetPorcentagem(this DateTime data, DateTime inicio, DateTime fim)
         {
             if(data<inicio)
