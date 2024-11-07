@@ -32,28 +32,36 @@ namespace Conexoes
             }
             return ret;
         }
-        public static string ToKMB(this double num)
+        public static string ToKMB(this double num, string prefix = "")
         {
-            if (num > 999999999 || num < -999999999)
+            if (num == 0)
             {
-                return num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
+                return "";
+            }
+            else if (num > 999999999 || num < -999999999)
+            {
+                return prefix + num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
             }
             else if (num > 999999 || num < -999999)
             {
-                return num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
+                return prefix + num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
             }
             else if (num > 999 || num < -999)
             {
-                return num.ToString("0,.K", CultureInfo.InvariantCulture);
+                return prefix + num.ToString("0,.K", CultureInfo.InvariantCulture);
             }
             else
             {
-                return num.ToString(CultureInfo.InvariantCulture);
+                return prefix + num.ToString(CultureInfo.InvariantCulture);
             }
         }
         public static string ToKg(this double num)
         {
-            if(num > 999 | num < -999)
+            if(num == 0)
+            {
+                return "";
+            }
+            else if(num > 999 | num < -999)
             {
                 num = num / 1000;
 
