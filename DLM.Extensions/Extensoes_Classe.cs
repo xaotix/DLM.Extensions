@@ -161,14 +161,19 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor.Boolean());
                 }
-                else if (prop.StartsWith("int"))
-                {
-                    Propriedade.SetValue(Objeto, Valor.Int());
-                }
                 else if (prop.StartsWith("long"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Long());
                 }
+                else if (prop.StartsWith("int64"))
+                {
+                    Propriedade.SetValue(Objeto, Valor.Long());
+                }
+                else if (prop.StartsWith("int"))
+                {
+                    Propriedade.SetValue(Objeto, Valor.Int());
+                }
+
                 else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contains("System.DateTime")))
                 {
                     Propriedade.SetValue(Objeto, Valor.DataNull());
