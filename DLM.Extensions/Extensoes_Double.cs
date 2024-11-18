@@ -7,6 +7,14 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static bool IsValid(this double d)
+        {
+            if (Double.IsNaN(d) || Double.IsPositiveInfinity(d) || Double.IsNegativeInfinity(d))
+            {
+                return false;
+            }
+            return true;
+        }
         public static string ToPCT(this double num, int decimais = 2)
         {
             if (num == 0)
