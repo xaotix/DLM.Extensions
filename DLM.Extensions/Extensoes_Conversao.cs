@@ -171,11 +171,27 @@ namespace Conexoes
                                 {
                                     if (pcs[0] > 1001)
                                     {
-                                        return new DateTime(pcs[0], pcs[1], pcs[2]);
+                                        var dt = new DateTime(pcs[0], pcs[1], pcs[2]);
+                                        if(dt.Year > 1988)
+                                        {
+                                            return dt;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
                                     }
-                                    else if(pcs[2] > 1988)
+                                    else if(pcs[2] > 1001)
                                     {
-                                        return new DateTime(pcs[2], pcs[1], pcs[0]);
+                                        var dt = new DateTime(pcs[2], pcs[1], pcs[0]);
+                                        if(dt.Year> 1988)
+                                        {
+                                            return dt;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
                                     }
                                 }
                             }
