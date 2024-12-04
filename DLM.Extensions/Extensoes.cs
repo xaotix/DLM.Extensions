@@ -554,6 +554,11 @@ namespace Conexoes
                 var item = window.Content as Grid;
                 return GetChildren<T>(item);
             }
+            else if (window.Content is TabControl)
+            {
+                var item = window.Content as TabControl;
+                return GetChildren<T>(item);
+            }
             return new List<T>();
         }
         public static List<T> GetChildren<T>(this Panel panel)
