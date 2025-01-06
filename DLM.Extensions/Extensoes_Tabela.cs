@@ -107,8 +107,8 @@ namespace Conexoes
                 var diferencas = posicao.ToList().GroupBy(x => x.GetChave()).ToList();
                 if (diferencas.Count > 1)
                 {
-                    erros.Add(new Report($"Posição com divergências", 
-                        $"\nPrancha(s)={string.Join(", ", posicao.ToList().GroupBy(x=>x.Arquivo).Select(x=>x.Key))}" +
+                    erros.Add(new Report($"Posição com divergências",
+                        $"\nPrancha(s)={string.Join(", ", posicao.ToList().GroupBy(x => x.Arquivo).Select(x => x.Key))}" +
                         $"\nDivergências:\n{posicao.Key}\n {string.Join("\n", diferencas.Select(x => x.Key.TrimStart().TrimEnd()))}", DLM.vars.TipoReport.Critico));
                 }
             }
@@ -119,7 +119,7 @@ namespace Conexoes
 
         public static void Show(this Tabela tabela)
         {
-            if(tabela.Linhas.Count>0)
+            if (tabela.Linhas.Count > 0)
             {
                 var mm = new WPF.VerTabela(tabela);
                 mm.Show();
@@ -197,31 +197,7 @@ namespace Conexoes
         }
         public static bool GerarExcel(this Tabela tabela, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null)
         {
-            if (destino == null)
-            {
-                destino = "xlsx".SalvarArquivo();
-            }
-            if (destino == null) { return false; }
-            if (destino.Length == 0) { return false; }
-
-
-            var pasta = destino.getPasta();
-            pasta.CreateDirectory();
-
-            if (destino.Delete())
-            {
-                if (tabela.Count > 0)
-                {
-                    Utilz.Excel.GerarExcel(destino, new List<Tabela> { tabela }, template, cabecalho, zerar_se_null, congelar);
-                    if (abrir)
-                    {
-                        destino.Abrir();
-                    }
-                    return destino.Exists();
-                }
-            }
-
-            return false;
+            return GerarExcel(new List<Tabela> { tabela }, destino, cabecalho, abrir, congelar, zerar_se_null, template);
         }
         public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null)
         {
@@ -268,12 +244,12 @@ namespace Conexoes
                 var nLinhas = linhas.Count;
 
                 var headers = new List<string>();
-                if(primeira_linha_cabecalho)
+                if (primeira_linha_cabecalho)
                 {
                     headers.AddRange(linhas[0]);
-                    if(headers.Count< nColunas)
+                    if (headers.Count < nColunas)
                     {
-                        for (int i = linhas[0].Count-1; i < nColunas; i++)
+                        for (int i = linhas[0].Count - 1; i < nColunas; i++)
                         {
                             headers.Add($"COLUNA_{i + 1}");
                         }
