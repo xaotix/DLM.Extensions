@@ -24,7 +24,7 @@ namespace DLM
                         var novo = new LT_PMP(pos, m);
                         retorno.Add(novo);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                 }
@@ -144,7 +144,7 @@ namespace DLM
                             var novo = new LT_PMP(pos, m);
                             retorno.Add(novo);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         }
                     }
