@@ -173,16 +173,16 @@ namespace DLM
 
 
             var Retorno = new List<DLM.orc.PGO_Peca>();
-            var grps = Pecas.GroupBy(x => x.Chave).ToList().Select(x => x.ToList()).ToList();
+            var grps = Pecas.GroupBy(x => x.Chave).ToList();
             foreach (var lista in grps)
             {
-                if (lista.Count == 1)
+                if (lista.Count() == 1)
                 {
                     Retorno.Add(lista.First());
                 }
                 else
                 {
-                    var n_peca = new PGO_Peca(lista);
+                    var n_peca = new PGO_Peca(lista.ToList());
                     Retorno.Add(n_peca);
                 }
             }
