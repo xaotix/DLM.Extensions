@@ -224,14 +224,32 @@ namespace Conexoes
                                 var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
                                 if (pcs.Count() >= 3)
                                 {
+                                    var dt = new DateTime();
                                     if (pcs[0] > 1000)
                                     {
-                                        return new DateTime(pcs[0], pcs[1], pcs[2]);
+                                        dt = new DateTime(pcs[0], pcs[1], pcs[2]);
                                     }
                                     else
                                     {
-                                        return new DateTime(pcs[2], pcs[1], pcs[0]);
+                                        dt = new DateTime(pcs[2], pcs[1], pcs[0]);
                                     }
+
+                                    if(pcs.Count()>3)
+                                    {
+                                        var hrs = vlr.Split(' ');
+                                        if(hrs.Count()> 1)
+                                        {
+                                            hrs = hrs[1].Split(':');
+                                            if(hrs.Count() == 3)
+                                            {
+                                                dt.AddHours(hrs[0].Int());
+                                                dt.AddMinutes(hrs[1].Int());
+                                                dt.AddSeconds(hrs[2].Int());
+                                            }
+                                        }
+                                    }
+
+                                    return dt;
                                 }
                             }
                             return Convert.ToDateTime(vlr);
