@@ -620,6 +620,13 @@ namespace Conexoes
         public static List<T> GetChildren<T>(this Selector subpanel)
         {
             List<T> Retorno = new List<T>();
+            foreach(var tab in subpanel.Items)
+            {
+                if(tab is T)
+                {
+                    Retorno.Add(tab.As<T>());
+                }
+            }
 
             foreach (var tab in subpanel.Items.OfType<HeaderedContentControl>())
             {

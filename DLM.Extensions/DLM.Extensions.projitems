@@ -49,8 +49,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_String.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Tabcontrol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Tabela.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Traducao.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_TreeView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Trigonometria.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ItemsControlFilter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Directory.Build.props" />
   </ItemGroup>
 </Project>
