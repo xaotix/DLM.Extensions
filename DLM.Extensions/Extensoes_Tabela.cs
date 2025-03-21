@@ -199,7 +199,7 @@ namespace Conexoes
         {
             return GerarExcel(new List<Tabela> { tabela }, destino, cabecalho, abrir, congelar, zerar_se_null, template);
         }
-        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null)
+        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null, bool girar_cabecalho = true)
         {
             if (destino == null)
             {
@@ -216,7 +216,7 @@ namespace Conexoes
             {
                 if (tabelas.Count > 0)
                 {
-                    Utilz.Excel.GerarExcel(destino, tabelas, template, cabecalho, zerar_se_null, congelar);
+                    Utilz.Excel.GerarExcel(destino, tabelas, template, cabecalho, zerar_se_null, congelar,girar_cabecalho);
                     if (abrir)
                     {
                         destino.Abrir();
