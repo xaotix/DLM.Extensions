@@ -157,110 +157,77 @@ namespace Conexoes
         {
             if (Data != null)
             {
-                var vlr = Data.ToString();
-                if (vlr.Length > 0)
-                {
-                    try
-                    {
-                        if (!vlr.Contains("0000") && !vlr.Contains("0001"))
-                        {
-                            if (vlr.Contains(@"/") | vlr.Contains("-"))
-                            {
-                                var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
-                                if (pcs.Count() >= 3)
-                                {
-                                    if (pcs[0] > 1001)
-                                    {
-                                        var dt = new DateTime(pcs[0], pcs[1], pcs[2]);
-                                        if(dt.Year > 1988)
-                                        {
-                                            return dt;
-                                        }
-                                        else
-                                        {
-                                            return null;
-                                        }
-                                    }
-                                    else if(pcs[2] > 1001)
-                                    {
-                                        var dt = new DateTime(pcs[2], pcs[1], pcs[0]);
-                                        if(dt.Year> 1988)
-                                        {
-                                            return dt;
-                                        }
-                                        else
-                                        {
-                                            return null;
-                                        }
-                                    }
-                                }
-                            }
-                            return Convert.ToDateTime(vlr);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        DLM.log.Log(ex);
-                    }
-                }
-
+                return GetDateTime(Data.ToString());
             }
 
             return null;
         }
+
+        private static DateTime? GetDateTime(string vlr)
+        {
+            if (vlr.Length > 0)
+            {
+                try
+                {
+                    if (!vlr.Contains("0000") && !vlr.Contains("0001"))
+                    {
+                        if (vlr.Contains(@"/") | vlr.Contains("-"))
+                        {
+                            var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
+                            if (pcs.Count() >= 3)
+                            {
+                                var dt = new DateTime();
+                                if (pcs[0] > 1000)
+                                {
+                                    dt = new DateTime(pcs[0], pcs[1], pcs[2]);
+                                }
+                                else
+                                {
+                                    dt = new DateTime(pcs[2], pcs[1], pcs[0]);
+                                }
+
+                                if (pcs.Count() > 3)
+                                {
+                                    var times = vlr.Split(' ');
+                                    if (times.Count() > 1)
+                                    {
+                                        if (times[1].Replace(":", "").Replace("0", "").Length > 0)
+                                        {
+                                            var hrs = times[1].Split(':');
+                                            if (hrs.Count() == 3)
+                                            {
+                                                dt = dt.AddHours(hrs[0].Double());
+                                                dt = dt.AddMinutes(hrs[1].Double());
+                                                dt = dt.AddSeconds(hrs[2].Double());
+                                            }
+                                        }
+                                    }
+                                }
+
+                                return dt;
+                            }
+                        }
+                        return Convert.ToDateTime(vlr);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DLM.log.Log(ex);
+                }
+            }
+            return null;
+        }
+
         public static DateTime Data<T>(this T Data)
         {
             if (Data != null)
             {
-                var vlr = Data.ToString();
-                if(vlr.Length>0)
+                var dt = GetDateTime(Data.ToString());
+                if (dt != null)
                 {
-                    try
-                    {
-                        if (!vlr.Contains("0000") && !vlr.Contains("0001"))
-                        {
-                            if (vlr.Contains(@"/") | vlr.Contains("-"))
-                            {
-                                var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
-                                if (pcs.Count() >= 3)
-                                {
-                                    var dt = new DateTime();
-                                    if (pcs[0] > 1000)
-                                    {
-                                        dt = new DateTime(pcs[0], pcs[1], pcs[2]);
-                                    }
-                                    else
-                                    {
-                                        dt = new DateTime(pcs[2], pcs[1], pcs[0]);
-                                    }
-
-                                    if(pcs.Count()>3)
-                                    {
-                                        var hrs = vlr.Split(' ');
-                                        if(hrs.Count()> 1)
-                                        {
-                                            hrs = hrs[1].Split(':');
-                                            if(hrs.Count() == 3)
-                                            {
-                                                dt.AddHours(hrs[0].Int());
-                                                dt.AddMinutes(hrs[1].Int());
-                                                dt.AddSeconds(hrs[2].Int());
-                                            }
-                                        }
-                                    }
-
-                                    return dt;
-                                }
-                            }
-                            return Convert.ToDateTime(vlr);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        DLM.log.Log(ex);
-                    }
+                    return dt.Value;
                 }
-                
+
             }
 
             return Cfg.Init.DataDummy;
