@@ -7,11 +7,35 @@ namespace Conexoes
 {
     public static class Extensoes_Data
     {
+        public static string ToShortDateString(this DateTime? dateTime)
+        {
+            if (dateTime != null)
+            {
+                return dateTime.Value.ToShortDateString();
+            }
+            return "";
+        }
         public static DateTime LastDay(this DateTime data)
         {
             int diasNoMes = DateTime.DaysInMonth(data.Year, data.Month);
             var last = new DateTime(data.Year, data.Month, diasNoMes);
             return last;
+        }
+        public static DateTime? LastDay(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.LastDay();
+            }
+            return null;
+        }
+        public static DateTime? FirstDay(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.FirstDay();
+            }
+            return null;
         }
         public static DateTime FirstDay(this DateTime data)
         {
@@ -51,19 +75,19 @@ namespace Conexoes
             var retorno = new List<string>();
 
             var dt = inicio.FirstDay();
-            while(dt<fim)
+            while (dt < fim)
             {
                 retorno.Add(dt.ToString("MM/yyyy"));
                 dt = dt.AddMonths(1);
             }
-            
+
             return retorno;
         }
         public static List<int> GetRangeAnos(this DateTime inicio, DateTime fim)
         {
             var retorno = new List<int>();
 
-            var ff = new DateTime(fim.Year,01,01);
+            var ff = new DateTime(fim.Year, 01, 01);
             var ii = new DateTime(inicio.Year, 01, 01);
             while (ff > ii)
             {
@@ -77,18 +101,18 @@ namespace Conexoes
         }
         public static double GetPorcentagem(this DateTime data, DateTime inicio, DateTime fim)
         {
-            if(data<inicio)
+            if (data < inicio)
             {
                 return 0;
             }
-            else if( data > fim)
+            else if (data > fim)
             {
                 return 1;
             }
             else
             {
                 var tempo_total = fim - inicio;
-                var tempo_data = data-inicio;
+                var tempo_data = data - inicio;
 
                 return tempo_data.TotalDays / tempo_total.TotalDays;
             }
@@ -96,7 +120,7 @@ namespace Conexoes
         public static DateTime? GetMin(this List<DateTime> dateTimes)
         {
             var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
-            if(datas.Count>0)
+            if (datas.Count > 0)
             {
                 return datas.Min();
             }
@@ -104,7 +128,7 @@ namespace Conexoes
         }
         public static DateTime? GetMin(this List<DateTime?> dateTimes)
         {
-            var datas = dateTimes.FindAll(x=>x!=null).FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
+            var datas = dateTimes.FindAll(x => x != null).FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
             if (datas.Count > 0)
             {
                 return datas.Min();
@@ -128,6 +152,45 @@ namespace Conexoes
                 return datas.Max();
             }
             return null;
+        }
+
+        public static int DiasUteis(this DateTime? inicio, DateTime? fim)
+        {
+            if (inicio != null && fim != null)
+            {
+                return inicio.Value.DiasUteis(fim.Value);
+            }
+            return 0;
+        }
+        public static int DiasUteis(this DateTime inicio, DateTime fim, bool feriados = true)
+        {
+            var dt_feriados = new List<DateTime>();
+
+            if (feriados)
+            {
+                dt_feriados.AddRange(Conexoes.Utilz.Calendario.Feriados(inicio, fim).Select(x => new DateTime(x.Date.Year, x.Date.Month, x.Date.Day)).ToList());
+            }
+            ;
+
+            int days = 0;
+            int daysCount = 0;
+            days = inicio.Subtract(fim).Days;
+
+            //Módulo 
+            if (days < 0)
+                days = days * -1;
+
+            for (int i = 1; i <= days; i++)
+            {
+                inicio = inicio.AddDays(1);
+                //Conta apenas dias da semana.
+                if (inicio.DayOfWeek != DayOfWeek.Sunday &&
+                    inicio.DayOfWeek != DayOfWeek.Saturday
+                    && !dt_feriados.Contains(inicio)
+                    )
+                    daysCount++;
+            }
+            return daysCount;
         }
     }
 }
