@@ -57,7 +57,7 @@ namespace Conexoes
             menu.Lista.ItemsSource = objetos;
             menu.ShowDialog();
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo = "Selecione")
+        public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo)
         {
             if (Objetos.Count == 0 | Objetos == null)
             {
