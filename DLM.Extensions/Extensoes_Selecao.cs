@@ -84,8 +84,12 @@ namespace Conexoes
                 return Objetos[0];
             }
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "")
+        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "", Window window = null)
         {
+            if (window != null)
+            {
+                window.Visibility = Visibility.Collapsed;
+            }
             if (Objetos == null)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
@@ -104,9 +108,18 @@ namespace Conexoes
             {
                 if (selecionar._lista.SelectedItem != null)
                 {
+                    if (window != null)
+                    {
+                        window.Visibility = Visibility.Visible;
+                    }
                     return (T)Convert.ChangeType(selecionar._lista.SelectedItem, typeof(T));
                 }
             }
+            if (window != null)
+            {
+                window.Visibility = Visibility.Visible;
+            }
+
             try
             {
                 return (T)Convert.ChangeType(null, typeof(T));
@@ -164,7 +177,7 @@ namespace Conexoes
         }
 
 
-        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, string titulo = "Selecione")
+        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, string titulo = "Selecione", Window window = null)
         {
             if (Objetos == null)
             {
@@ -176,18 +189,18 @@ namespace Conexoes
             }
             if (selecionar_tudo)
             {
-                return ListaSelecionarVarios(new List<T>(), Objetos, titulo);
+                return ListaSelecionarVarios(new List<T>(), Objetos, titulo, window);
             }
             else
             {
-                return ListaSelecionarVarios(Objetos, new List<T>(), titulo);
+                return ListaSelecionarVarios(Objetos, new List<T>(), titulo, window);
             }
         }
-        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, List<T> Selecionar = null, string titulo = "Selecione")
+        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, List<T> Selecionar = null, string titulo = "Selecione", Window window = null)
         {
-            return ListaSelecionarVarios(Objetos, false, true, titulo, null, Selecionar);
+            return ListaSelecionarVarios(Objetos, false, true, titulo, window, Selecionar);
         }
-        private static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, bool duas_colunas, string Titulo, Window owner = null, List<T> Selecionar = null)
+        private static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null)
         {
             if (!duas_colunas)
             {
@@ -198,16 +211,21 @@ namespace Conexoes
 
 
 
-                if (owner != null)
+                if (window != null)
                 {
-                    mm.Owner = owner;
+                    mm.Owner = window;
                     mm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    window.Visibility = Visibility.Collapsed;
                 }
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
                     if (mm._lista.SelectedItem != null)
                     {
+                        if (window != null)
+                        {
+                            window.Visibility = Visibility.Visible;
+                        }
                         return mm._lista.SelectedItems.Cast<T>().ToList();
                     }
                 }
@@ -221,10 +239,14 @@ namespace Conexoes
                 }
                 var mm = new JanelaAdicionarDuasColunas(Objetos.Cast<object>().ToList(), selecao);
                 mm.Title = Titulo;
-                if (owner != null)
+                if (window != null)
                 {
-                    mm.Owner = owner;
+                    mm.Owner = window;
                     mm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    if (window != null)
+                    {
+                        window.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
@@ -233,8 +255,16 @@ namespace Conexoes
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
+                    if (window != null)
+                    {
+                        window.Visibility = Visibility.Visible;
+                    }
                     return mm.Selecao.Cast<T>().ToList();
                 }
+            }
+            if (window != null)
+            {
+                window.Visibility = Visibility.Visible;
             }
             return new List<T>();
         }
@@ -286,7 +316,7 @@ namespace Conexoes
                 }
 
                 view.UpdateLayout();
-                if (view.SelectedItems.Count> 0)
+                if (view.SelectedItems.Count > 0)
                 {
                     view.ScrollIntoView(view.SelectedItems[0]);
                 }
