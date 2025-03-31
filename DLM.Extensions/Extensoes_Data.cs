@@ -162,16 +162,8 @@ namespace Conexoes
             }
             return 0;
         }
-        public static int DiasUteis(this DateTime inicio, DateTime fim, bool feriados = true)
+        public static int DiasUteis(this DateTime inicio, DateTime fim)
         {
-            var dt_feriados = new List<DateTime>();
-
-            if (feriados)
-            {
-                dt_feriados.AddRange(Conexoes.Utilz.Calendario.Feriados(inicio, fim).Select(x => new DateTime(x.Date.Year, x.Date.Month, x.Date.Day)).ToList());
-            }
-            ;
-
             int days = 0;
             int daysCount = 0;
             days = inicio.Subtract(fim).Days;
@@ -184,10 +176,7 @@ namespace Conexoes
             {
                 inicio = inicio.AddDays(1);
                 //Conta apenas dias da semana.
-                if (inicio.DayOfWeek != DayOfWeek.Sunday &&
-                    inicio.DayOfWeek != DayOfWeek.Saturday
-                    && !dt_feriados.Contains(inicio)
-                    )
+                if (inicio.DayOfWeek != DayOfWeek.Sunday && inicio.DayOfWeek != DayOfWeek.Saturday)
                     daysCount++;
             }
             return daysCount;
