@@ -203,17 +203,12 @@ namespace Conexoes
                 {
                     mm.Owner = window;
                     mm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    window.Visibility = Visibility.Collapsed;
                 }
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
                     if (mm._lista.SelectedItem != null)
                     {
-                        if (window != null)
-                        {
-                            window.Visibility = Visibility.Visible;
-                        }
                         return mm._lista.SelectedItems.Cast<T>().ToList();
                     }
                 }
@@ -231,10 +226,6 @@ namespace Conexoes
                 {
                     mm.Owner = window;
                     mm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    if (window != null)
-                    {
-                        window.Visibility = Visibility.Collapsed;
-                    }
                 }
                 else
                 {
@@ -243,16 +234,8 @@ namespace Conexoes
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
-                    if (window != null)
-                    {
-                        window.Visibility = Visibility.Visible;
-                    }
                     return mm.Selecao.Cast<T>().ToList();
                 }
-            }
-            if (window != null)
-            {
-                window.Visibility = Visibility.Visible;
             }
             return new List<T>();
         }
