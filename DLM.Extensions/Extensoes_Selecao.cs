@@ -84,12 +84,8 @@ namespace Conexoes
                 return Objetos[0];
             }
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "", Window window = null)
+        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "")
         {
-            if (window != null)
-            {
-                window.Visibility = Visibility.Collapsed;
-            }
             if (Objetos == null)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
@@ -108,16 +104,8 @@ namespace Conexoes
             {
                 if (selecionar._lista.SelectedItem != null)
                 {
-                    if (window != null)
-                    {
-                        window.Visibility = Visibility.Visible;
-                    }
                     return (T)Convert.ChangeType(selecionar._lista.SelectedItem, typeof(T));
                 }
-            }
-            if (window != null)
-            {
-                window.Visibility = Visibility.Visible;
             }
 
             try
@@ -177,7 +165,7 @@ namespace Conexoes
         }
 
 
-        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, string titulo = "Selecione", Window window = null)
+        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, string titulo = "Selecione")
         {
             if (Objetos == null)
             {
@@ -189,11 +177,11 @@ namespace Conexoes
             }
             if (selecionar_tudo)
             {
-                return ListaSelecionarVarios(new List<T>(), Objetos, titulo, window);
+                return ListaSelecionarVarios(new List<T>(), Objetos, titulo);
             }
             else
             {
-                return ListaSelecionarVarios(Objetos, new List<T>(), titulo, window);
+                return ListaSelecionarVarios(Objetos, new List<T>(), titulo);
             }
         }
         public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, List<T> Selecionar = null, string titulo = "Selecione", Window window = null)
