@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -366,6 +367,8 @@ namespace Conexoes
             }
             return CAM_TIPO_DESMEMBRADO.Normal;
         }
+
+
         public static TAB_FAMILIA_GRP_MERCADORIA GetFamilia(this TAB_MAKTX MAKTX)
         {
 
@@ -535,6 +538,11 @@ namespace Conexoes
                     return TAB_FAMILIA_GRP_MERCADORIA.VENEZIANA;
                 case TAB_MAKTX.SIE_RM:
                     break;
+                case TAB_MAKTX.SUPORTE_KANBAN:
+                    return TAB_FAMILIA_GRP_MERCADORIA.MISCELANEA_KANBAN;
+                case TAB_MAKTX.BANZO_INFERIOR_MEDAJ:
+                case TAB_MAKTX.BANZO_SUPERIOR_MEDAJ:
+                    return TAB_FAMILIA_GRP_MERCADORIA.MEDAJOIST;
             }
 
 
