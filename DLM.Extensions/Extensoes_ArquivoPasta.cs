@@ -1,4 +1,6 @@
-﻿using DLM.ini;
+﻿using Conexoes.Macros.Escada;
+using DLM;
+using DLM.ini;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
@@ -6,9 +8,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Conexoes.Utilz;
 
 namespace Conexoes
 {
@@ -56,10 +60,10 @@ namespace Conexoes
         public static bool LimparArquivosPasta(this Pasta Pasta, string filtro = "*", bool backup = false, string arquivo_backup = null)
         {
             var arquivos = Pasta.GetArquivos(filtro);
-           
+
             if (backup)
             {
-                if(arquivo_backup==null)
+                if (arquivo_backup == null)
                 {
                     arquivo_backup = $"{Pasta.Endereco.GetSubPasta(Cfg.Init.PASTA_BACKUPS)}R00.ZIP";
                 }
@@ -587,7 +591,7 @@ namespace Conexoes
                     System.Windows.Forms.SendKeys.SendWait("{+}");
                 }
             }
-            if (dwgs.Count > 0 && Buff.Pedido!=null && Buff.Obra!=null)
+            if (dwgs.Count > 0 && Buff.Pedido != null && Buff.Obra != null)
             {
                 string cfg = $"5|0|{Cfg.Init.DIR_RAIZ_OBRAS.Replace(@"\", "")}|1|{Conexoes.Buff.Obra.Nome}|2|{Conexoes.Buff.Pedido.Nome}|5|{dwgs[0]}.DWG|";
                 INI.Set(Cfg_User.Init.TecIniWindows, "Tecno2005", "WorksManagerCurrentStatus", cfg);
@@ -626,11 +630,15 @@ namespace Conexoes
 
         public static bool Abrir(this string arquivo_ou_pasta, string argumentos = "", bool wait = false)
         {
-           if(E_Diretorio(arquivo_ou_pasta))
+            if (arquivo_ou_pasta.Contains("%"))
             {
-                if(Directory.Exists(arquivo_ou_pasta))
+                arquivo_ou_pasta = Environment.ExpandEnvironmentVariables(arquivo_ou_pasta);
+            }
+            if (E_Diretorio(arquivo_ou_pasta))
+            {
+                if (Directory.Exists(arquivo_ou_pasta))
                 {
-                    Process.Start(arquivo_ou_pasta,argumentos);
+                    Process.Start(arquivo_ou_pasta, argumentos);
                     return true;
                 }
                 else
@@ -638,49 +646,84 @@ namespace Conexoes
                     return false;
                 }
             }
-           else
+            else
             {
                 return arquivo_ou_pasta.AsArquivo().Abrir(argumentos, wait);
 
             }
         }
 
-        public static void AbrirAsAdmin(this string arquivo, string argumentos = "")
+        public static void AbrirAsAdmin(this string appToRun, string arguments = "")
         {
+            string domain = "medabil.com.br";
+            string username = "med.admin";
+            string usernameFull = $@"{domain}\{username}";
+            string password = "K@$p3rsk1@2023!@";
+            var workingDirectory = Environment.ExpandEnvironmentVariables(@"%windir%\system32");
+
+            string filePath = Environment.ExpandEnvironmentVariables(@"%windir%\system32\cmd.exe");
+
+            if (appToRun.Contains("%"))
+            {
+                appToRun = Environment.ExpandEnvironmentVariables(appToRun);
+            }
+
+            string fullCommand = $"/C start \"\" \"{appToRun}\" {arguments}";
+            if (arguments == "" | arguments ==null)
+            {
+                fullCommand = $"/C start \"\" \"{appToRun}\"";
+            }
             try
             {
+
+
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = arquivo,
-                    Arguments = argumentos,
-                    UserName = "med.admin",
-                    Password = ConvertToSecureString("K@$p3rsk1@2023!@"),
-                    Domain = "medabil.com.br",
+                    UserName = username,
+                    Password = ConvertToSecureString(password),
+                    Domain = domain,
+                    WorkingDirectory = workingDirectory,
+                    FileName = filePath,
+                    Arguments = fullCommand,
                     UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    LoadUserProfile = true,
+                    CreateNoWindow = false
                 };
 
                 using (var process = new Process { StartInfo = startInfo })
                 {
                     process.Start();
-                    process.WaitForExit();
                 }
             }
-            catch (Exception)
+            catch (Exception ex1)
             {
-
-                var startInfo = new ProcessStartInfo
+                ex1.Log();
+                try
                 {
-                    FileName = arquivo,
-                    Arguments = argumentos,
-                    UserName = "administrador",
-                    Password = ConvertToSecureString("M&nfds14"),
-                    UseShellExecute = false,
-                };
+                    var startInfo = new ProcessStartInfo
+                    {
+                        Password = ConvertToSecureString("M&nfds14"),
+                        UserName = "administrador",
+                        WorkingDirectory = workingDirectory,
+                        FileName = filePath,
+                        Arguments = fullCommand,
+                        UseShellExecute = false,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
+                        LoadUserProfile = true,
+                        CreateNoWindow = false
+                    };
 
-                using (var process = new Process { StartInfo = startInfo })
+                    using (var process = new Process { StartInfo = startInfo })
+                    {
+                        process.Start();
+                    }
+                }
+                catch (Exception ex2)
                 {
-                    process.Start();
-                    process.WaitForExit();
+                    ex2.Log();
                 }
             }
         }
@@ -691,6 +734,7 @@ namespace Conexoes
             {
                 securePassword.AppendChar(c);
             }
+            securePassword.MakeReadOnly();
             return securePassword;
         }
 
