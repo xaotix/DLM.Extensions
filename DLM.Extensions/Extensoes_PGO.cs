@@ -5,6 +5,7 @@ using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,16 +13,16 @@ namespace DLM
 {
     public static class Extensoes_PGO
     {
-        public static List<LT_PMP> GetPMP(this RME m)
+        public static List<LT_PMP> GetPMP(this RME obj)
         {
             var retorno = new List<LT_PMP>();
-            foreach (var pos in m.Posicoes)
+            foreach (var pos in obj.Posicoes)
             {
                 if (pos.NORMT != TAB_NORMT.PERFIL_I_SOLDADO)
                 {
                     try
                     {
-                        var novo = new LT_PMP(pos, m);
+                        var novo = new LT_PMP(pos, obj);
                         retorno.Add(novo);
                     }
                     catch (Exception)
@@ -32,21 +33,13 @@ namespace DLM
 
             return retorno;
         }
-        public static List<LT_PMP> GetPMP(this RMA m)
+        public static List<LT_PMP> GetPMP(this RMA obj)
         {
-            var retorno = new List<LT_PMP>();
-            var novo = new LT_PMP(m);
-            retorno.Add(novo);
-
-            return retorno;
+            return new List<LT_PMP>() { new LT_PMP(obj) };
         }
-        public static List<LT_PMP> GetPMP(this RMT m)
+        public static List<LT_PMP> GetPMP(this RMT obj)
         {
-            var retorno = new List<LT_PMP>();
-            var novo = new LT_PMP(m);
-            retorno.Add(novo);
-
-            return retorno;
+            return new List<LT_PMP>() { new LT_PMP(obj) };
         }
         public static List<LT_PMP> Explodir(this List<LT_PMP> materiais)
         {
@@ -101,7 +94,7 @@ namespace DLM
             foreach (var material in materiais)
             {
                 var ms = new List<LT_PMP>();
-              
+
                 if (material.SAP_SubMateriais.Count > 0)
                 {
                     foreach (var sub in material.SAP_SubMateriais)
@@ -123,43 +116,25 @@ namespace DLM
         {
             return pcs.SelectMany(x => x.GetPMP()).ToList();
         }
-        public static List<LT_PMP> GetPMP(this PGO_Peca pc)
+        public static List<LT_PMP> GetPMP(this object obj)
         {
-            var retorno = new List<LT_PMP>();
-            if (pc.ItemRM is RMA)
+            if (obj is RME)
             {
-                var p = pc.ItemRM as RMA;
-                var novo = new LT_PMP(p);
-                retorno.Add(novo);
+                return (obj as RME).GetPMP();
             }
-            else if (pc.ItemRM is RME)
+            else if (obj is RMA)
             {
-                var m = pc.ItemRM as RME;
-                foreach (var pos in m.Posicoes)
-                {
-                    if (pos.NORMT != TAB_NORMT.PERFIL_I_SOLDADO)
-                    {
-                        try
-                        {
-                            var novo = new LT_PMP(pos, m);
-                            retorno.Add(novo);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
+                return (obj as RMA).GetPMP();
             }
-            else if (pc.ItemRM is RMT)
+            else if (obj is RMT)
             {
-                var m = pc.ItemRM as RMT;
-                var novo = new LT_PMP(m);
-                retorno.Add(novo);
+                return (obj as RMT).GetPMP();
             }
-            else
+            else if (obj is PGO_Peca)
             {
+                return (obj as PGO_Peca).ItemRM.GetPMP();
             }
-            return retorno;
+            return new List<LT_PMP>();
         }
 
         public static List<PGO_Peca> JuntarPecas(this List<Range> ranges)
