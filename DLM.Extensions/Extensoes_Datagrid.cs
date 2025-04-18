@@ -11,6 +11,33 @@ namespace Conexoes
 {
     public static class ExtensoesDatagrid
     {
+        public static void ShowHideColumns(this System.Windows.Controls.DataGrid data, string prompt = "Selecione as colunas que deseja visualizar/ocultar")
+        {
+            var columns = data.Columns.ToList();
+            var headers = columns.Select(x => x.Header.ToString()).Distinct().ToList().FindAll(x => x != "");
+            var selecao = headers.ListaSelecionarVarios(true, prompt);
+
+            if (selecao.Count > 0)
+            {
+                foreach (var column in columns)
+                {
+                    var header = column.Header.ToString();
+                    if(header !="")
+                    {
+                        var igual = selecao.Find(x => x == header);
+                        if (igual != null)
+                        {
+                            column.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            column.Visibility = Visibility.Collapsed;
+                        }
+                    }
+
+                }
+            }
+        }
         public static System.Windows.Controls.DataGrid GetParent(this System.Windows.Controls.DataGridCell cell)
         {
             DependencyObject datag = cell as DependencyObject;
