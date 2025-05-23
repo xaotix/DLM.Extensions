@@ -163,7 +163,7 @@ namespace Conexoes
             return null;
         }
 
-        private static DateTime? GetDateTime(string vlr)
+        public static DateTime? GetDateTime(this string vlr)
         {
             if (vlr.Length > 0)
             {

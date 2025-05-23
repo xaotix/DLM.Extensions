@@ -658,7 +658,8 @@ namespace Conexoes
             string domain = "medabil.com.br";
             string username = "med.admin";
             string usernameFull = $@"{domain}\{username}";
-            string password = "K@$p3rsk1@2023!@";
+            //string password = "K@$p3rsk1@2023!@";
+            string password = "B1td3f3nd3r@2025@";
             var workingDirectory = Environment.ExpandEnvironmentVariables(@"%windir%\system32");
 
             string filePath = Environment.ExpandEnvironmentVariables(@"%windir%\system32\cmd.exe");
