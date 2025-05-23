@@ -54,6 +54,14 @@ namespace Conexoes
                 soldas = face.Soldas.Select(x => x.SetY(Math.Abs(x.Linha.P1.Y) - face.Largura, Math.Abs(x.Linha.P2.Y) - face.Largura)).ToList();
             }
 
+            foreach (var furo in frs)
+            {
+                if (furo.Angulo != 0)
+                {
+                    furo.Angulo = 180 - furo.Angulo;
+                }
+            }
+
             return new Face(
                 pts,
                 face.FaceNum,
@@ -73,7 +81,13 @@ namespace Conexoes
             frs = face.Furacoes.Select(x => x.SetX(face.Comprimento - x.Origem.X)).ToList();
             recs = face.RecortesInternos.Select(x => x.SetX(face.Comprimento - x.Origem.X)).ToList();
             soldas = face.Soldas.Select(x => x.Clonar()).ToList();
-
+            foreach(var furo in frs)
+            {
+                if(furo.Angulo!=0)
+                {
+                    furo.Angulo = 180 - furo.Angulo;
+                }
+            }
             return new Face(
                 pts,
                 face.FaceNum,
