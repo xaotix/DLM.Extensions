@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Conexoes.Macros.Escada;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -120,28 +121,30 @@ namespace Conexoes
         }
         public static List<T> Move<T>(this List<T> list, List<T> mover, int places)
         {
-            var indexes = new List<int>();
-            var nlist = new List<T>();
-            nlist.AddRange(list);
-            foreach(var item  in mover)
+            var nlist = new List<T>(list);
+            var indexes = mover.Select(item => nlist.IndexOf(item)).ToList();
+
+            if (indexes.Any(idx => idx == -1))
+                throw new ArgumentException("Todos os itens a serem movidos devem estar presentes na lista original.");
+
+            // Removendo os itens para reposicioná-los corretamente
+            foreach (var item in mover)
             {
-                indexes.Add(item.GetPosition(nlist));
+                nlist.Remove(item);
             }
-            if((places < 0 && indexes.Last() < nlist.Count - places) | (places > 0 && indexes.First() > places))
+
+            // Calculando novos índices, garantindo que estejam dentro dos limites
+            var newIndexes = indexes.Select(idx => Math.Max(0, Math.Min(nlist.Count, idx + places))).ToList();
+
+            // Inserindo os itens nos novos locais
+            for (int i = 0; i < mover.Count; i++)
             {
-                for (int i = 0; i < mover.Count; i++)
-                {
-                    nlist.Remove(mover[i]);
-                }
-                for (int i = 0; i < indexes.Count; i++)
-                {
-                    var n_idx = indexes[i] + places;                 
-                    nlist.Insert(n_idx, mover[i]);
-                }
+                nlist.Insert(newIndexes[i], mover[i]);
             }
 
             return nlist;
         }
+
 
     }
 }
