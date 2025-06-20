@@ -17,6 +17,10 @@ namespace Conexoes
         {
             return Valor.ToString().PadLeft(padleft, padding);
         }
+        public static string String(this long Valor, int padleft = 0, char padding = '0')
+        {
+            return Valor.ToString().PadLeft(padleft, padding);
+        }
 
         public static double Double<T>(this T comp, int Decimais = 8)
         {
