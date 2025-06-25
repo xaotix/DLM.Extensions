@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLM.db;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -71,12 +72,12 @@ namespace Conexoes
                         {
                             try
                             {
-                                if(valor!=null && somente_preenchido)
+                                if (valor != null && somente_preenchido)
                                 {
                                     if ((valor.ToString().Length > 0 && somente_preenchido))
                                         igual_para.SetValue(Para, valor);
                                 }
-                                else if(!somente_preenchido)
+                                else if (!somente_preenchido)
                                 {
                                     igual_para.SetValue(Para, valor);
                                 }
@@ -108,10 +109,10 @@ namespace Conexoes
         }
         public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "")
         {
-            var props_para = Para.GetPropriedades().Filter().FindAll(x=>x.CanWrite);
+            var props_para = Para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
             foreach (var prop_para in props_para)
             {
-                var valor = De[$"{prefix}{prop_para.Name}",true];
+                var valor = De[$"{prefix}{prop_para.Name}", true];
 
                 if (valor != null)
                 {
@@ -139,11 +140,11 @@ namespace Conexoes
             if (Valor == null) { return; }
             var prop = Propriedade.PropertyType.Name.ToLower();
 
-            if (Propriedade.CanWrite && Propriedade.CanRead && 
+            if (Propriedade.CanWrite && Propriedade.CanRead &&
                 (
-                Propriedade.PropertyType.IsEnum | 
-                Propriedade.PropertyType.IsPrimitive | 
-                prop == "string" | 
+                Propriedade.PropertyType.IsEnum |
+                Propriedade.PropertyType.IsPrimitive |
+                prop == "string" |
                 prop == "datetime" |
                 prop == "nullable`1"
                 )
@@ -196,7 +197,7 @@ namespace Conexoes
 
                 }
             }
-           
+
 
         }
 
@@ -349,7 +350,7 @@ namespace Conexoes
                 return new DLM.db.Linha();
             }
             var linha = tbl.Linhas[0];
-            foreach(var r in remover)
+            foreach (var r in remover)
             {
                 var cel = linha[r];
                 linha.Celulas.Remove(cel);
@@ -369,14 +370,14 @@ namespace Conexoes
             var retorno = new DLM.db.Tabela();
             if (lista.Count > 0)
             {
-               var listagem = new List<PropertyInfo>();
+                var listagem = new List<PropertyInfo>();
                 listagem.AddRange(lista[0].GetPropriedades());
 
-                if(simple_properties)
+                if (simple_properties)
                 {
                     listagem = listagem.Filter();
                 }
-                if(only_browsable)
+                if (only_browsable)
                 {
                     listagem = listagem.FindAll(x => x.Browsable());
                 }
@@ -388,7 +389,7 @@ namespace Conexoes
                 var display = listagem.Select(x => x.GetDisplayName()).ToList();
                 foreach (var item in lista)
                 {
-                    if(item ==null)
+                    if (item == null)
                     {
                         continue;
                     }
@@ -403,24 +404,21 @@ namespace Conexoes
                     for (int c = 0; c < colunas.Count; c++)
                     {
                         var igual = props.Find(x => x.Name == colunas[c]);
-
+                        var cel = new DLM.db.Celula(colunas[c]);
+                        cel.DisplayName = igual.GetDisplayName();
+                        cel.StringFormat = igual.GetDisplayFormatString();
                         if (igual != null)
                         {
                             try
                             {
-                                var valor = igual.GetValue(item);
-
-                                linha.Add(colunas[c], valor);
+                                cel.Set(igual.GetValue(item));
                             }
                             catch (Exception)
                             {
-                                linha.Add(colunas[c], null);
+                             
                             }
                         }
-                        else
-                        {
-                            linha.Add(colunas[c], null);
-                        }
+                        linha.Add(cel);
                     }
                     retorno.Add(linha);
                 }
@@ -457,7 +455,7 @@ namespace Conexoes
                 var lc = new DLM.db.Linha();
                 for (int c = 0; c < lista[l].Count; c++)
                 {
-    
+
                     lc.Add(l_header[c].Coluna, lista[l][c]);
                 }
                 retorno.Add(lc);
@@ -485,10 +483,10 @@ namespace Conexoes
                 {
                     retorno.Add(l);
                 }
-                else if(prop == "nullable`1")
+                else if (prop == "nullable`1")
                 {
                     var full = l.PropertyType.FullName;
-                    if (full.Contains("System.DateTime") | full.Contains("System.Double"))
+                    if (full.Contains("System.DateTime") | full.Contains("System.Double") | full.Contains("System.Decimal"))
                     {
                         retorno.Add(l);
                     }
@@ -512,7 +510,7 @@ namespace Conexoes
             var propriedaes = obj.GetPropriedades();
             var prop = propriedaes.Find(x => x.Name.ToUpper() == propriedade.ToUpper());
 
-            if(prop!=null)
+            if (prop != null)
             {
                 return prop.GetValue(obj).ToString();
             }
@@ -547,7 +545,26 @@ namespace Conexoes
 
             return property.Name;
         }
+        private static string GetDisplayFormatString(this PropertyInfo property)
+        {
+            // Verifica se há MetadataTypeAttribute
+            var metadataAttrs = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
+            if (metadataAttrs.Length > 0)
+            {
+                var metaAttr = metadataAttrs[0] as MetadataTypeAttribute;
+                var metaProperty = metaAttr.MetadataClassType.GetProperty(property.Name);
+                if (metaProperty != null)
+                {
+                    return metaProperty.GetDisplayFormatString();
+                }
+            }
 
+            // Verifica se há DisplayFormatAttribute diretamente
+            var formatAttr = property.GetCustomAttributes(typeof(DisplayFormatAttribute), true)
+                                     .FirstOrDefault() as DisplayFormatAttribute;
+
+            return formatAttr?.DataFormatString ?? "";
+        }
 
 
         /// <summary>
