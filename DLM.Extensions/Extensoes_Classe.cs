@@ -344,6 +344,10 @@ namespace Conexoes
         public static DLM.db.Linha GetLinha<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, params string[] remover)
         {
             var tbl = GetTabela<T>(new List<T> { obj }, only_can_write, only_browsable, only_simple_properties);
+            if (tbl.Linhas.Count == 0)
+            {
+                return new DLM.db.Linha();
+            }
             var linha = tbl.Linhas[0];
             foreach(var r in remover)
             {
@@ -384,6 +388,10 @@ namespace Conexoes
                 var display = listagem.Select(x => x.GetDisplayName()).ToList();
                 foreach (var item in lista)
                 {
+                    if(item ==null)
+                    {
+                        continue;
+                    }
                     //pula itens que são diferentes do primeiro item da lista
                     if (item.GetType() != lista[0].GetType())
                     {
