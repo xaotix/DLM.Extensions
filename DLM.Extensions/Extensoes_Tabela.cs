@@ -117,7 +117,7 @@ namespace Conexoes
             return _Marcas;
         }
 
-        public static void Show(this Tabela tabela)
+        public static void Show(this Tabela tabela, bool display_names = false)
         {
             if (tabela.Linhas.Count > 0)
             {
@@ -204,6 +204,7 @@ namespace Conexoes
             if (destino == null)
             {
                 destino = "xlsx".SalvarArquivo();
+                abrir = true;
             }
             if (destino == null) { return false; }
             if (destino.Length == 0) { return false; }

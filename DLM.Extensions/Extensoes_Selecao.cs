@@ -1,4 +1,5 @@
-﻿using DLM.encoder;
+﻿using DLM.db;
+using DLM.encoder;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,11 +22,18 @@ namespace Conexoes
         public static void Show<T>(this T objeto)
         {
             if (objeto == null) { return; }
-            var objs = objeto.GetLinha(false, false, false).Celulas;
-            var mm = new DLM.WPF.DatagridProps();
-            mm.Title = $"Propriedades {objeto.ToString()}";
-            mm.Lista.ItemsSource = objs;
-            mm.Show();
+            if (objeto is Tabela)
+            {
+                (objeto as Tabela).Show(false);
+            }
+            else
+            {
+                var objs = objeto.GetLinha(false, false, false).Celulas;
+                var mm = new DLM.WPF.DatagridProps();
+                mm.Title = $"Propriedades {objeto.ToString()}";
+                mm.Lista.ItemsSource = objs;
+                mm.Show();
+            }
         }
         public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
         {

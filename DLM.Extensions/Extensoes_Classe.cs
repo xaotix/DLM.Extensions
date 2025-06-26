@@ -405,10 +405,11 @@ namespace Conexoes
                     {
                         var igual = props.Find(x => x.Name == colunas[c]);
                         var cel = new DLM.db.Celula(colunas[c]);
-                        cel.DisplayName = igual.GetDisplayName();
-                        cel.StringFormat = igual.GetDisplayFormatString();
+
                         if (igual != null)
                         {
+                            cel.DisplayName = igual.GetDisplayName();
+                            cel.StringFormat = igual.GetDisplayFormatString();
                             try
                             {
                                 cel.Set(igual.GetValue(item));
@@ -525,6 +526,10 @@ namespace Conexoes
 
         private static string GetDisplayName(this PropertyInfo property)
         {
+            if (property == null) 
+            { 
+                return ""; 
+            }
             var atts = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
             if (atts.Length > 0)
             {

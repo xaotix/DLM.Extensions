@@ -73,7 +73,7 @@ namespace Conexoes
             }
             return new Tabela(tabela);
         }
-        public static DLM.db.Tabela GetTabela(this IRfcTable tabela)
+        private static DLM.db.Tabela GetTabela(this IRfcTable tabela)
         {
             var retorno = new DLM.db.Tabela();
             retorno.Nome = tabela.Metadata.Name;
