@@ -21,7 +21,10 @@ namespace Conexoes
         {
             return Valor.ToString().PadLeft(padleft, padding);
         }
-
+        public static double Double(this decimal? valor)
+        {
+            return valor!=null? (double)valor.Value : 0;
+        }
         public static double Double<T>(this T comp, int Decimais = 8)
         {
             bool negativo = false;
