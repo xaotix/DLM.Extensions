@@ -1,12 +1,15 @@
-﻿using DLM.cam;
+﻿using DLM;
+using DLM.cam;
 using DLM.cam.Addons;
 using DLM.db;
 using DLM.desenho;
 using DLM.encoder;
 using DLM.macros;
+using DLM.sap;
 using DLM.vars;
 using Ionic.Zip;
 using iTextSharp.text.pdf;
+using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,7 +37,65 @@ using System.Xml.Serialization;
 
 namespace Conexoes
 {
+    public static class Extensoes_SAP
+    {
+        public static void GetMaterialBase(this List<SAP_Material> materiais)
+        {
+            var pck_mats = materiais.FindAll(x => x.SAP > 100000).Quebrar(200);
+            foreach (var pck in pck_mats)
+            {
+                var bases = DLM.SAP.MontarMateriaisExplodidos(pck.Select(x => x.SAP).ToList());
+                var bases_sap = bases.FindAll(x => x.Codigo != "").ToList();
+                foreach (var base_sap in bases_sap)
+                {
+                    var mp = pck.Find(x => x.SAP == base_sap.Pai.Int());
 
+                    if (mp != null)
+                    {
+                        mp.SAP_Base = base_sap.Codigo.Int();
+                    }
+                }
+            }
+
+        }
+        public static DLM.db.Tabela GetTabela(this IRfcFunction funcao, string tabela)
+        {
+            try
+            {
+                var rfc_tbl = funcao.GetTable(tabela);
+                var tbl = rfc_tbl.GetTabela();
+                tbl.Nome = tabela;
+                return tbl;
+            }
+            catch (Exception ex)
+            {
+                ex.Log();
+            }
+            return new Tabela(tabela);
+        }
+        public static DLM.db.Tabela GetTabela(this IRfcTable tabela)
+        {
+            var retorno = new DLM.db.Tabela();
+            retorno.Nome = tabela.Metadata.Name;
+            if (retorno.Nome == "")
+            {
+                retorno.Nome = tabela.Metadata.LineType.Name;
+            }
+            foreach (var l in tabela.ToList())
+            {
+                var nl = new DLM.db.Linha();
+                var valores = l.ToList();
+                foreach (var v in valores)
+                {
+                    var nc = nl.Add(v.Metadata.Name, v.GetValue());
+                }
+                retorno.Add(nl);
+            }
+
+            return retorno;
+
+        }
+    }
     public static class Extensoes
     {
 
