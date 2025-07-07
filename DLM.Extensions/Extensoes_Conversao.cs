@@ -23,7 +23,7 @@ namespace Conexoes
         }
         public static double Double(this decimal? valor)
         {
-            return valor!=null? (double)valor.Value : 0;
+            return valor != null ? (double)valor.Value : 0;
         }
         public static double Double<T>(this T comp, int Decimais = 8)
         {
@@ -59,7 +59,7 @@ namespace Conexoes
                 {
                     try
                     {
-                        if ((valor_final % 1) != 0)
+                        if ((valor_final % 1) != 0 && Decimais > -1)
                         {
                             valor_final_retorno = Math.Round(valor_final, Decimais);
                         }
