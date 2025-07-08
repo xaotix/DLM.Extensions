@@ -24,7 +24,7 @@ namespace Conexoes
             {
                 for (int i = 1; i < frs.Count; i++)
                 {
-                    ret.Add(Math.Round(frs[i] - frs[i - 1]));
+                    ret.Add((frs[i] - frs[i - 1]).Round(0));
                 }
             }
             return ret;

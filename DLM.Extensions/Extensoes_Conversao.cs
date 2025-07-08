@@ -1,5 +1,6 @@
 ﻿using DLM.vars;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -34,63 +35,47 @@ namespace Conexoes
                 return 0;
             }
 
-            if (Decimais > 15)
+            if (Decimais > 10)
             {
-                Decimais = 15;
+                Decimais = 10;
             }
 
+            if (comp is decimal or double or float)
+            {
+                return Convert.ToDouble(comp).Round(Decimais);
+            }
+
+            double valor_final = 0;
             try
             {
                 var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsWith("-"))
+                if (str.EndsWith("-") | str.StartsW("-"))
                 {
-                    str = str.TrimEnd('-');
-                    negativo = true;
-
-                }
-                else if (str.StartsW("-"))
-                {
-                    str = str.TrimStart('-');
+                    str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;
                 }
-
-                double valor_final;
+               
                 if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._BR, out valor_final))
                 {
-                    try
-                    {
-                        if ((valor_final % 1) != 0 && Decimais > -1)
-                        {
-                            valor_final_retorno = Math.Round(valor_final, Decimais);
-                        }
-                        else
-                        {
-
-                            valor_final_retorno = valor_final;
-                        }
-
-                    }
-                    catch (Exception)
-                    {
-
-                    }
+                   
                 }
-
                 else if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._US, out valor_final))
                 {
-                    try
-                    {
-
-                        valor_final_retorno = Math.Round(valor_final, Decimais);
-                    }
-                    catch (Exception)
-                    {
-                    }
                 }
             }
             catch (Exception)
             {
             }
+
+            if ((valor_final % 1) != 0 && Decimais > -1)
+            {
+                valor_final_retorno = valor_final.Round(Decimais);
+            }
+            else
+            {
+                valor_final_retorno = valor_final;
+            }
+
 
             if (negativo)
             {
@@ -100,7 +85,6 @@ namespace Conexoes
             {
                 return valor_final_retorno;
             }
-
         }
         public static long Long<T>(this T comp)
         {
@@ -136,11 +120,11 @@ namespace Conexoes
         }
         public static double Double(this double vlr, int decimais = 0)
         {
-            return Math.Round(vlr, decimais);
+            return vlr.Round(decimais);
         }
         public static double Double(this float vlr, int decimais = 0)
         {
-            return Math.Round(vlr, decimais);
+            return vlr.Round(decimais);
         }
         public static double Double(this int vlr)
         {
@@ -148,7 +132,7 @@ namespace Conexoes
         }
         public static int Int(this double vlr)
         {
-            return (int)Math.Round(vlr);
+            return (int)vlr.Round(0);
         }
         public static bool Boolean<T>(this T obj)
         {

@@ -26,7 +26,7 @@ namespace Conexoes
             {
                 p0.Z = 0;
             }
-            p0 = new P3d(Math.Round(p0.X, decimais), Math.Round(p0.Y, decimais), Math.Round(p0.Z, decimais));
+            p0 = new P3d(p0.X.Round(decimais), p0.Y.Round(decimais), p0.Z.Round(decimais));
             return p0;
         }
         public static List<P3d> GetHorizontaisTop(this List<P3d> Origens)
@@ -217,7 +217,7 @@ namespace Conexoes
         }
         public static double Distancia(this P3d p3d, P3d p2, int precisao = 4)
         {
-            return Math.Round(Math.Sqrt(Math.Pow(p2.X - p3d.X, 2) + Math.Pow(p2.Y - p3d.Y, 2) + Math.Pow(p2.Z - p3d.Z, 2)), precisao);
+            return Math.Sqrt(Math.Pow(p2.X - p3d.X, 2) + Math.Pow(p2.Y - p3d.Y, 2) + Math.Pow(p2.Z - p3d.Z, 2)).Round(precisao);
         }
         public static double DistanciaX(this P3d p3d, P3d p1)
         {
@@ -298,7 +298,7 @@ namespace Conexoes
 
             ret.Y = (p3d.Y + (Math.Sin(angleRadians) * Distancia));
             ret.X = (p3d.X + (Math.Cos(angleRadians) * Distancia));
-            return new P3d(Math.Round(ret.X, decimais), Math.Round(ret.Y, decimais), p3d.Z);
+            return new P3d(ret.X.Round(decimais), ret.Y.Round(decimais), p3d.Z);
         }
         public static P3d Mover(this P3d p3d, P3d Distancia)
         {
@@ -474,7 +474,7 @@ namespace Conexoes
         {
             try
             {
-                return origem.Select(x => new P3d(Math.Round(x.X, decimais_X), Math.Round(x.Y, decimais_Y), 0)).GroupBy(x => "X: " + x.X + " Y:" + x.Y).Select(x => x.First()).ToList();
+                return origem.Select(x => new P3d(x.X.Round(decimais_X), x.Y.Round(decimais_Y), 0)).GroupBy(x => "X: " + x.X + " Y:" + x.Y).Select(x => x.First()).ToList();
 
             }
             catch (System.Exception)

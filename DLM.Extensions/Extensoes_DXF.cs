@@ -526,7 +526,7 @@ namespace DLM.desenho
             {
 
 
-                Vetores.Add(new Vector3(Math.Round(p3d.X, 10), Math.Round(p3d.Y, 10), 0));
+                Vetores.Add(new Vector3(p3d.X.Round(8), p3d.Y.Round(8), 0));
             }
             var poly = new Polyline3D(Vetores);
 

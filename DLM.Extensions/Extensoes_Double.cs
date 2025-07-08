@@ -26,7 +26,7 @@ namespace Conexoes
         public static string ToFin(this double num, int decimais = 3)
         {
             bool neg = false;
-            if(num<0)
+            if (num < 0)
             {
                 neg = true;
                 num = num.Abs();
@@ -34,7 +34,7 @@ namespace Conexoes
 
             var ret = num.ToString($"N{decimais}");
 
-            if(neg)
+            if (neg)
             {
                 ret = $"({ret})";
             }
@@ -65,11 +65,11 @@ namespace Conexoes
         }
         public static string ToKg(this double num)
         {
-            if(num == 0)
+            if (num == 0)
             {
                 return "";
             }
-            else if(num > 999 | num < -999)
+            else if (num > 999 | num < -999)
             {
                 num = num / 1000;
 
@@ -99,7 +99,7 @@ namespace Conexoes
             var retorno = new List<double>();
             var valor = min;
 
-            if(comp>0)
+            if (comp > 0)
             {
                 while (valor < max)
                 {
@@ -107,13 +107,13 @@ namespace Conexoes
                     valor += comp;
                 }
 
-                if(retorno.Count>0)
+                if (retorno.Count > 0)
                 {
                     retorno.Add(max);
                 }
             }
 
-            
+
 
 
             return retorno;
@@ -201,7 +201,7 @@ namespace Conexoes
         {
             try
             {
-                var t = Math.Round(100 * Valor / Maximo, Decimais);
+                var t = (100 * Valor / Maximo).Round(Decimais);
                 if (t >= 0)
                 {
                     return t;
@@ -217,9 +217,25 @@ namespace Conexoes
             return 0;
         }
 
-        public static double Round(this double valor, int decimais = 4)
+        public static double Round(this double valor, int decimais)
         {
+            if (decimais > 10)
+            {
+                decimais = 10;
+            }
+            else if (decimais < 0)
+            {
+                decimais = 4;
+            }
             return Math.Round(valor, decimais);
+        }
+        public static float Round(this float valor, int decimais)
+        {
+            if (decimais > 10)
+            {
+                decimais = 10;
+            }
+            return (float)Math.Round(valor, decimais);
         }
 
         public static double ArredondarMultiplo(this double valor, double multiplo)
@@ -227,7 +243,7 @@ namespace Conexoes
             var valor_fim = valor;
 
             var neg = valor_fim < 0;
-            if(neg)
+            if (neg)
             {
                 valor_fim = valor_fim.Abs();
             }
@@ -243,7 +259,7 @@ namespace Conexoes
             {
                 valor_fim = valor;
             }
-            else if(valor<multiplo)
+            else if (valor < multiplo)
             {
                 valor_fim = multiplo;
             }
@@ -268,17 +284,17 @@ namespace Conexoes
                 }
             }
 
-            
-            if(valor_fim == 0)
+
+            if (valor_fim == 0)
             {
                 valor_fim = multiplo;
             }
-            if (valor_fim < valor.Round(1) && multiplo>1)
+            if (valor_fim < valor.Round(1) && multiplo > 1)
             {
                 valor_fim += multiplo;
             }
 
-            if(neg)
+            if (neg)
             {
                 valor_fim *= -1;
             }

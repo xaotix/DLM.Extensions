@@ -98,7 +98,7 @@ namespace Conexoes
                 {
 
                     resto = sub % max;
-                    sub = (long)Math.Round((double)(sub / max));
+                    sub = (long)((double)(sub / max)).Round(0);
                     retorno = alfabeto[resto] + retorno;
                 }
 

@@ -83,7 +83,7 @@ namespace Conexoes.Macros
                 fn.Posicao = Tipo_Posicao_Purlin.Rebatido;
                 fn.Texto.Value = s.Posicao.GetStr() + " - " + s.ToString();
                 //só rebate se não encontra nenhum furo
-                if (furos.Find(x => Math.Round(x.X) == Math.Round(fn.X) | Math.Round(x.X) == Math.Round(fn.X - 1) | Math.Round(x.X) == Math.Round(fn.X + 1)) == null)
+                if (furos.Find(x => (x.X).Round(0) == (fn.X).Round(0) | (x.X).Round(0) == (fn.X - 1).Round(0) | (x.X).Round(0) == (fn.X + 1).Round(0)) == null)
                 {
                     //só rebate se não encontra nenhum furo próximo
                     if (Rebater_Furos_Ignorar)

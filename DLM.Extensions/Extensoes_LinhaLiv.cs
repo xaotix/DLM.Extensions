@@ -123,7 +123,7 @@ namespace DLM.cam
 
             if (liv.Raio > 0)
             {
-                int segmentos = (int)Math.Round(liv.Anterior.Origem.Distancia(liv.Proximo.Origem) / Cfg.Init.CAM_Multiplo_Segmentos);
+                int segmentos = (int)(liv.Anterior.Origem.Distancia(liv.Proximo.Origem) / Cfg.Init.CAM_Multiplo_Segmentos).Round(0);
 
                 if (segmentos < Cfg.Init.CAM_Min_Segmentos)
                 {

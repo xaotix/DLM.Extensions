@@ -100,13 +100,13 @@ namespace Conexoes
 
             if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Redonda | shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Redondo)
             {
-                return Math.Round(shape.Perfil.GetPesoMetro() / 1000 * shape.Comprimento, Cfg.Init.CAM_Decimais_Peso);
+                return (shape.Perfil.GetPesoMetro() / 1000 * shape.Comprimento).Round(Cfg.Init.CAM_Decimais_Peso);
             }
             else if (shape.Perfil.Familia == CAM_FAMILIA.Laminado)
             {
                 if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.L_Laminado)
                 {
-                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
+                    return (liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Chata)
                 {
@@ -114,15 +114,15 @@ namespace Conexoes
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.INP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.WLam)
                 {
-                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
+                    return (liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.UAP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.UNP)
                 {
-                    return Math.Round(liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
+                    return (liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
                 else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Quadrado)
                 {
-                    return Math.Round((liv1P.GetPeso(shape.Perfil) * 2) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil), Cfg.Init.CAM_Decimais_Peso);
+                    return ((liv1P.GetPeso(shape.Perfil) * 2) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
 
             }
