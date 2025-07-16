@@ -22,7 +22,7 @@ namespace Conexoes
         public static string GetJSON(this Linha linha)
         {
             string p = "    {\n";
-            for (int i = 0; i < linha.Celulas.Count; i++)
+            for (int i = 0; i < linha.Count; i++)
             {
                 p = p + (i > 0 ? ",\n" : "") + "      " + linha.Celulas[i].GetJSON();
             }

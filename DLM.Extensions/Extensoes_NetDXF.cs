@@ -529,10 +529,10 @@ namespace DLM.desenho
 
             if (atributos != null)
             {
-                if (atributos.Celulas.Count > 0)
+                if (atributos.Count > 0)
                 {
 
-                    foreach (var cel in atributos.Celulas)
+                    foreach (var cel in atributos)
                     {
                         var tag = cel.Coluna.ToUpper();
 
