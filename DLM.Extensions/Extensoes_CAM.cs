@@ -342,7 +342,7 @@ namespace Conexoes
 
         public static List<ReadCAM> GetCAMs(this List<string> programas)
         {
-            var _CAMs = new List<ReadCAM>();
+            var items = new List<ReadCAM>();
             programas = programas.Select(x => x.ToUpper()).Distinct().ToList();
             var lista = programas.Quebrar(500);
             foreach (var pack in lista)
@@ -364,13 +364,39 @@ namespace Conexoes
 
                 Task.WaitAll(Tarefas.ToArray());
 
-                _CAMs.AddRange(cams_map);
-                _CAMs.AddRange(cams_map.SelectMany(x=>x.GetDesmembrados()));
+                items.AddRange(cams_map);
+                items.AddRange(cams_map.SelectMany(x=>x.GetDesmembrados()));
                 //_CAMs = _CAMs.OrderBy(x => x.Nome).ToList();
             }
-            return _CAMs;
+            return items;
         }
+        public static List<NC1> GetNCs(this List<string> programas)
+        {
+            var items = new List<NC1>();
+            programas = programas.Select(x => x.ToUpper()).Distinct().ToList();
+            var lista = programas.Quebrar(500);
+            foreach (var pack in lista)
+            {
+                var Tarefas = new List<Task>();
+                var cams_map = new ConcurrentBag<DLM.cam.NC1>();
+                foreach (var programa in pack)
+                {
+                    Tarefas.Add(Task.Factory.StartNew(() =>
+                    {
+                        if (programa.Exists())
+                        {
+                            var ncam = new NC1(programa);
+                            cams_map.Add(ncam);
+                        }
+                    }));
+                }
 
+                Task.WaitAll(Tarefas.ToArray());
+
+                items.AddRange(cams_map);
+            }
+            return items;
+        }
 
 
         public static Face GetBordas(this List<Face> faces, double offset_Y = 0)
