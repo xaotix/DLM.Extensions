@@ -16,11 +16,156 @@ namespace Conexoes
 
     public static class ExtensoesCAM
     {
+        public static TAB_MAKTX GetMAKTX(this TAB_NORMT normt)
+        {
+            var maktx = TAB_MAKTX._INVALIDO;
+            switch (normt)
+            {
+                case TAB_NORMT._INVALIDO:
+                    break;
+                case TAB_NORMT._VAZIO:
+                    break;
+                case TAB_NORMT.CHAPA:
+                    maktx = TAB_MAKTX.CHAPA;
+                    break;
+                case TAB_NORMT.PERFIL_DOBRADO:
+                    maktx = TAB_MAKTX.PERFIL_DOBRADO;
+                    break;
 
+
+                case TAB_NORMT.CHAPA_XADREZ:
+                    maktx = TAB_MAKTX.CHAPA_DE_PISO;
+                    break;
+                case TAB_NORMT.FERRO_REDONDO:
+                    maktx = TAB_MAKTX.TIRANTE;
+                    break;
+                case TAB_NORMT.BARRA_CHATA:
+                    maktx = TAB_MAKTX.CHAPA;
+                    break;
+                case TAB_NORMT.PERFIL_I_LAMINADO:
+                    maktx = TAB_MAKTX.VIGA_LAM_W;
+                    break;
+                case TAB_NORMT.VIGA_ALMA:
+                case TAB_NORMT.VIGA_MESA:
+                case TAB_NORMT.PERFIL_I_SOLDADO:
+                    maktx = TAB_MAKTX.VIGA_SOLDADA;
+                    break;
+                case TAB_NORMT.PERFIL_C_PADRAO_165:
+                case TAB_NORMT.PERFIL_C_PADRAO_216:
+                case TAB_NORMT.PERFIL_C_PADRAO_292:
+                case TAB_NORMT.PERFIL_C_PADRAO_125:
+                case TAB_NORMT.PERFIL_C_PADRAO_185:
+                    maktx = TAB_MAKTX.TERCA_PURLIN_C;
+                    break;
+                case TAB_NORMT.PERFIL_Z_PADRAO_165:
+                case TAB_NORMT.PERFIL_Z_PADRAO_216:
+                case TAB_NORMT.PERFIL_Z_PADRAO_292:
+                case TAB_NORMT.PERFIL_Z_ENRIJECIDO_185:
+                case TAB_NORMT.PERFIL_Z_ENRIJECIDO_360:
+                case TAB_NORMT.PERFIL_Z_ENRIJECIDO_245:
+                case TAB_NORMT.PERFIL_Z_ENRIJECIDO_300:
+                    maktx = TAB_MAKTX.TERCA_PURLIN_Z;
+                    break;
+
+                case TAB_NORMT.TUBO_RETANGULAR:
+                case TAB_NORMT.TUBO_REDONDO:
+                case TAB_NORMT.PERFIL_C_LAMINADO:
+                case TAB_NORMT.PERFIL_T_LAMINADO:
+                    maktx = TAB_MAKTX.VIGA_LAM_GEN;
+                    break;
+
+
+                case TAB_NORMT.DIAGONAL_MEDAJOIST:
+                    maktx = TAB_MAKTX.DIAGONAL_MEDAJOIST;
+                    break;
+                case TAB_NORMT.BANZO_INFERIOR_TIPO_D:
+                    maktx = TAB_MAKTX.BANZO_SUPERIOR_MEDAJOIST;
+                    break;
+                case TAB_NORMT.BANZO_SUPERIOR_TIPO_D:
+                    maktx = TAB_MAKTX.BANZO_INFERIOR_MEDAJOIST;
+                    break;
+
+                case TAB_NORMT.BANZO_INFERIOR_MEDABAR:
+                    maktx = TAB_MAKTX.BANZO_INFERIOR_MEDABAR;
+                    break;
+                case TAB_NORMT.BANZO_SUPERIOR_MEDABAR:
+                    maktx = TAB_MAKTX.BANZO_SUPERIOR_MEDABAR;
+                    break;
+                case TAB_NORMT.DIAGONAL_MEDABAR:
+                    maktx = TAB_MAKTX.DIAGONAL_MEDABAR;
+                    break;
+
+
+
+
+
+                case TAB_NORMT.CANTONEIRA_LAMINADA:
+                case TAB_NORMT.TUBO_QUADRADO:
+                    maktx = TAB_MAKTX.VIGA_LAM_GEN;
+                    break;
+
+
+                case TAB_NORMT.CHAPA_EXPANDIDA:
+                    maktx = TAB_MAKTX.CHAPA_DE_PISO;
+                    break;
+                case TAB_NORMT.SSR1:
+                    maktx = TAB_MAKTX.SSR1;
+                    break;
+                case TAB_NORMT.SSR2:
+                    maktx = TAB_MAKTX.SSR2;
+                    break;
+                case TAB_NORMT.SSR1M:
+                    maktx = TAB_MAKTX.SSR1M;
+                    break;
+                case TAB_NORMT.SSR1BM:
+                    maktx = TAB_MAKTX.SSR1BM;
+                    break;
+                case TAB_NORMT.SSR1F:
+                    maktx = TAB_MAKTX.SSR1F;
+                    break;
+                case TAB_NORMT.SSR1BF:
+                    maktx = TAB_MAKTX.SSR1BF;
+                    break;
+                case TAB_NORMT.STEEL_DECK:
+                    maktx = TAB_MAKTX.STEEL_DECK;
+                    break;
+                case TAB_NORMT.PANEL_RIB_II:
+                    maktx = TAB_MAKTX.PANEL_RIB_II;
+                    break;
+                case TAB_NORMT.PANEL_RIB_III:
+                    maktx = TAB_MAKTX.PANEL_RIB_III;
+                    break;
+                case TAB_NORMT.TELHA_ONDULADA:
+                    maktx = TAB_MAKTX.TELHA_ONDULADA;
+                    break;
+                case TAB_NORMT.GRADE:
+                    maktx = TAB_MAKTX.GRADE_DE_PISO;
+                    break;
+                case TAB_NORMT.TELA:
+                case TAB_NORMT.TELHA_FORRO:
+                    maktx = TAB_MAKTX.QUADRO_DE_TELA;
+                    break;
+                    break;
+                case TAB_NORMT.TRINS:
+                    maktx = TAB_MAKTX.ARREMATE;
+                    break;
+                case TAB_NORMT.MARCA_KIT_PIE:
+                case TAB_NORMT.ALMOX_FABRICACAO:
+                case TAB_NORMT.KIT_PIE:
+                case TAB_NORMT._DESCONTINUADO_1:
+                case TAB_NORMT._DESCONTINUADO_2:
+                    maktx = TAB_MAKTX._INVALIDO;
+                    break;
+                default:
+                    break;
+            }
+
+            return maktx;
+        }
         public static List<Report> Verificar(this List<Furo> furos)
         {
             var reports = new List<Report>();
-       
+
             for (int i = 0; i < furos.Count; i++)
             {
                 var f1 = furos[i];
@@ -86,7 +231,7 @@ namespace Conexoes
                     n_CAM.CopiarInfo(Origem);
                     cCam++;
                     Retorno.Add(n_CAM);
-                   
+
                 }
             }
             return Retorno;
@@ -105,7 +250,7 @@ namespace Conexoes
 
             var Geometria = new List<Liv>();
             Geometria.AddRange(Origem.LivSegmentada);
-            
+
 
             for (int i = 0; i < Qtd; i++)
             {
@@ -286,7 +431,7 @@ namespace Conexoes
             faces.AddRange(nfaces.SelectMany(x => x.RecortesInternos));
             faces.AddRange(nfaces.SelectMany(x => x.Dobras));
             faces.AddRange(nfaces.SelectMany(x => x.Soldas));
-            if(uniao.Count==1)
+            if (uniao.Count == 1)
             {
                 faces.AddRange(uniao[0].Liv);
             }
@@ -365,7 +510,7 @@ namespace Conexoes
                 Task.WaitAll(Tarefas.ToArray());
 
                 items.AddRange(cams_map);
-                items.AddRange(cams_map.SelectMany(x=>x.GetDesmembrados()));
+                items.AddRange(cams_map.SelectMany(x => x.GetDesmembrados()));
                 //_CAMs = _CAMs.OrderBy(x => x.Nome).ToList();
             }
             return items;
@@ -698,7 +843,7 @@ namespace Conexoes
 
                         var p_contorno = bordas.GetPath().GetPathsD();
                         p_contorno.AddRange(faces1);
-                        
+
                         var p_contornos_pecas = new PathsD();
                         p_contornos_pecas.AddRange(faces1);
 
