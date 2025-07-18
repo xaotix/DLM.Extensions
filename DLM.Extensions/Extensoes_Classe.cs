@@ -416,7 +416,7 @@ namespace Conexoes
                             }
                             catch (Exception)
                             {
-                             
+
                             }
                         }
                         linha.Add(cel);
@@ -526,9 +526,9 @@ namespace Conexoes
 
         private static string GetDisplayName(this PropertyInfo property)
         {
-            if (property == null) 
-            { 
-                return ""; 
+            if (property == null)
+            {
+                return "";
             }
             var atts = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
             if (atts.Length > 0)

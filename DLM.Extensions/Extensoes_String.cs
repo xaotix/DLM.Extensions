@@ -8,21 +8,27 @@ namespace Conexoes
 {
     public static class Extensoes_String
     {
+        public static bool Vazio(this string valor)
+        {
+            if (valor == null) { return true; }
+            var vlr = valor.Replace(" ", "").Replace("0","");
+            return vlr.Length == 0;
+        }
         public static string GetKey(this string txt)
         {
-            if(txt !=null)
+            if (txt != null)
             {
-                if(txt.Length>0)
+                if (txt.Length > 0)
                 {
                     return txt.ToUpper().Replace(" ", "").Replace(".", "");
                 }
             }
             return txt;
-        } 
+        }
         public static string FirstCharToUpper(this string text)
         {
 
-            if(text==null)
+            if (text == null)
             {
                 return null;
             }
@@ -41,13 +47,13 @@ namespace Conexoes
                 for (int i = 0; i < strs.Count; i++)
                 {
                     var st = strs[i];
-                    if(i>0)
+                    if (i > 0)
                     {
                         str_join += " ";
                     }
-                    if(st.Length>0)
+                    if (st.Length > 0)
                     {
-                        if(st.Length == 1)
+                        if (st.Length == 1)
                         {
                             str_join += st.ToUpper();
                         }
@@ -66,9 +72,9 @@ namespace Conexoes
         }
         public static bool StartsW(this string txt, params string[] valores)
         {
-            foreach(var valor in valores)
+            foreach (var valor in valores)
             {
-            var tem = txt.TrimStart().StartsWith(valor);
+                var tem = txt.TrimStart().StartsWith(valor);
                 if (tem)
                 {
                     return tem;
@@ -174,7 +180,7 @@ namespace Conexoes
         public static string Direita(this string Origem, int Comp)
         {
             string txt = Origem;
-            if(Comp<txt.Length)
+            if (Comp < txt.Length)
             {
                 return txt.Substring(txt.Length - Comp, Comp);
             }
