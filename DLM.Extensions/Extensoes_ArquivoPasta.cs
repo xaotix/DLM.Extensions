@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -44,6 +45,10 @@ namespace Conexoes
             return retorno;
         }
 
+        public static void Add(this List<ArquivoCopiar> lista, string origem, string destino)
+        {
+            lista.Add(new ArquivoCopiar(origem, destino));
+        }
 
         public static List<Arquivo> GetArquivos(this List<Pasta> Pastas, string Filtro = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
         {
@@ -511,7 +516,7 @@ namespace Conexoes
             {
                 if (mensagem)
                 {
-                    if (Utilz.Pergunta("Falha ao tentar copiar o arquivo " + arquivo_origem + " para o destino: " + Destino_Pasta_Ou_Arquivo + "\n\nTentar novamente ?\n" + ex.Message + "\n\n\n\n" + ex.StackTrace))
+                    if (Utilz.Pergunta("Falha ao tentar copiar o arquivo " + arquivo_origem + " para o destino: " + Destino_Pasta_Ou_Arquivo + "\n\nTentar novamente ?\n\n\n\n\n\n" + ex.Message + "\n\n\n\n" + ex.StackTrace))
                     {
                         goto retentar;
                     }
