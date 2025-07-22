@@ -1,4 +1,5 @@
-﻿using Conexoes;
+﻿using Clipper2Lib;
+using Conexoes;
 using DLM.desenho;
 using DLM.vars;
 using System;
@@ -12,7 +13,7 @@ namespace DLM.cam
 {
     public static class ExtensoesLiv
     {
-       
+
         public static Liv MoverY(this Liv p1, double valor)
         {
             var pt = p1.Clonar();
@@ -64,7 +65,7 @@ namespace DLM.cam
 
         public static List<Liv> ToLiv(this List<P3d> p3Ds)
         {
-            return new List<Liv>(p3Ds.Select(x=> new Liv(x)));
+            return new List<Liv>(p3Ds.Select(x => new Liv(x)));
         }
 
         public static List<Liv> Offset(this List<Liv> livs, double offset, bool fechar = false)
@@ -91,7 +92,7 @@ namespace DLM.cam
                     retorno.Add(new Liv(ponto));
                 }
             }
-            if(fechar && retorno.Count>0)
+            if (fechar && retorno.Count > 0)
             {
                 retorno.Add(retorno.First().Clonar());
             }
@@ -364,6 +365,21 @@ namespace DLM.cam
             }
 
         }
+        public static List<Liv> ChapaParaMesa(this List<Liv> livs, double algura, double largura_mesa)
+        {
+            var retorno = new List<Liv>();
+            if (livs.Count >= 3)
+            {
+                var meio = largura_mesa / 2;
+                foreach (var liv in livs)
+                {
+                    var nliv = new Liv(liv.Origem.X, algura, liv.Origem.Y + meio);
+                    retorno.Add(nliv);
+                }
+            }
+
+            return retorno;
+        }
         public static List<Liv> MesaParaChapa(this List<Liv> Mesa, bool zerarX = true)
         {
             var Retorno = new List<Liv>();
@@ -610,7 +626,7 @@ namespace DLM.cam
                 {
                     points = Pts.Segmentar().Zerar(out xmin, out ymin);
                 }
-            
+
 
 
                 points = points.RemoveSobrePostos();
