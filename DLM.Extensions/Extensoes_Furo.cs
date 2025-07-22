@@ -20,7 +20,7 @@ namespace DLM.cam
                 var meio = largura_mesa / 2;
                 foreach (var item in items)
                 {
-                    var nliv = new Furo(item.Origem.X, algura, item.Diametro,item.Oblongo,item.Angulo, item.Origem.Y + meio);
+                    var nliv = new Furo(item.Origem.X, item.Origem.Y + meio, item.Diametro,item.Oblongo,item.Angulo, algura);
                     retorno.Add(nliv);
                 }
             }

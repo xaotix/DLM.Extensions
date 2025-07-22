@@ -45,9 +45,9 @@ namespace Conexoes
             return retorno;
         }
 
-        public static void Add(this List<ArquivoCopiar> lista, string origem, string destino)
+        public static void Add(this List<ArquivoCopiar> lista, string destino, string origem)
         {
-            lista.Add(new ArquivoCopiar(origem, destino));
+            lista.Add(new ArquivoCopiar(destino, origem));
         }
 
         public static List<Arquivo> GetArquivos(this List<Pasta> Pastas, string Filtro = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
@@ -417,10 +417,19 @@ namespace Conexoes
         {
             if (!arquivo_origem.Exists())
             {
+                if(mensagem)
+                {
+                    $"Arquivo de origem não econtrado. {arquivo_origem}".Alerta();
+                }
+
                 return false;
             }
             if (Destino_Pasta_Ou_Arquivo == "")
             {
+                if(mensagem)
+                {
+                    $"Destino em branco.".Alerta();
+                }
                 return false;
             }
 
