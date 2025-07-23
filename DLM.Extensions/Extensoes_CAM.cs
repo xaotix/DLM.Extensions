@@ -3,6 +3,7 @@ using Conexoes;
 using DLM.cam;
 using DLM.desenho;
 using DLM.encoder;
+using DLM.mdj6;
 using DLM.vars;
 using System;
 using System.Collections.Concurrent;
@@ -16,6 +17,8 @@ namespace Conexoes
 
     public static class ExtensoesCAM
     {
+
+
         public static TAB_MAKTX GetMAKTX(this TAB_NORMT normt)
         {
             var maktx = TAB_MAKTX._INVALIDO;
