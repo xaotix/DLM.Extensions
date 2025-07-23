@@ -45,9 +45,9 @@ namespace Conexoes
             return retorno;
         }
 
-        public static void Add(this List<ArquivoCopiar> lista, string destino, string origem)
+        public static void Add(this List<ArquivoCopiar> lista, string destino, string origem, string marca, string posicao)
         {
-            lista.Add(new ArquivoCopiar(destino, origem));
+            lista.Add(new ArquivoCopiar(destino, origem, marca, posicao));
         }
 
         public static List<Arquivo> GetArquivos(this List<Pasta> Pastas, string Filtro = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
