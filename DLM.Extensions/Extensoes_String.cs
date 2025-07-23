@@ -11,7 +11,7 @@ namespace Conexoes
         public static bool Vazio(this object valor)
         {
             if (valor == null) { return true; }
-            var vlr = valor.ToString().Replace(" ", "").Replace("0","");
+            var vlr = valor.ToString().Replace(" ", "").Replace(".","").Replace(",","").Replace("0","");
             return vlr.Length == 0;
         }
         public static string GetKey(this string txt)
