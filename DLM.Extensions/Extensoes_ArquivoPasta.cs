@@ -170,6 +170,10 @@ namespace Conexoes
             }
             return retorno;
         }
+        public static List<Arquivo> GetArquivos(this Pasta Raiz, bool sub_pastas = false, params string[] filtros)
+        {
+            return Raiz.Endereco.GetArquivos(sub_pastas, filtros);
+        }
         public static List<Arquivo> GetArquivos(this string Raiz, bool sub_pastas = false, params string[] filtros)
         {
             if (!Raiz.Exists())
