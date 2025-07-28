@@ -115,17 +115,17 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    var erro = ex.Message + "\n" + ex.StackTrace;
+                    var erro = ex.Message + "\n\n\n" + ex.StackTrace;
                     if (msg)
                     {
-                        if (Conexoes.Utilz.Pergunta("Tentar Novamente?\n\n\n" + erro))
+                        if (Conexoes.Utilz.Pergunta($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}"))
                         {
                             goto retentar;
                         }
                     }
                     if (log)
                     {
-                        DLM.log.Log(erro);
+                        DLM.log.Log(ex);
                     }
                 }
             }
@@ -138,17 +138,16 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    var erro = ex.Message + "\n" + ex.StackTrace;
                     if (msg)
                     {
-                        if (Conexoes.Utilz.Pergunta("Tentar Novamente?\n\n\n" + erro))
+                        if (Conexoes.Utilz.Pergunta($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}"))
                         {
                             goto retentar;
                         }
                     }
                     if (log)
                     {
-                        DLM.log.Log(erro);
+                        DLM.log.Log(ex);
                     }
 
                     return false;
@@ -462,7 +461,7 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    var erro = $"Não foi possível criar o diretório {Destino_Pasta_Ou_Arquivo}.\n" + ex.Message + "\n\n\n\n" + ex.StackTrace;
+                    var erro = $"Não foi possível criar o diretório {Destino_Pasta_Ou_Arquivo}.\n" + ex.Message;
                     if (mensagem)
                     {
 
@@ -474,7 +473,7 @@ namespace Conexoes
 
                     if (log)
                     {
-                        DLM.log.Log(erro);
+                        DLM.log.Log(ex);
                     }
 
                     return false;
