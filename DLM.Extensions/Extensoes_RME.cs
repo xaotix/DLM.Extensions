@@ -614,10 +614,10 @@ namespace Conexoes
                                              .GroupBy(x => x.ToString())
                                              .Select(g => g.First())
                                              .ToList().OrderBy(x => x.COD_DB).ToList();
-            foreach (RMT t in distinct)
+            foreach (RMT rm in distinct)
             {
-                RMT N = new RMT(t, t.Bobina, t.GetLinha_RMT_User());
-                N.Quantidade = Origem.FindAll(x => x.ToString() == t.ToString()).Sum(y => y.Quantidade);
+                RMT N = new RMT(rm, rm.Bobina, rm.GetLinha_RMT_User());
+                N.Quantidade = Origem.FindAll(x => x.ToString() == rm.ToString()).Sum(y => y.Quantidade);
                 retorno.Add(N);
             }
             var lista_fim = retorno.GroupBy(x => x.CODIGOFIM).ToList();
