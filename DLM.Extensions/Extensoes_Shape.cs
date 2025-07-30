@@ -407,11 +407,11 @@ namespace Conexoes
         }
         public static Face GetLIV3_MesaParaChapa(this Shape shape)
         {
-            return shape.LIV3.MesaParaChapa(shape.Perfil);
+            return shape.LIV3.MesaParaChapa(shape.Perfil,shape.Comprimento, shape.Perfil.Largura_MI,shape.Perfil.Esp_MI);
         }
         public static Face GetLIV2_MesaParaChapa(this Shape shape)
         {
-            return shape.LIV2.MesaParaChapa(shape.Perfil);
+            return shape.LIV2.MesaParaChapa(shape.Perfil, shape.Comprimento, shape.Perfil.Largura_MS, shape.Perfil.Esp_MS);
         }
         public static Face LIV3_Cartola1(this Shape shape)
         {

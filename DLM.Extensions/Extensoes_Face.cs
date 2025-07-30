@@ -134,12 +134,16 @@ namespace Conexoes
                 )
                ;
         }
-        public static Face MesaParaChapa(this Face face, Perfil Perfil)
+        public static Face MesaParaChapa(this Face face, Perfil Perfil, double comprimento, double largura, double esp)
         {
 
             if (face.Mesa)
             {
                 var liv = face.LivSegmentada.MesaParaChapa(false);
+                if(liv.Count==0)
+                {
+                    liv = Retangulo.New(comprimento, largura, esp).Get(TipoREC.Cima_Baixo);
+                }
                 return new Face(
                     liv,
                     FaceNum.LIV1,
@@ -150,8 +154,14 @@ namespace Conexoes
             }
             else
             {
+                var liv = new List<Liv>();
+                liv.AddRange(face.Liv);
+                if (liv.Count == 0)
+                {
+                    liv = Retangulo.New(comprimento, largura, esp).Get(TipoREC.Cima_Baixo);
+                }
                 var pp = new Face(
-                    face.Liv,
+                    liv,
                     FaceNum.LIV1,
                     face.RecortesInternos,
                     face.Furacoes,
