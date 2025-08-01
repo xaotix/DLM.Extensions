@@ -914,39 +914,39 @@ namespace Conexoes
 
         public static List<Report> Comparar(this DLM.cam.ReadCAM p1, DLM.cam.ReadCAM p2)
         {
-            List<Report> Reports = new List<Report>();
+            var reports = new List<Report>();
 
             if (p1.Largura != p2.Largura)
             {
-                Reports.Add(new Report("Largura Divergente", p1.Nome + " - " + p1.Largura + " / " + p2.Nome + " - " + p2.Largura));
+                reports.Add(new Report("Largura Divergente", p1.Nome + " - " + p1.Largura + " / " + p2.Nome + " - " + p2.Largura));
             }
 
             if (p1.Comprimento != p2.Comprimento)
             {
-                Reports.Add(new Report("Comprimento Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Comprimento));
+                reports.Add(new Report("Comprimento Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Comprimento));
             }
             if (p1.Descricao != p2.Descricao)
             {
-                Reports.Add(new Report("Descricao Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Descricao));
+                reports.Add(new Report("Descricao Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Descricao));
             }
 
             foreach (var s in p1.Formato.LIV1.Furacoes.FindAll(x => p2.Formato.LIV1.Furacoes.Find(y =>
               y.GetLinha() == x.GetLinha()
           ) == null))
             {
-                Reports.Add(new Report("Furo Divergente", p1.Nome + " - " + s.ToString()));
+                reports.Add(new Report("Furo Divergente", p1.Nome + " - " + s.ToString()));
             }
 
             foreach (var s in p2.Formato.LIV1.Furacoes.FindAll(x => p1.Formato.LIV1.Furacoes.Find(y =>
              y.GetLinha() == x.GetLinha()
          ) == null))
             {
-                Reports.Add(new Report("Furo Divergente", p2.Nome + " - " + s.ToString()));
+                reports.Add(new Report("Furo Divergente", p2.Nome + " - " + s.ToString()));
             }
 
             if (p1.Espessura != p2.Espessura)
             {
-                Reports.Add(new Report("Espessura Divergente", p1.Nome + " - " + p1.Espessura + " / " + p2.Nome + " - " + p2.Espessura));
+                reports.Add(new Report("Espessura Divergente", p1.Nome + " - " + p1.Espessura + " / " + p2.Nome + " - " + p2.Espessura));
             }
 
             foreach (var s in p1.Formato.LIV1.Dobras
@@ -954,7 +954,7 @@ namespace Conexoes
                 .Find(y => y.GetLinhaCAM() == x.GetLinhaCAM()
          ) == null))
             {
-                Reports.Add(new Report("Dobra Divergente", p2.Nome + " - " + s.ToString()));
+                reports.Add(new Report("Dobra Divergente", p2.Nome + " - " + s.ToString()));
             }
             foreach (var s in p2.Formato.LIV1.Dobras
                 .FindAll(x => p1.Formato.LIV1.Dobras
@@ -962,10 +962,10 @@ namespace Conexoes
              y.GetLinhaCAM() == x.GetLinhaCAM()
          ) == null))
             {
-                Reports.Add(new Report("Dobra Divergente", p2.Nome + " - " + s.ToString()));
+                reports.Add(new Report("Dobra Divergente", p2.Nome + " - " + s.ToString()));
             }
 
-            return Reports;
+            return reports;
         }
     }
 }

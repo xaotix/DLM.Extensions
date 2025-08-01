@@ -799,9 +799,9 @@ namespace Conexoes
 
 
    
-        public static void Add(this ObservableCollection<Report> Objetos, string propriedades = "", string mensagem = "", TipoReport report = TipoReport.Status)
+        public static void Add(this ObservableCollection<Report> reports, string propriedades = "", string mensagem = "", TipoReport report = TipoReport.Status)
         {
-            Objetos.Add(new Report(propriedades, mensagem, report));
+            reports.Add(new Report(propriedades, mensagem, report));
         }
         /// <param name="Datagrid"></param>
 

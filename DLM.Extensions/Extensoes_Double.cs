@@ -73,10 +73,10 @@ namespace Conexoes
             {
                 num = num / 1000;
 
-                return num.ToString("N0") + " Ton";
+                return num.ToString("N0") + " t";
             }
 
-            return num.ToString("N0") + " Kg";
+            return num.ToString("N0") + " kg";
         }
         public static List<double> MediaMovel(this List<double> valores)
         {
