@@ -8,6 +8,44 @@ namespace Conexoes
 {
     public static class Extensoes_String
     {
+        public static string ToPEP(this string valor)
+        {
+            var retorno = "";
+            var pep = valor.Replace(" ", "").Replace("-", "").Replace(".", "");
+            //10-123456.P00.001.30A.F2
+            //setor atividade
+            if (pep.Length > 1)
+            {
+                retorno += $"{pep.Substring(0, 2)}";
+            }
+            //contrato
+            if (pep.Length > 7)
+            {
+                retorno += $"-{pep.Substring(2, 6)}";
+            }
+            //pedido
+            if (pep.Length > 10)
+            {
+                retorno += $".{pep.Substring(8, 3)}";
+            }
+            //etapa
+            if (pep.Length > 13)
+            {
+                retorno += $".{pep.Substring(11, 3)}";
+            }
+            //sub-etapa
+            if (pep.Length > 16)
+            {
+                retorno += $".{pep.Substring(14, 3)}";
+            }
+            //pep
+            if (pep.Length > 18)
+            {
+                retorno += $".{pep.Substring(17, 2)}";
+            }
+
+            return retorno;
+        }
         public static bool Vazio(this object valor)
         {
             if (valor == null) { return true; }
