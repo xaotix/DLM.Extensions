@@ -56,7 +56,7 @@ namespace Conexoes
 
             List<MarcaTecnoMetal> lista_pecas = new List<MarcaTecnoMetal>();
 
-            foreach (var linha in consulta.Linhas)
+            foreach (var linha in consulta)
             {
                 lista_pecas.Add(new MarcaTecnoMetal(linha));
             }
@@ -119,7 +119,7 @@ namespace Conexoes
 
         public static void Show(this Tabela tabela, bool display_names = false)
         {
-            if (tabela.Linhas.Count > 0)
+            if (tabela.Count > 0)
             {
                 var mm = new WPF.VerTabela(tabela);
                 mm.Show();
