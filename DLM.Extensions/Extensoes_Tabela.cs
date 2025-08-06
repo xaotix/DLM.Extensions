@@ -35,16 +35,16 @@ namespace Conexoes
             string p = "{" +
                 "\n  " + Utilz._Aspas + "Nome" + Utilz._Aspas + ":" + Utilz._Aspas + tabela.Nome + Utilz._Aspas + "," +
                "\n  " + Utilz._Aspas + "Valores" + Utilz._Aspas + ": \n  [\n";
-            for (int i = 0; i < tabela.Linhas.Count; i++)
+            for (int i = 0; i < tabela.Count; i++)
             {
-                p = p + (i > 0 ? ",\n" : "") + tabela.Linhas[i].GetJSON();
+                p = p + (i > 0 ? ",\n" : "") + tabela[i].GetJSON();
             }
             p = p + "\n  ]\n}";
             return p;
         }
-        public static List<List<object>> ToList(this DLM.db.Tabela tabela)
+        public static List<List<object>> ToObjectList(this DLM.db.Tabela tabela)
         {
-            return tabela.Linhas.Select(x => x.GetValores()).ToList();
+            return tabela.Select(x => x.GetValores()).ToList();
         }
         public static DLM.db.Tabela Unir(this List<DLM.db.Tabela> tabelas)
         {
@@ -160,7 +160,7 @@ namespace Conexoes
             {
                 List<string> l = new List<string>();
                 l.Add(i.ToString());
-                l.AddRange(tabela.Linhas[i].Valores());
+                l.AddRange(tabela[i].Valores());
                 ls.Add(l);
             }
             foreach (var L in ls)

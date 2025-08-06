@@ -187,7 +187,7 @@ namespace Conexoes
             }
 
 
-            foreach (var linha in tabela.Linhas)
+            foreach (var linha in tabela)
             {
                 lista.Rows.Add(linha.Valores().ToArray());
             }

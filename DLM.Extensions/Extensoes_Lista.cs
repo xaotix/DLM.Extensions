@@ -1,4 +1,5 @@
 ﻿using Conexoes.Macros.Escada;
+using DLM.db;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -66,6 +67,7 @@ namespace Conexoes
 
             return list;
         }
+
         public static List<List<T>> Quebrar<T>(this List<T> locations, int maximo = 30)
         {
             var list = new List<List<T>>();
@@ -73,6 +75,17 @@ namespace Conexoes
             for (int i = 0; i < locations.Count; i += maximo)
             {
                 list.Add(locations.GetRange(i, Math.Min(maximo, locations.Count - i)));
+            }
+
+            return list;
+        }
+        public static List<List<Linha>> Quebrar(this Tabela locations, int maximo = 30)
+        {
+            var list = new List<List<Linha>>();
+
+            for (int i = 0; i < locations.Count; i += maximo)
+            {
+                list.Add(locations.Linhas.GetRange(i, Math.Min(maximo, locations.Count - i)));
             }
 
             return list;

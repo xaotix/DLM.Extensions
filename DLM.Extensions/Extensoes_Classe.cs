@@ -345,11 +345,11 @@ namespace Conexoes
         public static DLM.db.Linha GetLinha<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, params string[] remover)
         {
             var tbl = GetTabela<T>(new List<T> { obj }, only_can_write, only_browsable, only_simple_properties);
-            if (tbl.Linhas.Count == 0)
+            if (tbl.Count == 0)
             {
                 return new DLM.db.Linha();
             }
-            var linha = tbl.Linhas[0];
+            var linha = tbl[0];
             foreach (var r in remover)
             {
                 var cel = linha[r];
