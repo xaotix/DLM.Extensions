@@ -24,7 +24,7 @@ namespace Conexoes
             string p = "    {\n";
             for (int i = 0; i < linha.Count; i++)
             {
-                p = p + (i > 0 ? ",\n" : "") + "      " + linha.Celulas[i].GetJSON();
+                p = p + (i > 0 ? ",\n" : "") + "      " + linha[i].GetJSON();
             }
             p = p + "\n    }";
 

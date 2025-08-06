@@ -353,7 +353,7 @@ namespace Conexoes
             foreach (var r in remover)
             {
                 var cel = linha[r];
-                linha.Celulas.Remove(cel);
+                linha.Remove(cel);
             }
             return linha;
         }
