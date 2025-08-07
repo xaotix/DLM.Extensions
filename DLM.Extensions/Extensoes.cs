@@ -85,9 +85,82 @@ namespace Conexoes
             {
                 var nl = new DLM.db.Linha();
                 var valores = l.ToList();
+
                 foreach (var v in valores)
                 {
-                    var nc = nl.Add(v.Metadata.Name, v.GetValue());
+                    var type_cel = Celula_Tipo_Valor.NULL;
+                    var valor = v.GetValue();
+                    var valorstr = "";
+                    if (!valor.Vazio())
+                    {
+                        valorstr = valor.ToString();
+                        var type = v.Metadata.DataType;
+                        switch (type)
+                        {
+                            case RfcDataType.XSTRING:
+                            case RfcDataType.BYTE:
+                                type_cel = Celula_Tipo_Valor.Texto;
+                                break;
+
+                            case RfcDataType.STRING:
+                                type_cel = Celula_Tipo_Valor.Texto;
+                                break;
+                            case RfcDataType.CHAR:
+                            case RfcDataType.NUM:
+                                if (valorstr.ESoNumero())
+                                {
+                                    type_cel = Celula_Tipo_Valor.Inteiro;
+                                }
+                                else
+                                {
+                                    type_cel = Celula_Tipo_Valor.Texto;
+                                }
+                                    break;
+
+
+                            case RfcDataType.BCD:
+                            case RfcDataType.FLOAT:
+                            case RfcDataType.DECF16:
+                            case RfcDataType.DECF34:
+                                type_cel = Celula_Tipo_Valor.Decimal;
+                                break;
+
+                            case RfcDataType.INT1:
+                            case RfcDataType.INT2:
+                            case RfcDataType.INT4:
+                            case RfcDataType.INT8:
+                            case RfcDataType.DTWEEK:
+                            case RfcDataType.TSECOND:
+                            case RfcDataType.DTMONTH:
+                            case RfcDataType.TMINUTE:
+                                type_cel = Celula_Tipo_Valor.Inteiro;
+                                break;
+
+                            case RfcDataType.UTCLONG:
+                            case RfcDataType.UTCSECOND:
+                            case RfcDataType.UTCMINUTE:
+                            case RfcDataType.DATE:
+                            case RfcDataType.CDAY:
+                            case RfcDataType.DTDAY:
+                                type_cel = Celula_Tipo_Valor.Data;
+                                break;
+
+                            case RfcDataType.TIME:
+                                break;
+
+                            case RfcDataType.STRUCTURE:
+                            case RfcDataType.TABLE:
+                            case RfcDataType.CLASS:
+                            case RfcDataType.UNKNOWN:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        valorstr = null;
+                    }
+
+                    var nc = nl.Add(v.Metadata.Name, valorstr, type_cel);
                 }
                 retorno.Add(nl);
             }
@@ -101,7 +174,7 @@ namespace Conexoes
 
         public static System.Windows.Media.Color GetColor(this System.Drawing.Color color)
         {
-           return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
         }
         public static System.Drawing.Color GetColor(this System.Windows.Media.Color color)
         {
@@ -109,7 +182,7 @@ namespace Conexoes
         }
         public static void OtimizarComprimentos(this List<Tirante> Tirantes)
         {
-            foreach(var tr in Tirantes)
+            foreach (var tr in Tirantes)
             {
                 tr.CompUser = 0;
             }
@@ -117,7 +190,7 @@ namespace Conexoes
             var comps_otimizados = comps.AgruparPorDistancia(Cfg.CTV2.Tirante_Multiplo_Otimizar);
             foreach (var cmps in comps_otimizados)
             {
-                if(cmps.Count>0)
+                if (cmps.Count > 0)
                 {
                     foreach (var cmp in cmps)
                     {
@@ -149,7 +222,7 @@ namespace Conexoes
         public static string GetPropriedade(this System.DirectoryServices.SearchResult search, string propriedade)
         {
             var props = search.Properties[propriedade];
-            if(props.Count>0)
+            if (props.Count > 0)
             {
                 return props[0].ToString();
             }
@@ -261,12 +334,12 @@ namespace Conexoes
         public static void AddKeyEvent<T>(this Window window, System.Windows.Input.KeyEventHandler KeyDown)
         {
             var elementos = window.GetChildren<T>();
-            foreach(var elemento in elementos)
+            foreach (var elemento in elementos)
             {
                 (elemento as FrameworkElement).PreviewKeyDown += KeyDown;
             }
         }
-     
+
 
         public static bool Is<T>(this object en)
         {
@@ -316,7 +389,7 @@ namespace Conexoes
             window.Left = mouse.X - window.ActualWidth;
             window.Top = mouse.Y - window.ActualHeight;
         }
- 
+
 
 
 
@@ -361,7 +434,7 @@ namespace Conexoes
             var arquivo_backup = $"{Pasta.GetSubPasta(Cfg.Init.PASTA_BACKUPS)}{nome}.BKP.ZIP";
             return Conexoes.Utilz.FazerBackup(Pasta, arquivo_backup, $"*{nome}.{Ext}");
         }
-        
+
         public static BitmapImage GetImageSource(this string file)
         {
             return new BitmapImage(new Uri(file));
@@ -613,12 +686,12 @@ namespace Conexoes
 
         public static List<T> GetChildren<T>(this Window window)
         {
-            if(window.Content is Panel)
+            if (window.Content is Panel)
             {
                 var item = window.Content as Panel;
                 return GetChildren<T>(item);
             }
-            else if(window.Content is Grid)
+            else if (window.Content is Grid)
             {
                 var item = window.Content as Grid;
                 return GetChildren<T>(item);
@@ -689,9 +762,9 @@ namespace Conexoes
         public static List<T> GetChildren<T>(this Selector subpanel)
         {
             List<T> Retorno = new List<T>();
-            foreach(var tab in subpanel.Items)
+            foreach (var tab in subpanel.Items)
             {
-                if(tab is T)
+                if (tab is T)
                 {
                     Retorno.Add(tab.As<T>());
                 }
@@ -788,7 +861,7 @@ namespace Conexoes
 
 
 
-     
+
 
         //public static double Prompt(this double valor)
         //{
@@ -798,7 +871,7 @@ namespace Conexoes
         //}
 
 
-   
+
         public static void Add(this ObservableCollection<Report> reports, string propriedades = "", string mensagem = "", TipoReport report = TipoReport.Status)
         {
             reports.Add(new Report(propriedades, mensagem, report));
@@ -855,7 +928,7 @@ namespace Conexoes
         }
         public static DateTime GetValue(this DateTime? data)
         {
-            if(data==null)
+            if (data == null)
             {
                 return Cfg.Init.DataDummy;
             }
