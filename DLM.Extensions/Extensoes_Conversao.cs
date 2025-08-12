@@ -73,14 +73,13 @@ namespace Conexoes
             catch (Exception)
             {
             }
-
-            if ((valor_final % 1) != 0 && Decimais > -1)
+            valor_final_retorno = valor_final;
+            if (Decimais >= 0)
             {
-                valor_final_retorno = valor_final.Round(Decimais);
-            }
-            else
-            {
-                valor_final_retorno = valor_final;
+                if ((valor_final % 1) != 0)
+                {
+                    valor_final_retorno = valor_final.Round(Decimais);
+                }
             }
 
 
