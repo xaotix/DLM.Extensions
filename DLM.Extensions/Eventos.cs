@@ -1,4 +1,5 @@
-﻿using DLM.cam;
+﻿using DataGridExtensions;
+using DLM.cam;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,14 @@ namespace Conexoes
             var filtro = new ItemsControlFilter(_lista, _filtro);
 
             return filtro;
+        }
+        public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, List<T> lista)
+        {
+            grid.ItemsSource = null;
+            var filter = grid.GetFilter();
+            filter?.Clear();
+
+            grid.ItemsSource = lista;
         }
         /// <summary>
         /// Adiciona um evento quando o ItemSource muda
