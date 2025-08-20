@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -43,6 +44,40 @@ namespace Conexoes
 
             return ret;
         }
+        public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        {
+
+            CultureInfo cultura = CultureInfo.InvariantCulture;
+            Calendar calendario = cultura.Calendar;
+
+            // Define a regra ISO 8601: semana começa na segunda e a primeira semana tem pelo menos 4 dias
+            CalendarWeekRule regraSemana = CalendarWeekRule.FirstFourDayWeek;
+
+            return  calendario.GetWeekOfYear(data, regraSemana, primeiroDiaSemana);
+        }
+        public static DataRange IntervaloSemana(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        {
+            return Conexoes.Utilz.Calendario.IntervaloSemana(data.Year, data.Week(), primeiroDiaSemana);
+        }
+
+        public static bool MaisRecente(this DateTime anterior, DateTime maisrecente)
+        {
+            int a = DateTime.Compare(anterior, maisrecente);
+            return (a < 0);
+        }
+
+        public static DateTime CTimeToDate(this long ctime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(ctime).ToLocalTime();
+        }
+        public static long DateToCTime(this DateTime data)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return Convert.ToInt64((data.ToUniversalTime() - epoch).TotalSeconds);
+        }
+
+
         public static List<DateTime> GetDatasMes(this DateTime data)
         {
             return GetRangeDatas(data.FirstDay(), data.LastDay());
