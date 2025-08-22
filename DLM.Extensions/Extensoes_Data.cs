@@ -16,29 +16,13 @@ namespace Conexoes
             }
             return "";
         }
-        public static DateTime LastDay(this DateTime data)
+        public static DateTime LastDayOfMonth(this DateTime data)
         {
             int diasNoMes = DateTime.DaysInMonth(data.Year, data.Month);
             var last = new DateTime(data.Year, data.Month, diasNoMes);
             return last;
         }
-        public static DateTime? LastDay(this DateTime? data)
-        {
-            if (data != null)
-            {
-                return data.Value.LastDay();
-            }
-            return null;
-        }
-        public static DateTime? FirstDay(this DateTime? data)
-        {
-            if (data != null)
-            {
-                return data.Value.FirstDay();
-            }
-            return null;
-        }
-        public static DateTime FirstDay(this DateTime data)
+        public static DateTime FirstDayOfMonth(this DateTime data)
         {
             var ret = new DateTime(data.Year, data.Month, 1);
 
@@ -46,15 +30,33 @@ namespace Conexoes
         }
         public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
         {
-
-            CultureInfo cultura = CultureInfo.InvariantCulture;
-            Calendar calendario = cultura.Calendar;
+            var cultura = CultureInfo.InvariantCulture;
+            var calendario = cultura.Calendar;
 
             // Define a regra ISO 8601: semana começa na segunda e a primeira semana tem pelo menos 4 dias
             CalendarWeekRule regraSemana = CalendarWeekRule.FirstFourDayWeek;
 
-            return  calendario.GetWeekOfYear(data, regraSemana, primeiroDiaSemana);
+            return calendario.GetWeekOfYear(data, regraSemana, primeiroDiaSemana);
         }
+        public static DateTime FirstDayOfWeek(this DateTime data)
+        {
+            // Considerando que a semana começa no domingo
+            int diferenca = data.DayOfWeek - DayOfWeek.Sunday;
+            if (diferenca < 0)
+                diferenca += 7;
+
+            return data.AddDays(-diferenca).Date;
+        }
+        public static DateTime LastDayOfWeek(this DateTime data)
+        {
+            // Considerando que a semana termina no sábado
+            int diferenca = DayOfWeek.Saturday - data.DayOfWeek;
+            if (diferenca < 0)
+                diferenca += 7;
+
+            return data.AddDays(diferenca).Date;
+        }
+
         public static DataRange IntervaloSemana(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
         {
             return Conexoes.Utilz.Calendario.IntervaloSemana(data.Year, data.Week(), primeiroDiaSemana);
@@ -80,7 +82,7 @@ namespace Conexoes
 
         public static List<DateTime> GetDatasMes(this DateTime data)
         {
-            return GetRangeDatas(data.FirstDay(), data.LastDay());
+            return GetRangeDatas(data.FirstDayOfMonth(), data.LastDayOfMonth());
         }
         public static List<DateTime> GetRangeDatas(this DateTime startDate, DateTime endDate)
         {
@@ -109,7 +111,7 @@ namespace Conexoes
         {
             var retorno = new List<string>();
 
-            var dt = inicio.FirstDay();
+            var dt = inicio.FirstDayOfMonth();
             while (dt < fim)
             {
                 retorno.Add(dt.ToString("MM/yyyy"));
@@ -129,7 +131,7 @@ namespace Conexoes
                 retorno.Add(ff.Year);
                 ff = ff.AddYears(-1);
             }
-            retorno.Add(fim.Year);
+            retorno.Add(inicio.Year);
             retorno = retorno.Distinct().ToList();
 
             return retorno;
@@ -152,6 +154,27 @@ namespace Conexoes
                 return tempo_data.TotalDays / tempo_total.TotalDays;
             }
         }
+        public static int DiasUteis(this DateTime inicio, DateTime fim)
+        {
+            int days = 0;
+            int daysCount = 0;
+            days = inicio.Subtract(fim).Days;
+
+            //Módulo 
+            if (days < 0)
+                days = days * -1;
+
+            for (int i = 1; i <= days; i++)
+            {
+                inicio = inicio.AddDays(1);
+                //Conta apenas dias da semana.
+                if (inicio.DayOfWeek != DayOfWeek.Sunday && inicio.DayOfWeek != DayOfWeek.Saturday)
+                    daysCount++;
+            }
+            return daysCount;
+        }
+
+
         public static DateTime? GetMin(this List<DateTime> dateTimes)
         {
             var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);
@@ -188,6 +211,38 @@ namespace Conexoes
             }
             return null;
         }
+        public static DateTime? LastDayOfMonth(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.LastDayOfMonth();
+            }
+            return null;
+        }
+        public static DateTime? LastDayOfWeek(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.LastDayOfWeek();
+            }
+            return null;
+        }
+        public static DateTime? FirstDayOfMonth(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.FirstDayOfMonth();
+            }
+            return null;
+        }
+        public static DateTime? FirstDayOfWeek(this DateTime? data)
+        {
+            if (data != null)
+            {
+                return data.Value.FirstDayOfWeek();
+            }
+            return null;
+        }
 
         public static int DiasUteis(this DateTime? inicio, DateTime? fim)
         {
@@ -196,25 +251,6 @@ namespace Conexoes
                 return inicio.Value.DiasUteis(fim.Value);
             }
             return 0;
-        }
-        public static int DiasUteis(this DateTime inicio, DateTime fim)
-        {
-            int days = 0;
-            int daysCount = 0;
-            days = inicio.Subtract(fim).Days;
-
-            //Módulo 
-            if (days < 0)
-                days = days * -1;
-
-            for (int i = 1; i <= days; i++)
-            {
-                inicio = inicio.AddDays(1);
-                //Conta apenas dias da semana.
-                if (inicio.DayOfWeek != DayOfWeek.Sunday && inicio.DayOfWeek != DayOfWeek.Saturday)
-                    daysCount++;
-            }
-            return daysCount;
         }
     }
 }

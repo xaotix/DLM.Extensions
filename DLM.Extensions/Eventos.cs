@@ -17,14 +17,17 @@ namespace Conexoes
         public static ItemsControlFilter SetFiltro(this System.Windows.Controls.ItemsControl _lista, System.Windows.Controls.TextBox _filtro)
         {
             var filtro = new ItemsControlFilter(_lista, _filtro);
-
             return filtro;
         }
-        public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, List<T> lista)
+        public static void ResetSource(this System.Windows.Controls.DataGrid grid)
         {
             grid.ItemsSource = null;
             var filter = grid.GetFilter();
             filter?.Clear();
+        }
+        public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, List<T> lista)
+        {
+            grid.ResetSource();
 
             grid.ItemsSource = lista;
         }
