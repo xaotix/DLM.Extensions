@@ -28,6 +28,14 @@ namespace Conexoes
 
             return ret;
         }
+        public static int Week(this DateTime? data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        {
+            if (data != null)
+            {
+                return data.Value.Week(primeiroDiaSemana);
+            }
+            return 0;
+        }
         public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
         {
             var cultura = CultureInfo.InvariantCulture;
