@@ -171,7 +171,37 @@ namespace Conexoes
     }
     public static class Extensoes
     {
-
+        public static void ColarExcel(this System.Windows.Forms.DataGridView grid)
+        {
+            try
+            {
+                var obj = (System.Windows.DataObject)System.Windows.Clipboard.GetDataObject();
+                var colunas = grid.ColumnCount - 1;
+                if (grid.Rows.Count > 0)
+                {
+                    if (Conexoes.Utilz.Pergunta("Substituir valores atuais?"))
+                    {
+                        grid.Rows.Clear();
+                    }
+                }
+                if (obj.GetDataPresent(System.Windows.DataFormats.Text))
+                {
+                    int c0 = grid.Rows.Count;
+                    var linhas = Regex.Split(obj.GetData(System.Windows.DataFormats.Text).ToString().Replace("\r", "").Replace("\n", ""), "\r\n").Select(x => x.Split(new char[] { '\t' }).ToList()).ToList().FindAll(x => string.Join("", x).Replace(" ", "") != "");
+                    foreach (var linha in linhas)
+                    {
+                        if (linha.Count <= colunas)
+                        {
+                            grid.Rows.Add(linha.ToArray());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Alerta();
+            }
+        }
         public static System.Windows.Media.Color GetColor(this System.Drawing.Color color)
         {
             return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);

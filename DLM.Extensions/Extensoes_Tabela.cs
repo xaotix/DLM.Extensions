@@ -2,6 +2,7 @@
 using DLM.encoder;
 using DLM.vars;
 using Ionic.Zip;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -195,11 +196,11 @@ namespace Conexoes
             }
             return retorno;
         }
-        public static bool GerarExcel(this Tabela tabela, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null)
+        public static bool GerarExcel(this Tabela tabela, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string arq_template = null, bool girar_cabecalho = false)
         {
-            return GerarExcel(new List<Tabela> { tabela }, destino, cabecalho, abrir, congelar, zerar_se_null, template);
+            return GerarExcel(new List<Tabela> { tabela }, destino, cabecalho, abrir, congelar, zerar_se_null, arq_template, girar_cabecalho);
         }
-        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string template = null, bool girar_cabecalho = true)
+        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string arq_template = null, bool girar_cabecalho = false)
         {
             if (destino == null)
             {
@@ -217,7 +218,167 @@ namespace Conexoes
             {
                 if (tabelas.Count > 0)
                 {
-                    Utilz.Excel.GerarExcel(destino, tabelas, template, cabecalho, zerar_se_null, congelar,girar_cabecalho);
+                    if (tabelas.Count > 0)
+                    {
+                        if (zerar_se_null)
+                        {
+                            foreach (var aba in tabelas)
+                            {
+                                aba.SetNullIfZero();
+                            }
+                        }
+
+                    denovo:
+                        var arquivo = new FileInfo(destino);
+                        if (arquivo.Exists)
+                        {
+                            try
+                            {
+                                arquivo.Delete();
+                            }
+                            catch (Exception ex)
+                            {
+                                if (Utilz.Pergunta("Ocorreu um erro ao tentar substituir o arquivo " + arquivo.ToString() + "\n\n" + ex.Message + "\n\nTentar Novamente?"))
+                                {
+                                    goto denovo;
+                                }
+
+                                return false;
+                            }
+                        }
+                        if (arq_template != null)
+                        {
+                            if (arq_template.Exists())
+                            {
+                                if (!arq_template.Copiar(destino))
+                                {
+                                    Utilz.Alerta($"Não foi possível copiar o template {arq_template}  \n para o destino\n {destino}");
+                                    return false;
+                                }
+                            }
+                        }
+
+                        try
+                        {
+                            var nExcel = new OfficeOpenXml.ExcelPackage(arquivo);
+
+                            for (int i = 0; i < tabelas.Count; i++)
+                            {
+                                if (tabelas[i].Nome.Replace(" ", "").Length == 0)
+                                {
+                                    tabelas[i].Nome = $"ABA_{i.String(3)}";
+                                }
+                                else if (tabelas.FindAll(x => x.Nome.ToUpper() == tabelas[i].Nome.ToUpper()).Count > 1)
+                                {
+                                    tabelas[i].Nome += $"_{i}";
+                                }
+                            }
+
+                            foreach (var tabela in tabelas)
+                            {
+                                int L0 = tabela.Excel_L0 + 1;
+                                int C0 = tabela.Excel_C0 + 1;
+
+
+
+                                var colunas = tabela.GetColunas();
+                                if (colunas.Count == 0) { continue; }
+
+                                var aba = nExcel.Workbook.Worksheets.ToList().Find(x => x.Name.ToUpper() == tabela.Nome.ToUpper());
+                                if (aba == null)
+                                {
+                                    aba = nExcel.Workbook.Worksheets.Add(tabela.Nome);
+                                }
+
+                                if (cabecalho && arq_template == null)
+                                {
+                                    for (int c = 0; c < colunas.Count; c++)
+                                    {
+                                        aba.Cells[L0, C0 + c].Value = colunas[c];
+                                    }
+                                    L0++;
+                                }
+                                else if (arq_template != null)
+                                {
+                                    colunas = new List<string>();
+                                    for (int i = 0; i < aba.Dimension.End.Column; i++)
+                                    {
+                                        var cel = aba.Cells[L0, i + 1];
+
+                                        var valor = cel.Text;
+                                        if (valor == null | valor == "")
+                                        {
+                                            valor = cel.Address;
+                                        }
+                                        colunas.Add(valor);
+                                    }
+                                    L0++;
+                                }
+
+                                for (int L = 0; L < tabela.Count; L++)
+                                {
+                                    for (int C = 0; C < colunas.Count; C++)
+                                    {
+                                        if (colunas[C] == "")
+                                        {
+                                            continue;
+                                        }
+                                        var nCel = new Celula(colunas[C], null);
+                                        if (colunas[C] == tabela[L][C].ColunaUpper)
+                                        {
+                                            nCel = tabela[L][C];
+                                        }
+                                        else
+                                        {
+                                            nCel = tabela[L][colunas[C]];
+                                        }
+
+                                        aba.Cells[L + L0, C + C0].SetValor(nCel);
+                                    }
+                                }
+
+                                if (cabecalho && arq_template == null)
+                                {
+                                    try
+                                    {
+
+                                        aba.Cells[1, 1, 1, colunas.Count].AutoFilter = true;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.WrapText = false;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.ShrinkToFit = true;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightCyan);
+                                        if (girar_cabecalho)
+                                        {
+                                            aba.Cells[1, 1, 1, colunas.Count].Style.TextRotation = 90;
+                                        }
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                        aba.Cells[1, 1, 1, colunas.Count].Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                        aba.Cells[aba.Dimension.Address].AutoFitColumns();
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                    if (congelar)
+                                    {
+                                        aba.View.FreezePanes(2, 1);
+                                    }
+                                }
+                            }
+                            nExcel.Workbook.Properties.Author = $"DLM.excel v{System.Windows.Forms.Application.ProductVersion}";
+                            nExcel.Save();
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.Alerta("Gerar Excel");
+                        }
+                    }
+
                     if (abrir)
                     {
                         destino.Abrir();
@@ -230,10 +391,48 @@ namespace Conexoes
         }
 
 
-        public static Tabela GetTabela(this string arquivo)
+
+
+
+        public static void SetValor(this ExcelRange Excel_cel, Celula cel)
         {
-            var linhas = Utilz.Arquivo.Ler(arquivo).Select(x => x.Split(";".ToCharArray()).ToList().Select(y => y.TrimEnd().TrimStart()).ToList()).ToList();
-            return linhas.GetTabela();
+            if (!cel.Valor.Vazio())
+            {
+                switch (cel.Tipo)
+                {
+                    case Celula_Tipo_Valor.Data:
+                    case Celula_Tipo_Valor.DataHora:
+                        Excel_cel.Style.Numberformat.Format = "dd/mm/yyyy";
+                        Excel_cel.Value = cel.DataNull();
+                        break;
+                    case Celula_Tipo_Valor.Texto:
+                        Excel_cel.Value = cel.Valor;
+                        break;
+                    case Celula_Tipo_Valor.Decimal:
+                    case Celula_Tipo_Valor.Moeda:
+                        Excel_cel.Value = cel.Double();
+                        break;
+                    case Celula_Tipo_Valor.Inteiro:
+                        var valor = cel.Long();
+                        Excel_cel.Value = valor;
+                        if (valor > 99999999999)
+                        {
+                            Excel_cel.Style.Numberformat.Format = "0";
+                        }
+                        break;
+
+                    case Celula_Tipo_Valor.Booleano:
+                        Excel_cel.Value = cel.Boolean() ? "SIM" : "";
+                        break;
+                    case Celula_Tipo_Valor.NULL:
+                        break;
+                }
+
+                if (cel.Tipo == Celula_Tipo_Valor.Moeda)
+                {
+                    Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
+                }
+            }
         }
 
         public static Tabela GetTabela(this List<List<string>> linhas, bool primeira_linha_cabecalho = false)
