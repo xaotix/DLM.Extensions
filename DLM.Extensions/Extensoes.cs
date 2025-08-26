@@ -9,6 +9,8 @@ using DLM.sap;
 using DLM.vars;
 using Ionic.Zip;
 using iTextSharp.text.pdf;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.AccessControl;
 using System.Text;
@@ -34,6 +37,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using static System.Net.WebRequestMethods;
 
 namespace Conexoes
 {
@@ -115,7 +119,7 @@ namespace Conexoes
                                 {
                                     type_cel = Celula_Tipo_Valor.Texto;
                                 }
-                                    break;
+                                break;
 
 
                             case RfcDataType.BCD:
@@ -171,6 +175,34 @@ namespace Conexoes
     }
     public static class Extensoes
     {
+        public static string GetBackgroundColorHex(this ExcelRange celula)
+        {
+            try
+            {
+                if (celula != null)
+                {
+                    if (celula.Style != null)
+                    {
+                        if (celula.Style.Fill != null)
+                        {
+                            if (celula.Style.Fill.PatternType == ExcelFillStyle.Solid)
+                            {
+                                if (celula.Style.Fill.BackgroundColor != null)
+                                {
+                                    var corDeFundo = celula.Style.Fill.BackgroundColor.Rgb;
+                                    return $"#{corDeFundo}";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return "";
+        }
         public static void ColarExcel(this System.Windows.Forms.DataGridView grid)
         {
             try
