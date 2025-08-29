@@ -70,7 +70,7 @@ namespace Conexoes
             return Conexoes.Utilz.Calendario.IntervaloSemana(data.Year, data.Week(), primeiroDiaSemana);
         }
 
-        public static bool MaisRecente(this DateTime anterior, DateTime maisrecente)
+        public static bool MostRecent(this DateTime anterior, DateTime maisrecente)
         {
             int a = DateTime.Compare(anterior, maisrecente);
             return (a < 0);
@@ -87,6 +87,11 @@ namespace Conexoes
             return Convert.ToInt64((data.ToUniversalTime() - epoch).TotalSeconds);
         }
 
+        public static string WeekStr(this DateTime data)
+        {
+            var week = data.Week();
+            return $"{data.Year.String(4)}.S{week.String(2)}";
+        }
 
         public static List<DateTime> GetDatasMes(this DateTime data)
         {
@@ -126,6 +131,23 @@ namespace Conexoes
                 dt = dt.AddMonths(1);
             }
 
+            return retorno;
+        }
+        public static List<string> GetRangeSemanas(this DateTime inicio, DateTime fim)
+        {
+            var retorno = new List<string>();
+
+            var data = inicio.FirstDayOfWeek();
+            while (data < fim)
+            {
+                var semana = data.Week();
+
+                retorno.Add(data.WeekStr());
+                data = data.AddDays(7);
+            }
+
+            retorno.Add(fim.WeekStr());
+            retorno = retorno.Distinct().ToList();
             return retorno;
         }
         public static List<int> GetRangeAnos(this DateTime inicio, DateTime fim)
