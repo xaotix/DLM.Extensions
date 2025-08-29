@@ -8,6 +8,46 @@ namespace Conexoes
 {
     public static class Extensoes_Data
     {
+        public static string DayOfWeek(this DateTime data)
+        {
+            CultureInfo cultura = Conexoes.Utilz._BR;
+            return cultura.DateTimeFormat.GetDayName(data.DayOfWeek);
+        }
+        public static int Months(DateTime startDate, DateTime endDate)
+        {
+            int monthsApart = 12 * (startDate.Year - endDate.Year) + startDate.Month - endDate.Month;
+            return Math.Abs(monthsApart);
+        }
+        public static DateTime LastDayOfWeek(this int ano, int semana)
+        {
+            return ano.FirstDayOfWeek(semana).AddDays(7);
+        }
+        public static DateTime FirstDayOfWeek(this int ano, int semana)
+        {
+            DateTime jan1 = new DateTime(ano, 1, 1);
+            int daysOffset = System.DayOfWeek.Thursday - jan1.DayOfWeek;
+
+            // Use first Thursday in January to get first week of the year as
+            // it will never be in Week 52/53
+            DateTime firstThursday = jan1.AddDays(daysOffset);
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            int firstWeek = cal.GetWeekOfYear(firstThursday, CalendarWeekRule.FirstFourDayWeek, System.DayOfWeek.Monday);
+
+            var weekNum = semana;
+            // As we're adding days to a date in Week 1,
+            // we need to subtract 1 in order to get the right date for week #1
+            if (firstWeek == 1)
+            {
+                weekNum -= 1;
+            }
+
+            // Using the first Thursday as starting week ensures that we are starting in the right year
+            // then we add number of weeks multiplied with days
+            var result = firstThursday.AddDays(weekNum * 7);
+
+            // Subtract 3 days from Thursday to get Monday, which is the first weekday in ISO8601
+            return result.AddDays(-3);
+        }
         public static string ToShortDateString(this DateTime? dateTime)
         {
             if (dateTime != null)
@@ -28,7 +68,7 @@ namespace Conexoes
 
             return ret;
         }
-        public static int Week(this DateTime? data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        public static int Week(this DateTime? data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Monday)
         {
             if (data != null)
             {
@@ -36,7 +76,7 @@ namespace Conexoes
             }
             return 0;
         }
-        public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Monday)
         {
             var cultura = CultureInfo.InvariantCulture;
             var calendario = cultura.Calendar;
@@ -49,7 +89,7 @@ namespace Conexoes
         public static DateTime FirstDayOfWeek(this DateTime data)
         {
             // Considerando que a semana começa no domingo
-            int diferenca = data.DayOfWeek - DayOfWeek.Sunday;
+            int diferenca = data.DayOfWeek - System.DayOfWeek.Sunday;
             if (diferenca < 0)
                 diferenca += 7;
 
@@ -58,16 +98,21 @@ namespace Conexoes
         public static DateTime LastDayOfWeek(this DateTime data)
         {
             // Considerando que a semana termina no sábado
-            int diferenca = DayOfWeek.Saturday - data.DayOfWeek;
+            int diferenca = System.DayOfWeek.Saturday - data.DayOfWeek;
             if (diferenca < 0)
                 diferenca += 7;
 
             return data.AddDays(diferenca).Date;
         }
 
-        public static DataRange IntervaloSemana(this DateTime data, DayOfWeek primeiroDiaSemana = DayOfWeek.Monday)
+        public static DataRange IntervaloSemana(this DateTime data)
         {
-            return Conexoes.Utilz.Calendario.IntervaloSemana(data.Year, data.Week(), primeiroDiaSemana);
+            var semana = data.Week();
+            return new DataRange(data.Year, semana);
+        }
+        public static DataRange IntervaloSemana(this int ano, int semana)
+        {
+            return new DataRange(ano, semana);
         }
 
         public static bool MostRecent(this DateTime anterior, DateTime maisrecente)
@@ -198,7 +243,7 @@ namespace Conexoes
             {
                 inicio = inicio.AddDays(1);
                 //Conta apenas dias da semana.
-                if (inicio.DayOfWeek != DayOfWeek.Sunday && inicio.DayOfWeek != DayOfWeek.Saturday)
+                if (inicio.DayOfWeek != System.DayOfWeek.Sunday && inicio.DayOfWeek != System.DayOfWeek.Saturday)
                     daysCount++;
             }
             return daysCount;
