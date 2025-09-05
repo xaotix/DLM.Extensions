@@ -18,35 +18,34 @@ namespace Conexoes
             int monthsApart = 12 * (startDate.Year - endDate.Year) + startDate.Month - endDate.Month;
             return Math.Abs(monthsApart);
         }
-        public static DateTime LastDayOfWeek(this int ano, int semana)
+        public static DateTime LastDayOfWeek(this int ano, int semana, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
-            return ano.FirstDayOfWeek(semana).AddDays(7);
+            return ano.FirstDayOfWeek(semana, primeiroDiaSemana).AddDays(7);
         }
-        public static DateTime FirstDayOfWeek(this int ano, int semana)
+        public static DateTime FirstDayOfWeek(this int ano, int semana, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
-            DateTime jan1 = new DateTime(ano, 1, 1);
-            int daysOffset = System.DayOfWeek.Thursday - jan1.DayOfWeek;
+            // Cria um objeto DateTime para o primeiro dia do ano
+            var primeiroDiaDoAno = new DateTime(ano, 1, 1);
 
-            // Use first Thursday in January to get first week of the year as
-            // it will never be in Week 52/53
-            DateTime firstThursday = jan1.AddDays(daysOffset);
-            var cal = CultureInfo.CurrentCulture.Calendar;
-            int firstWeek = cal.GetWeekOfYear(firstThursday, CalendarWeekRule.FirstFourDayWeek, System.DayOfWeek.Monday);
+            // Obtém o CultureInfo atual para determinar o primeiro dia da semana
+            var culture = CultureInfo.CurrentCulture;
 
-            var weekNum = semana;
-            // As we're adding days to a date in Week 1,
-            // we need to subtract 1 in order to get the right date for week #1
-            if (firstWeek == 1)
-            {
-                weekNum -= 1;
-            }
+            // Calcula o primeiro dia da primeira semana do ano
+            // Encontra o primeiro dia da semana (ex.: segunda-feira)
+            int diasParaPrimeiroDiaSemana = (int)primeiroDiaSemana - (int)primeiroDiaDoAno.DayOfWeek;
+            if (diasParaPrimeiroDiaSemana > 0)
+                diasParaPrimeiroDiaSemana -= 7;
 
-            // Using the first Thursday as starting week ensures that we are starting in the right year
-            // then we add number of weeks multiplied with days
-            var result = firstThursday.AddDays(weekNum * 7);
+            DateTime inicioPrimeiraSemana = primeiroDiaDoAno.AddDays(diasParaPrimeiroDiaSemana);
 
-            // Subtract 3 days from Thursday to get Monday, which is the first weekday in ISO8601
-            return result.AddDays(-3);
+            // Calcula o primeiro dia da semana desejada
+            DateTime primeiroDiaDaSemana = inicioPrimeiraSemana.AddDays((semana-1) * 7);
+
+            // Verifica se a data resultante está dentro do ano especificado
+            if (primeiroDiaDaSemana.Year > ano)
+                throw new ArgumentException("A semana especificada está fora do ano informado.");
+
+            return primeiroDiaDaSemana;
         }
         public static string ToShortDateString(this DateTime? dateTime)
         {
@@ -62,13 +61,23 @@ namespace Conexoes
             var last = new DateTime(data.Year, data.Month, diasNoMes);
             return last;
         }
+        public static DateTime AddWeeks(this DateTime data, int weeks, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
+        {
+            var firs = data.FirstDayOfWeek(primeiroDiaSemana);
+            while (weeks > 0)
+            {
+                firs = firs.AddDays(7);
+                weeks--;
+            }
+            return firs;
+        }
         public static DateTime FirstDayOfMonth(this DateTime data)
         {
             var ret = new DateTime(data.Year, data.Month, 1);
 
             return ret;
         }
-        public static int Week(this DateTime? data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Monday)
+        public static int Week(this DateTime? data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
             if (data != null)
             {
@@ -76,7 +85,7 @@ namespace Conexoes
             }
             return 0;
         }
-        public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Monday)
+        public static int Week(this DateTime data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
             var cultura = CultureInfo.InvariantCulture;
             var calendario = cultura.Calendar;
@@ -86,10 +95,10 @@ namespace Conexoes
 
             return calendario.GetWeekOfYear(data, regraSemana, primeiroDiaSemana);
         }
-        public static DateTime FirstDayOfWeek(this DateTime data)
+        public static DateTime FirstDayOfWeek(this DateTime data, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
             // Considerando que a semana começa no domingo
-            int diferenca = data.DayOfWeek - System.DayOfWeek.Sunday;
+            int diferenca = data.DayOfWeek - primeiroDiaSemana;
             if (diferenca < 0)
                 diferenca += 7;
 
