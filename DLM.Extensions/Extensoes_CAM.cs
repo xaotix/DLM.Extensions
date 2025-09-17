@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -18,7 +19,10 @@ namespace Conexoes
     public static class ExtensoesCAM
     {
 
-
+        public static List<CAM_Node> GetAll(this List<CAM_Node> nodes, string chave)
+        {
+            return nodes.SelectMany(x => x.GetAll(chave)).ToList();
+        }
         public static TAB_MAKTX GetMAKTX(this TAB_NORMT normt)
         {
             var maktx = TAB_MAKTX._INVALIDO;
@@ -448,40 +452,40 @@ namespace Conexoes
             return faces;
         }
 
-        public static List<Liv> RemoveSobrePostos(this List<Liv> Lista)
+        public static List<Liv> RemoveSobrePostos(this List<Liv> lista)
         {
-            var Retorno = new List<Liv>();
+            var retorno = new List<Liv>();
 
-            if (Lista.Count == 0)
+            if (lista.Count == 0)
             {
-                return Lista;
+                return lista;
             }
 
-            for (int i = 0; i < Lista.Count; i++)
+            for (int i = 0; i < lista.Count; i++)
             {
                 if (i == 0)
                 {
-                    Retorno.Add(Lista[i]);
+                    retorno.Add(lista[i]);
                 }
                 else
                 {
-                    if (Retorno.Last().GetCid() != Lista[i].GetCid())
+                    if (retorno.Last().GetCid() != lista[i].GetCid())
                     {
-                        if (i == Lista.Count - 1)
+                        if (i == lista.Count - 1)
                         {
-                            if (Retorno.First().GetCid() != Lista[i].GetCid())
+                            if (retorno.First().GetCid() != lista[i].GetCid())
                             {
-                                Retorno.Add(Lista[i]);
+                                retorno.Add(lista[i]);
                             }
                         }
                         else
                         {
-                            Retorno.Add(Lista[i]);
+                            retorno.Add(lista[i]);
                         }
                     }
                 }
             }
-            return Retorno;
+            return retorno;
         }
         public static Face GetFace(this PathD points)
         {

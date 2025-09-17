@@ -528,7 +528,7 @@ namespace Conexoes
 
         public static DLM.cam.ReadCAM GetInfo(this RME rme)
         {
-            DLM.cam.ReadCAM pp = new DLM.cam.ReadCAM();
+            var pp = new DLM.cam.ReadCAM();
             pp.Tratamento = rme.FICHA_PINTURA;
             pp.Material = rme.MATERIAL;
             pp.Data = DateTime.Now.ToShortDateString();

@@ -109,7 +109,7 @@ namespace Conexoes
             return _Perfil;
         }
 
-        public static List<Recorte> GetRecortes(this List<CAM_Node> blks, bool inverterY = false)
+        public static List<Recorte> GetRecortesInternos(this List<CAM_Node> blks, bool inverterY = false)
         {
             var Retorno = new List<Recorte>();
             foreach (var no in blks)

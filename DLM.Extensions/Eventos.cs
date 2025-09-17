@@ -14,6 +14,38 @@ namespace Conexoes
 {
     public static class Eventos
     {
+        public static void SetFiltro(this StackPanel grid, TextBox filtro)
+        {
+            // Armazena a referência do Grid no Tag do TextBox
+            filtro.Tag = grid;
+            filtro.TextChanged += Filtro_TextChanged_Stack;
+        }
+
+        private static void Filtro_TextChanged_Stack(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox filtro && filtro.Tag is StackPanel grid)
+            {
+                string chave = filtro.Text.ToUpper();
+
+                foreach (var item in grid.Children)
+                {
+                    if (item is Button bt)
+                    {
+                        if (chave.Length > 2)
+                        {
+                            bt.Visibility = bt.Content.ToString().ToUpper().Contains(chave)
+                                ? Visibility.Visible
+                                : Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            bt.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
+        }
+
         public static ItemsControlFilter SetFiltro(this System.Windows.Controls.ItemsControl _lista, System.Windows.Controls.TextBox _filtro)
         {
             var filtro = new ItemsControlFilter(_lista, _filtro);
