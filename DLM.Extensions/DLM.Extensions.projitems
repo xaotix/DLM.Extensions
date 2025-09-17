@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NetDXFMBS.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Node.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_NORMT.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_P3d.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Pacote.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_PDF.cs" />
