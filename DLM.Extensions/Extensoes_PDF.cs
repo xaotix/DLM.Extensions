@@ -16,7 +16,7 @@ namespace Conexoes
     {
         public static bool InserirTabelasPDFsCAMs(this Pacotes pacotes, bool horizontal = false)
         {
-            var cams = pacotes.GetCAMs().FindAll(x => x.Mesa);
+            var cams = pacotes.GetCAMs().FindAll(x => x.IsMesa());
             var pos_mesas = pacotes.GetPosicoes_NaoRM_CHGrossa().FindAll(x => x.NORMT == TAB_NORMT.VIGA_MESA).FindAll(x => x.GetCam() != null);
             pos_mesas = pos_mesas.FindAll(x => x.Marca.Pacote.Tipo == Pacote_Tipo.MBS);
 

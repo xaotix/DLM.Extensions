@@ -272,8 +272,8 @@ namespace Conexoes
             header.Data = DateTime.Now.ToShortDateString();
             header.Equipe = etapa.GetPedido().Equipe;
             header.Etapa = etapa.Nome;
-            header.Lugar = etapa.GetPedido().GetObra().Lugar;
-            header.NomeObra = etapa.GetPedido().GetObra().Nome;
+            header.Local = etapa.GetPedido().GetObra().Lugar;
+            header.Obra = etapa.GetPedido().GetObra().Nome;
             header.Pedido = etapa.GetPedido().NomePedido;
             return header;
         }
@@ -455,9 +455,9 @@ namespace Conexoes
 
 
 
-        public static string RemoverSufixDesmembrado(this string Nome)
+        public static string RemoverSufixDesmembrado(this string nome)
         {
-            var nNome = Nome
+            var nNome = nome
                     .Replace("_1", "")
                     .Replace("_2", "")
                     .Replace("_3", "")

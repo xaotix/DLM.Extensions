@@ -5,6 +5,7 @@ using DLM.desenho;
 using DLM.encoder;
 using DLM.mdj6;
 using DLM.vars;
+using Microsoft.Isam.Esent.Interop;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,7 +19,14 @@ namespace Conexoes
 
     public static class ExtensoesCAM
     {
-
+        public static bool IsAlma(this ReadCAM cam)
+        {
+            return cam.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_ALMA;
+        }
+        public static bool IsMesa(this ReadCAM cam)
+        {
+            return cam.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_MESA;
+        }
         public static List<CAM_Node> GetAll(this List<CAM_Node> nodes, string chave)
         {
             return nodes.SelectMany(x => x.GetAll(chave)).ToList();
@@ -732,9 +740,9 @@ namespace Conexoes
                         n_cam_2.Formato.LIV1.RecortesInternos.AddRange(f2.RecortesInternos);
                         n_cam_3.Formato.LIV1.RecortesInternos.AddRange(f3.RecortesInternos);
 
-                        n_cam_1.Cabecalho.Notas = nota;
-                        n_cam_2.Cabecalho.Notas = nota;
-                        n_cam_3.Cabecalho.Notas = nota;
+                        n_cam_1.Cabecalho.Nota_Principal = nota;
+                        n_cam_2.Cabecalho.Nota_Principal = nota;
+                        n_cam_3.Cabecalho.Nota_Principal = nota;
 
                         retorno.Add(n_cam_1);
                         retorno.Add(n_cam_2);
@@ -814,7 +822,7 @@ namespace Conexoes
                 var faces3 = new List<Face>();
                 var faces4 = new List<Face>();
 
-                n_cam.Cabecalho.Notas = $"{string.Join("|", lista_cam.GroupBy(x => x.Nome).Select(x => $"{x.Key}({x.Count()})"))}";
+                n_cam.Cabecalho.Nota_Principal = $"{string.Join("|", lista_cam.GroupBy(x => x.Nome).Select(x => $"{x.Key}({x.Count()})"))}";
                 try
                 {
 

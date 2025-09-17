@@ -63,16 +63,22 @@ namespace Conexoes
 
             shape.LIV1.Furacoes = shape.LIV1.Furacoes.GroupBy(x => $"{x.Origem.X}@{x.Origem.Y}").Select(x => x.First()).ToList();
         }
+
+        public static netDxf.DxfDocument GetDxf(this Shape formato, P3d origem = null)
+        {
+            //todo = adicionar opções de demais vistas.
+            return formato.LIV1.GetDxf(origem);
+        }
         public static List<Face> GetLivs(this Shape shape)
         {
-            var Retorno = new List<Face>();
-            Retorno.Add(shape.LIV1);
-            Retorno.Add(shape.LIV2);
+            var retorno = new List<Face>();
+            retorno.Add(shape.LIV1);
+            retorno.Add(shape.LIV2);
             if (shape.Perfil.Faces > 2)
             {
                 if (shape.LIV3.Comprimento > 0 && shape.LIV3.Largura > 0)
                 {
-                    Retorno.Add(shape.LIV3);
+                    retorno.Add(shape.LIV3);
                 }
             }
 
@@ -80,13 +86,49 @@ namespace Conexoes
             {
                 if (shape.LIV4.Comprimento > 0 && shape.LIV4.Largura > 0)
                 {
-                    Retorno.Add(shape.LIV4);
+                    retorno.Add(shape.LIV4);
                 }
             }
 
-            return Retorno;
+            return retorno;
         }
-        public static double GetPeso(this Shape shape)
+        public static double CalcularSuperficie(this Shape shape)
+        {
+            var liv1SUP = shape.LIV1_SemBordas().GetArea(shape.Perfil.Cilindro) * 2;
+            var liv2SUP = shape.LIV2.GetArea() * 2;
+            var liv3SUP = shape.LIV3.GetArea() * 2;
+            var planSUP = shape.GetPlanificada().GetArea() * 2;
+            switch (shape.Perfil.Primitivo)
+            {
+                case CAM_PRIMITIVO.H:
+                    return Math.Round(liv1SUP + liv2SUP + liv3SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.U:
+                    return Math.Round(liv1SUP + liv2SUP + liv3SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.L:
+                    return Math.Round(liv1SUP + liv2SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.Z:
+                    return Math.Round(liv1SUP + liv2SUP + liv3SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.II:
+                    return Math.Round((liv1SUP * 2) + liv2SUP + liv3SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.O:
+                    return Math.Round((liv1SUP * 2) + liv2SUP + liv3SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.T:
+                    return Math.Round(liv1SUP + liv2SUP, Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO._:
+                    return liv1SUP.Round(Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.C:
+                    return planSUP.Round(Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.Z1:
+                    return planSUP.Round(Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.Omega:
+                    return planSUP.Round(Cfg.Init.CAM_Decimais_Superficie);
+                case CAM_PRIMITIVO.ERR:
+                    break;
+            }
+
+            return 0;
+        }
+        public static double CalcularPeso(this Shape shape)
         {
             var liv1 = shape.LIV1;
             var liv1P = shape.LIV1_SemBordas();

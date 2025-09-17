@@ -790,6 +790,8 @@ namespace DLM.cam
         {
             return l1.P1.Interseccao(l1.P2, l2.P1, l2.P2);
         }
+
+
         public static netDxf.DxfDocument GetDxf(this Face face, P3d origem = null)
         {
             double dist_min = 500;
