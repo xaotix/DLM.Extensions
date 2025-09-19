@@ -118,7 +118,7 @@ namespace Conexoes
         }
         public static Face AjustarOrigens(this Face face)
         {
-            if (face.Mesa)
+            if (face.IsMesa())
             {
                 return face.MoverY(0);
             }
@@ -137,7 +137,7 @@ namespace Conexoes
         public static Face MesaParaChapa(this Face face, Perfil Perfil, double comprimento, double largura, double esp)
         {
 
-            if (face.Mesa)
+            if (face.IsMesa())
             {
                 var liv = face.LivSegmentada.MesaParaChapa(false);
                 if(liv.Count==0)
@@ -270,36 +270,39 @@ namespace Conexoes
         public static Face Deformar(this Face face, double ContraFlecha)
         {
 
-            var Retorno = new List<Liv>();
-            double Comprimento = face.Comprimento;
-            double Largura = face.Largura;
-            var LivDeformado = new List<Liv>();
+            var retorno = new List<Liv>();
+            double comp = face.Comprimento;
+            double larg = face.Largura;
+            var livDeformado = new List<Liv>();
+
             foreach (Liv L in face.Liv)
             {
-                Retorno.Add(new Liv(L));
+                retorno.Add(new Liv(L));
             }
-            Retorno.Aninhar();
+            retorno.Aninhar();
+
             #region Separa a lista de coordenadas em 2 horizontalmente
             var Superior2 = new List<Liv>();
             var Inferior2 = new List<Liv>();
-            Retorno.DividirHorizontal(out Superior2, out Inferior2);
+            retorno.DividirHorizontal(out Superior2, out Inferior2);
             #endregion
 
             //ponto onde inserir a linha do contra flecha - lado superior
             int sup1 = -1;
             int sup2 = -1;
             double supdist = -1;
+
             //ponto onde inserir a linha do contra flecha - lado inferior
             int inf1 = -1;
             int inf2 = -1;
             double infdist = -1;
             #region Acha os pontos onde inserir a linha do contra-flecha
-            for (int i = 0; i < Retorno.Count; i++)
+            for (int i = 0; i < retorno.Count; i++)
             {
-                if (i == Retorno.Count - 1)
+                if (i == retorno.Count - 1)
                 {
-                    Liv p1 = Retorno[i];
-                    Liv p2 = Retorno[0];
+                    var p1 = retorno[i];
+                    var p2 = retorno[0];
                     if (Superior2.Find(x => x.GetCid() == p1.GetCid()) != null && Superior2.Find(x => x.GetCid() == p2.GetCid()) != null)
                     {
                         double dist = p1.Origem.Distancia(p2.Origem).Abs();
@@ -309,14 +312,12 @@ namespace Conexoes
                             sup1 = i;
                             sup2 = 0;
                         }
-
                     }
-
                 }
                 else
                 {
-                    var p1 = Retorno[i];
-                    var p2 = Retorno[i + 1];
+                    var p1 = retorno[i];
+                    var p2 = retorno[i + 1];
                     if (Superior2.Find(x => x.GetCid() == p1.GetCid()) != null && Superior2.Find(x => x.GetCid() == p2.GetCid()) != null)
                     {
                         double dist = p1.Origem.Distancia(p2.Origem).Abs();
@@ -326,18 +327,17 @@ namespace Conexoes
                             sup1 = i;
                             sup2 = i + 1;
                         }
-
                     }
                 }
             }
 
             //10-05-2018 - removi o -1 da contagem por causa do problema que tava dando nas primeiras linhas
-            for (int i = 0; i < Retorno.Count; i++)
+            for (int i = 0; i < retorno.Count; i++)
             {
-                if (i == Retorno.Count - 1)
+                if (i == retorno.Count - 1)
                 {
-                    var p1 = Retorno[i];
-                    var p2 = Retorno[0];
+                    var p1 = retorno[i];
+                    var p2 = retorno[0];
                     if (Inferior2.Find(x => x.GetCid() == p1.GetCid()) != null && Inferior2.Find(x => x.GetCid() == p2.GetCid()) != null)
                     {
                         double dist = p1.Origem.Distancia(p2.Origem).Abs();
@@ -347,14 +347,12 @@ namespace Conexoes
                             inf1 = i;
                             inf2 = 0;
                         }
-
                     }
-
                 }
                 else
                 {
-                    var p1 = Retorno[i];
-                    var p2 = Retorno[i + 1];
+                    var p1 = retorno[i];
+                    var p2 = retorno[i + 1];
                     if (Inferior2.Find(x => x.GetCid() == p1.GetCid()) != null && Inferior2.Find(x => x.GetCid() == p2.GetCid()) != null)
                     {
                         double dist = p1.Origem.Distancia(p2.Origem).Abs();
@@ -372,13 +370,13 @@ namespace Conexoes
             if (sup1 >= 0 && sup2 >= 0 && inf1 >= 0 && inf2 >= 0)
             {
                 //acha a diferença y do ponto inicial e final
-                double psup1y = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[sup1].Origem.X);
-                double psup2y = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[sup2].Origem.X);
+                double psup1y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup1].Origem.X);
+                double psup2y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup2].Origem.X);
 
-                double pinf1y = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[inf1].Origem.X);
-                double pinf2y = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[inf2].Origem.X);
+                double pinf1y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf1].Origem.X);
+                double pinf2y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf2].Origem.X);
 
-                double Raio = FuncoesDLMCam.Arco.Raio(ContraFlecha, Comprimento);
+                double Raio = FuncoesDLMCam.Arco.Raio(ContraFlecha, comp);
 
                 //double AnguloSup = Funcoes.Graus(Math.Atan(Funcoes.Arco.DifY(supdist, ContraFlecha, 1) / 1));
                 //double AnguloInf = Funcoes.Graus(Math.Atan(Funcoes.Arco.DifY(infdist, ContraFlecha, 1) / 1));
@@ -386,35 +384,33 @@ namespace Conexoes
                 double AnguloSup = FuncoesDLMCam.Arco.Angulo2(Raio, supdist) / 2;
                 double AnguloInf = FuncoesDLMCam.Arco.Angulo2(Raio, infdist) / 2;
 
+                var sup = new Liv(comp / 2, -Raio, 0, Raio, 90 - AnguloSup, 90 + AnguloSup);
+                var inf = new Liv(comp / 2, -Raio - larg, 0, Raio, 90 - AnguloInf, 90 + AnguloInf);
 
-
-                Liv sup = new Liv(Comprimento / 2, -Raio, 0, Raio, 90 - AnguloSup, 90 + AnguloSup);
-                Liv inf = new Liv(Comprimento / 2, -Raio - Largura, 0, Raio, 90 - AnguloInf, 90 + AnguloInf);
-
-                for (int i = 0; i < Retorno.Count; i++)
+                for (int i = 0; i < retorno.Count; i++)
                 {
-                    Retorno[i].Origem.Y = Retorno[i].Origem.Y - ContraFlecha;
+                    retorno[i].Origem.Y = retorno[i].Origem.Y - ContraFlecha;
                 }
 
                 //ajusta diferenças em Y
-                Retorno[sup1].Origem.Y = Retorno[sup1].Origem.Y + FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[sup1].Origem.X);
-                Retorno[sup2].Origem.Y = Retorno[sup2].Origem.Y + FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[sup2].Origem.X);
+                retorno[sup1].Origem.Y = retorno[sup1].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup1].Origem.X);
+                retorno[sup2].Origem.Y = retorno[sup2].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup2].Origem.X);
 
-                Retorno[inf1].Origem.Y = Retorno[inf1].Origem.Y + FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[inf1].Origem.X);
-                Retorno[inf2].Origem.Y = Retorno[inf2].Origem.Y + FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, Retorno[inf2].Origem.X);
+                retorno[inf1].Origem.Y = retorno[inf1].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf1].Origem.X);
+                retorno[inf2].Origem.Y = retorno[inf2].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf2].Origem.X);
 
 
 
-                for (int i = 0; i < Retorno.Count; i++)
+                for (int i = 0; i < retorno.Count; i++)
                 {
-                    LivDeformado.Add(Retorno[i]);
+                    livDeformado.Add(retorno[i]);
                     if (i == sup1)
                     {
-                        LivDeformado.Add(sup);
+                        livDeformado.Add(sup);
                     }
                     if (i == inf1)
                     {
-                        LivDeformado.Add(inf);
+                        livDeformado.Add(inf);
                     }
                 }
             }
@@ -430,7 +426,7 @@ namespace Conexoes
                 var FR = furo.Clonar();
                 FR.Origem.Y = FR.Origem.Y - ContraFlecha;
 
-                double offY = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, FR.Origem.X);
+                double offY = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, FR.Origem.X);
                 FR.Origem.Y = FR.Origem.Y + offY;
                 if (Cfg.Init.CAM_CTF_AlinharFuros)
                 {
@@ -448,22 +444,17 @@ namespace Conexoes
                 furos.Add(FR);
             }
 
-
             foreach (Recorte recorte in face.RecortesInternos)
             {
                 //Deslocamento Inicial
                 var FR = recorte.MoverY(-ContraFlecha);
-                double offY = FuncoesDLMCam.Arco.DifY(Comprimento, ContraFlecha, FR.Origem.X);
+                double offY = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, FR.Origem.X);
                 FR = FR.MoverY(offY);
                 recortes.Add(FR);
             }
 
-            var o = new Face(
-                LivDeformado,
-                FaceNum.LIV1,
-                recortes,
-                furos);
-            return o;
+            var nFace = new Face(livDeformado, FaceNum.LIV1, recortes, furos);
+            return nFace;
         }
         public static Face Cortar(this Face face, double cima, double baixo)
         {
@@ -623,7 +614,7 @@ namespace Conexoes
                         novo.Origem.X = comp - novo.Origem.X;
                         break;
                     case Sentido_Espelho.Y:
-                        if (face.Mesa)
+                        if (face.IsMesa())
                         {
                             novo.Origem.Y = -novo.Origem.Y;
                         }
@@ -634,7 +625,7 @@ namespace Conexoes
                         break;
                     case Sentido_Espelho.XY:
                         novo.Origem.X = comp - novo.Origem.X;
-                        if (face.Mesa)
+                        if (face.IsMesa())
                         {
                             novo.Origem.Y = -novo.Origem.Y;
                         }

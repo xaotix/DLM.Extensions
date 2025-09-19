@@ -342,7 +342,7 @@ namespace Conexoes
             {
                 return new List<P3d>();
             }
-            return faces.SelectMany(x => x.Liv).Select(x => x.Origem).ToList().GetContornoConvexoHull(faces.First().Mesa ? TipoLiv.Z : TipoLiv.Y);
+            return faces.SelectMany(x => x.Liv).Select(x => x.Origem).ToList().GetContornoConvexoHull(faces.First().IsMesa() ? TipoLiv.Z : TipoLiv.Y);
         }
         public static List<P3d> GetContornoExterno(this List<Face> faces, double offset_X = 0, double offset_Y = 0, double offset_Z = 0)
         {
@@ -561,7 +561,7 @@ namespace Conexoes
 
         public static Face GetBordas(this List<Face> faces, double offset_Y = 0)
         {
-            if (!faces.First().Mesa)
+            if (!faces.First().IsMesa())
             {
                 var ptss = faces.SelectMany(x => x.Liv.Select(y => y.Origem)).ToList();
 
@@ -626,9 +626,9 @@ namespace Conexoes
             }
             else
             {
-                foreach (var liv in cam.Formato.LIV1.Linhas)
+                foreach (var linha in cam.Formato.LIV1.Linhas)
                 {
-                    var ang = liv.Anterior.Angulo(liv).Abs();
+                    var ang = linha.Anterior.Angulo(linha).Abs();
                     var angulo = ang;
                     while (angulo > 90)
                     {
@@ -637,7 +637,7 @@ namespace Conexoes
                     angulo = angulo.Abs();
                     if (angulo >= ang_min)
                     {
-                        var ponto = liv.OffSetInterno(dist, cam.Formato.LIV1.Rotacao);
+                        var ponto = linha.OffSetInterno(dist, cam.Formato.LIV1.Rotacao);
                         var proximos = cam.Formato.LIV1.Furacoes.FindAll(x => x.Origem.Distancia(ponto) <= dist_min);
                         if (proximos.Count == 0)
                         {

@@ -40,9 +40,9 @@ namespace Conexoes
             }
             else
             {
-                foreach (var liv in shape.LIV1.Linhas)
+                foreach (var linha in shape.LIV1.Linhas)
                 {
-                    var ang = liv.Anterior.Angulo(liv).Abs();
+                    var ang = linha.Anterior.Angulo(linha).Abs();
                     var angulo = ang;
                     while (angulo > 90)
                     {
@@ -51,7 +51,7 @@ namespace Conexoes
                     angulo = angulo.Abs();
                     if (angulo >= ang_min)
                     {
-                        var ponto = liv.OffSetInterno(borda, shape.LIV1.Rotacao);
+                        var ponto = linha.OffSetInterno(borda, shape.LIV1.Rotacao);
                         var proximos = shape.LIV1.Furacoes.FindAll(x => x.Origem.Distancia(ponto) <= distmin);
                         if (proximos.Count == 0)
                         {

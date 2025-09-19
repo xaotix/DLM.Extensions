@@ -78,6 +78,12 @@ namespace Conexoes
 
             return num.ToString("N0") + " kg";
         }
+        public static double Stretch_X(this double mm_comp, double mm_metro_adicional)
+        {
+            var metros = mm_comp / 1000;
+            var soma = metros * mm_metro_adicional;
+            return soma + mm_comp;
+        }
         public static List<double> MediaMovel(this List<double> valores)
         {
             var mediaMovel = new List<double>();

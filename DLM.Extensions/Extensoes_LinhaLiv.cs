@@ -803,9 +803,9 @@ namespace DLM.cam
                 origem = new P3d(0, 50 + (tamanho * 2));
             }
 
-            foreach (var l in face.Linhas)
+            foreach (var linha in face.Linhas)
             {
-                doc.Entities.Add(GetLine(l, netDxf.AciColor.Green, origem));
+                doc.Entities.Add(GetLine(linha, netDxf.AciColor.Green, origem));
             }
 
             foreach (var rec in face.RecortesInternos)
