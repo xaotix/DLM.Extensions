@@ -1,22 +1,569 @@
-﻿using netDxf;
+﻿using Conexoes;
+using DLM.macros;
+using DLM.vars;
+using netDxf;
 using netDxf.Entities;
+using netDxf.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Conexoes;
-using DLM.vars;
-using DLM.db;
-using DLM.macros;
 
 namespace DLM.desenho
 {
     public static class ExtensoesNetDxf
     {
-        private static Dictionary<System.Windows.Media.Color, AciColor> _CoresAci { get; set; } = new Dictionary<System.Windows.Media.Color, AciColor>();
-        public static AciColor getCor(this Janela_Cor Cor)
+        private static Dictionary<System.Windows.Media.Color, AciColor> _cores_aci { get; set; } = new Dictionary<System.Windows.Media.Color, AciColor>();
+
+        public static List<P3d> GetOrigens(this List<EntityObject> objs, bool cotas = false)
+        {
+            var Retorno = new List<P3d>();
+            foreach (var ob in objs)
+            {
+                if (ob is Line)
+                {
+                    var t = ob as Line;
+                    Retorno.Add(new P3d(t.StartPoint.X, t.StartPoint.Y));
+                    Retorno.Add(new P3d(t.EndPoint.X, t.EndPoint.Y));
+                }
+                else if (ob is Polyline3D)
+                {
+                    var t = ob as Polyline3D;
+                    Retorno.AddRange(t.Vertexes.Select(x => new P3d(x.X, x.Y, x.Z)));
+                }
+                else if (ob is Polyline2D)
+                {
+                    var t = ob as Polyline2D;
+                    Retorno.AddRange(t.Vertexes.Select(x => new P3d(x.Position.X, x.Position.Y)));
+                }
+                else if (ob is Circle)
+                {
+                    var t = ob as Circle;
+                    Retorno.Add(new P3d(t.Center.X, t.Center.Y));
+                }
+                else if (ob is Insert)
+                {
+                    var t = ob as Insert;
+                    Retorno.Add(new P3d(t.Position.X, t.Position.Y));
+                }
+                else if (ob is Arc)
+                {
+                    var t = ob as Arc;
+                    Retorno.Add(new P3d(t.Center.X, t.Center.Y));
+                    Retorno.Add(new P3d(t.Center.X, t.Center.Y).Mover(t.StartAngle, t.Radius));
+                    Retorno.Add(new P3d(t.Center.X, t.Center.Y).Mover(t.EndAngle, t.Radius));
+                }
+
+                if (cotas)
+                {
+                    if (ob is AlignedDimension)
+                    {
+                        var t = ob as AlignedDimension;
+                        Retorno.Add(new P3d(t.FirstReferencePoint.X, t.FirstReferencePoint.Y));
+                        Retorno.Add(new P3d(t.SecondReferencePoint.X, t.SecondReferencePoint.Y));
+                    }
+                    else if (ob is OrdinateDimension)
+                    {
+                        var t = ob as OrdinateDimension;
+                        Retorno.Add(new P3d(t.Origin.X, t.Origin.Y));
+                        Retorno.Add(new P3d(t.FeaturePoint.X, t.FeaturePoint.Y));
+                    }
+                    else if (ob is Text)
+                    {
+                        var t = ob as Text;
+                        Retorno.Add(new P3d(t.Position.X, t.Position.Y));
+                    }
+                    else if (ob is MText)
+                    {
+                        var t = ob as MText;
+                        Retorno.Add(new P3d(t.Position.X, t.Position.Y));
+                    }
+                }
+            }
+
+            return Retorno;
+        }
+        public static DimensionStyle GetEstilo(this DxfDocument doc, string Nome, double escala)
+        {
+            var s = doc.DimensionStyles.ToList().Find(X => X.Name.ToUpper().Replace(" ", "") == Nome.ToUpper().Replace(" ", ""));
+            if (s != null)
+            {
+                return s;
+            }
+            var st = GetEstilo(Nome.ToUpper().Replace(" ", ""), escala);
+            return st;
+        }
+
+        public static MText GetTexto(List<string> Linhas, Vector2 posicao, double tam, TextStyle style)
+        {
+            MText retorno = new MText();
+            retorno.Height = tam;
+            retorno.Style = style;
+            retorno.Value = string.Join(@"\P", Linhas);
+            retorno.Position = new Vector3(posicao.X, posicao.Y, 0);
+
+            return retorno;
+        }
+        public static Insert InserirBloco(string Nome, DxfDocument Arquivo_Origem, DxfDocument Arquivo_Destino, P3d Ponto, double Escala = 1, double Angulo = 0)
+        {
+            try
+            {
+                var block = Arquivo_Destino.Blocks.ToList().Find(x => x.Name.ToUpper() == Nome.ToUpper());
+
+                if (block == null)
+                {
+                    block = Arquivo_Origem.Blocks.ToList().Find(x => x.Name.ToUpper() == Nome.ToUpper());
+                    block = block.Clone() as netDxf.Blocks.Block;
+                }
+
+                if (block != null)
+                {
+
+                    var p = new Insert(block);
+                    p.Position = new Vector3(0, 0, 0);
+
+                    p.Scale = new Vector3(Escala);
+
+                    p.Position = new Vector3(Ponto.X, Ponto.Y, 0);
+                    p.TransformAttributes();
+                    p.Rotation = Angulo;
+                    return p;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+
+        }
+        public static List<Vector2> ToVector2(List<System.Windows.Point> pts)
+        {
+            return pts.Select(x => new Vector2(x.X, x.Y)).ToList();
+        }
+
+        public static DimensionStyle GetEstilo(string nome, double escala)
+        {
+            DimensionStyle retorno = new DimensionStyle(nome);
+            retorno.DimLineExtend = 2;
+            retorno.DimBaselineSpacing = 2;
+            retorno.ExtLineExtend = 2.5;
+            retorno.ExtLineOffset = 2.5;
+            retorno.ArrowSize = 1;
+            retorno.TextHeight = 2;
+            retorno.TextStyle = new TextStyle("ROMANS", "romans__.ttf");
+            retorno.TextStyle.Height = 0;
+            retorno.TextStyle.WidthFactor = 0.7;
+            retorno.TextColor = AciColor.Cyan;
+            retorno.TextHorizontalPlacement = DimensionStyleTextHorizontalPlacement.Centered;
+            retorno.TextDirection = DimensionStyleTextDirection.LeftToRight;
+            retorno.DimScaleLinear = 1;
+            retorno.DimScaleOverall = escala;
+            retorno.LengthPrecision = 0;
+            retorno.TextOffset = 1;
+            retorno.TextVerticalPlacement = DimensionStyleTextVerticalPlacement.Outside;
+
+            return retorno;
+
+        }
+        public static List<OrdinateDimension> CotasAcumuladas(List<P3d> pts, double offset, Sentido sentido = Sentido.Horizontal, Layer Layer = null, DimensionStyle estilo = null, bool inverter = false)
+        {
+            List<OrdinateDimension> Retorno = new List<OrdinateDimension>();
+            pts = pts.Select(x => x.Tratar()).ToList();
+            if (sentido == Sentido.Horizontal)
+            {
+                var ps = pts.GetHorizontaisTop();
+                if (inverter)
+                {
+                    ps = ps.OrderByDescending(x => x.X).ToList();
+                }
+
+                for (int i = 0; i < ps.Count; i++)
+                {
+                    OrdinateDimension pp = new OrdinateDimension(new Vector2(ps[0].X, ps[0].Y), new Vector2(ps[i].X, ps[i].Y), -offset, OrdinateDimensionAxis.X);
+
+
+                    if (Layer != null)
+                    {
+                        pp.Layer = Layer;
+                    }
+                    if (estilo != null)
+                    {
+                        pp.Style = estilo;
+                    }
+                    Retorno.Add(pp);
+                }
+            }
+            else if (sentido == Sentido.Vertical)
+            {
+                var ps = pts.GetVerticaisRight();
+                ps = ps.OrderByDescending(x => x.Y).ToList();
+
+                for (int i = 0; i < ps.Count; i++)
+                {
+                    OrdinateDimension pp = new OrdinateDimension(new Vector2(ps[0].X, ps[0].Y), new Vector2(ps[i].X, ps[i].Y), -offset, OrdinateDimensionAxis.Y);
+                    if (Layer != null)
+                    {
+                        pp.Layer = Layer;
+                    }
+                    if (estilo != null)
+                    {
+                        pp.Style = estilo;
+                    }
+                    Retorno.Add(pp);
+                }
+            }
+            return Retorno;
+        }
+
+
+        public static List<AlignedDimension> CotasHorizontais(List<P3d> pontos, double y, double offset, double escala = 0, Layer layer = null, DimensionStyle estilo = null)
+        {
+            var xs = pontos.Select(x => x.X).Distinct().ToList().OrderBy(x => x).ToList();
+            var tt = new List<AlignedDimension>();
+            for (int i = 1; i < xs.Count(); i++)
+            {
+                var s = Cota(new P3d(xs[i - 1], y), new P3d(xs[i], y), offset, layer, estilo);
+                tt.Add(s);
+            }
+            return tt;
+        }
+
+
+
+
+
+        public static AlignedDimension Cota(P3d p0, P3d p1, double offset, Layer Layer = null, DimensionStyle estilo = null)
+        {
+            p0 = p0.Tratar();
+            p1 = p1.Tratar();
+            double dist = p0.Distancia(p1);
+
+            if (dist == 0)
+            {
+                /**/
+                p1.X = p1.X + 1;
+                p1.Y = p1.Y + 1;
+            }
+            var t = new AlignedDimension(new Vector2(p0.X, p0.Y), new Vector2(p1.X, p1.Y), offset);
+
+            if (Layer != null)
+            {
+                t.Layer = Layer;
+            }
+            if (estilo != null)
+            {
+                t.Style = estilo;
+
+            }
+
+            return t;
+        }
+        public static Leader Leader(string Texto, double Tamanho, P3d Origem, Layer Layer = null, DimensionStyle estilo = null, int offset = 3)
+        {
+            Origem = Origem.Tratar();
+
+            var p1 = Origem.Mover(45, Tamanho * offset);
+            return Leader(Texto, Tamanho, new List<P3d> { new P3d(Origem.X, Origem.Y), new P3d(p1.X, p1.Y) }, Layer, estilo);
+        }
+        public static Leader Leader(string Texto, double Tamanho, List<P3d> Vetores, Layer Layer = null, DimensionStyle estilo = null)
+        {
+            var leader = new Leader(Texto, Vetores.Select(x => x.ToVector2()));
+
+            leader.Color = AciColor.Cyan;
+            if (Layer != null)
+            {
+                leader.Layer = Layer;
+            }
+            if (estilo != null)
+            {
+                leader.Style = estilo;
+            }
+
+            return leader;
+
+        }
+        public static Text Texto(P3d Origem, string valor, double tamanho = 10, Layer layer = null, TextStyle estilo = null, double angulo = 0, AciColor cor = null, netDxf.Entities.TextAlignment alinhamento = netDxf.Entities.TextAlignment.MiddleCenter)
+        {
+            var texto = new Text(valor, Origem.ToVector2(), tamanho);
+            texto.Alignment = alinhamento;
+            texto.Color = AciColor.Cyan;
+
+            if (angulo > 0)
+            {
+                texto.Rotation = angulo;
+            }
+            if (layer != null)
+            {
+                texto.Layer = layer;
+            }
+            if (estilo != null)
+            {
+                texto.Style = estilo;
+            }
+            if (cor != null)
+            {
+                texto.Color = cor;
+            }
+            texto.Rotation = angulo;
+
+            return texto;
+        }
+
+        public static List<Line> Cruz(P3d origem, double Diametro, Layer Layer = null)
+        {
+            double o = (Diametro / 4);
+            var ret = new List<Line>();
+            ret.Add(Linha(new P3d(origem.X - o, origem.Y - o), new P3d(origem.X + o, origem.Y + o), Layer));
+            ret.Add(Linha(new P3d(origem.X + o, origem.Y - o), new P3d(origem.X - o, origem.Y + o), Layer));
+            return ret;
+
+        }
+
+        public static List<EntityObject> Oblongo(double Diametro, double Oblongo, double Angulo, double X, double Y, Layer Layer = null)
+        {
+            var retorno = new List<EntityObject>();
+
+            var Origem = new P3d(X, Y);
+            var x0 = new P3d(X, Y).Mover(Angulo, -Oblongo / 2);
+            var x1 = new P3d(X, Y).Mover(Angulo, Oblongo / 2);
+
+            var t = new Arc(new Vector2(x0.X, x0.Y), Diametro / 2, 90 + Angulo, -90 + Angulo);
+            var t2 = new Arc(new Vector2(x1.X, x1.Y), Diametro / 2, -90 + Angulo, 90 + Angulo);
+
+            if (Layer != null)
+            {
+                t.Layer = Layer;
+                t2.Layer = Layer;
+            }
+
+            retorno.Add(Linha(x0.Mover(Angulo - 90, Diametro / 2), x1.Mover(Angulo - 90, Diametro / 2), Layer));
+            retorno.Add(Linha(x0.Mover(Angulo + 90, Diametro / 2), x1.Mover(Angulo + 90, Diametro / 2), Layer));
+
+            /*linhas de centro*/
+            double c0 = Diametro + Oblongo;
+            retorno.Add(Linha(Origem.Mover(Angulo, c0 * .75), Origem.Mover(Angulo, -c0 * .75), Layer));
+            retorno.Add(Linha(Origem.Mover(Angulo + 90, Diametro * 0.75), Origem.Mover(Angulo + 90, -Diametro * .75), Layer));
+            retorno.Add(t);
+            retorno.Add(t2);
+            return retorno;
+        }
+
+        public static Circle Circulo(double Diametro, double X, double Y, Layer Layer = null, AciColor Cor = null)
+        {
+            var t = new Circle(new Vector2(X, Y), Diametro / 2);
+            if (Layer != null)
+            {
+                t.Layer = Layer;
+            }
+            if (Cor != null)
+            {
+                t.Color = Cor;
+            }
+            else
+            {
+                t.Color = AciColor.ByLayer;
+            }
+            return t;
+        }
+        public static Ellipse Elipse(double diam1, double diam2, double X, double Y, Layer Layer = null, AciColor Cor = null)
+        {
+            var t = new Ellipse(new Vector2(X, Y), diam1, diam2);
+
+            if (Layer != null)
+            {
+                t.Layer = Layer;
+            }
+            if (Cor != null)
+            {
+                t.Color = Cor;
+            }
+            else
+            {
+                t.Color = AciColor.ByLayer;
+            }
+            return t;
+        }
+        public static List<EntityObject> FuroCorte(P3d Origem, double Diametro, double Angulo, Layer Layer = null, AciColor Cor = null)
+        {
+            var retorno = new List<EntityObject>();
+            var p1 = Origem.Mover(Angulo + 90, Diametro);
+            var p2 = Origem.Mover(Angulo + 90, -Diametro);
+            retorno.Add(Linha(p1, p2, Layer, Linetype.ByLayer, Cor));
+
+            retorno.AddRange(Xis(p1, Diametro, Angulo, Layer, Cor));
+            retorno.AddRange(Xis(p2, Diametro, Angulo, Layer, Cor));
+
+            return retorno;
+        }
+
+        public static List<EntityObject> Xis(P3d Origem, double Diametro, double Angulo = 0, Layer Layer = null, AciColor cor = null)
+        {
+            var retorno = new List<EntityObject>();
+            retorno.Add(
+                Linha(
+                Origem.Mover(Angulo + 90 + 45, Diametro / 3),
+                Origem.Mover(Angulo + 90 + 45, -Diametro / 3),
+                Layer,
+                Linetype.ByLayer,
+                cor
+            )
+            );
+
+            retorno.Add(
+                Linha(
+                Origem.Mover(Angulo + 90 - 45, Diametro / 3),
+                Origem.Mover(Angulo + 90 - 45, -Diametro / 3),
+                Layer,
+                Linetype.ByLayer,
+                cor
+            )
+            );
+
+            return retorno;
+        }
+
+        public static List<EntityObject> Furo(P3d Origem, double Diametro, double Oblongo, double Angulo, Layer Layer = null, AciColor Cor = null, Desenho_Furo Tipo = Desenho_Furo.Vista, bool Linhas_De_Centro = true, Sentido Sentido = Sentido.Horizontal)
+        {
+            if (Oblongo > 0)
+            {
+                return ExtensoesNetDxf.Oblongo(Diametro, Oblongo, Angulo, Origem.X, Origem.Y, Layer);
+            }
+
+            List<EntityObject> retorno = new List<EntityObject>();
+            if (Tipo == Desenho_Furo.Vista)
+            {
+                retorno.Add(Circulo(Diametro, Origem.X, Origem.Y, Layer, Cor));
+                if (Linhas_De_Centro)
+                {
+                    double o = (Diametro / 2) + (Diametro / 3);
+                    retorno.Add(Linha(new P3d(Origem.X - o, Origem.Y), new P3d(Origem.X + o, Origem.Y), Layer, Linetype.Dashed, Cor));
+                    retorno.Add(Linha(new P3d(Origem.X, Origem.Y - o), new P3d(Origem.X, Origem.Y + o), Layer, Linetype.Dashed, Cor));
+                }
+            }
+            else if (Tipo == Desenho_Furo.Corte)
+            {
+                double o = Diametro * 1.5;
+                if (Sentido == Sentido.Horizontal)
+                {
+                    retorno.Add(Linha(new P3d(Origem.X - o, Origem.Y), new P3d(Origem.X + o, Origem.Y), Layer));
+                    retorno.AddRange(Cruz(new P3d(Origem.X - o, Origem.Y), Diametro, Layer));
+                    retorno.AddRange(Cruz(new P3d(Origem.X + o, Origem.Y), Diametro, Layer));
+                }
+                else if (Sentido == Sentido.Vertical)
+                {
+                    retorno.Add(Linha(new P3d(Origem.X, Origem.Y - o), new P3d(Origem.X, Origem.Y + o)));
+                    retorno.AddRange(Cruz(new P3d(Origem.X, Origem.Y - o), Diametro, Layer));
+                    retorno.AddRange(Cruz(new P3d(Origem.X, Origem.Y + o), Diametro, Layer));
+                }
+            }
+            return retorno;
+        }
+        public static Line Linha(P3d p1, P3d p2, Layer layer = null, Linetype tipo = null, AciColor cor = null)
+        {
+            if (tipo == null)
+            {
+                tipo = Linetype.ByLayer;
+            }
+            var t = new Line(new Vector2(p1.X, p1.Y), new Vector2(p2.X, p2.Y));
+            if (layer != null)
+            {
+                t.Layer = layer;
+            }
+
+            if (tipo != null)
+            {
+                t.Linetype = tipo;
+            }
+            else
+            {
+                t.Linetype = Linetype.ByLayer;
+            }
+
+            if (cor != null)
+            {
+                t.Color = cor;
+            }
+
+            return t;
+        }
+
+        public static Polyline3D Retangulo(double Comprimento, double Largura, double X = 0, double Y = 0, Layer Layer = null, AciColor Cor = null)
+        {
+            var Vetores = new List<Vector3>();
+            Vetores = new List<Vector3> {
+                            new Vector3(X, Y, 0),
+                            new Vector3(X + Comprimento, Y, 0),
+                            new Vector3(X + Comprimento, Y + Largura, 0),
+                            new Vector3(X, Y+ Largura, 0),
+                            new Vector3(X, Y, 0)
+
+                        };
+            var poly = new Polyline3D(Vetores);
+
+            if (Layer != null)
+            {
+                poly.Layer = Layer;
+            }
+
+            if (Cor != null)
+            {
+                poly.Color = Cor;
+            }
+            else
+            {
+                poly.Color = AciColor.ByLayer;
+            }
+
+            return poly;
+        }
+        public static Polyline3D Polilinha(List<P3d> Origens, Layer Layer = null, AciColor Cor = null, Linetype tipo = null)
+        {
+            var Vetores = new List<Vector3>();
+            foreach (var p3d in Origens)
+            {
+
+
+                Vetores.Add(new Vector3(p3d.X.Round(8), p3d.Y.Round(8), 0));
+            }
+            var poly = new Polyline3D(Vetores);
+
+            if (Layer != null)
+            {
+                poly.Layer = Layer;
+            }
+            if (Cor != null)
+            {
+                poly.Color = Cor;
+            }
+            else
+            {
+                poly.Color = AciColor.ByLayer;
+            }
+
+            if (tipo != null)
+            {
+                poly.Linetype = tipo;
+            }
+
+            return poly;
+        }
+
+        public static AciColor ToAciColor(this System.Windows.Media.SolidColorBrush mediacolor)
+        {
+            var dColor = System.Drawing.Color.FromArgb(
+                                     mediacolor.Color.A,
+                                     mediacolor.Color.R,
+                                     mediacolor.Color.G,
+                                     mediacolor.Color.B
+                                     );
+            var retorno = new AciColor(dColor);
+            return retorno;
+        }
+        public static AciColor ToAciColor(this Janela_Cor Cor)
         {
 
             if (Cor == Janela_Cor.Amarelo)
@@ -50,29 +597,28 @@ namespace DLM.desenho
 
 
         }
-        public static AciColor getCor(this System.Windows.Media.Color cor)
+        public static AciColor ToAciColor(this System.Windows.Media.Color cor)
         {
             AciColor ret = null;
-            var igual = _CoresAci.TryGetValue(cor, out ret);
+            var igual = _cores_aci.TryGetValue(cor, out ret);
             if (ret != null)
             {
                 return ret;
             }
 
             AciColor retorno = new AciColor(cor.R, cor.G, cor.B);
-            _CoresAci.Add(cor, retorno);
+            _cores_aci.Add(cor, retorno);
 
             return retorno;
         }
         public static void Show(this DxfDocument dxf)
         {
             var mm = new Conexoes.Janelas.VisualizarDXF();
-
             mm.DXF_view.Abrir(dxf);
             mm.Show();
         }
 
-        public static List<EntityObject> AddPerfil_UFrontal(this DxfDocument dxf, netDxf.Tables.Layer l, netDxf.Tables.Layer lC, EM2Parte parte, EM2 esc)
+        public static List<EntityObject> AddPerfil_UFrontal(this DxfDocument dxf, Layer l, Layer lC, EM2Parte parte, EM2 esc)
         {
 
             double y0 = parte.Y + esc.caB;
@@ -86,7 +632,7 @@ namespace DLM.desenho
             var comp = parte.Comp_Fim;
             //esquerda
             retorno.Add(dxf.AddRec(l, 0, 0, esc.puL, comp));
-            retorno.Add(dxf.AddLine(l, esc.puL - esc.puE, 0, esc.puL - esc.puE, comp, netDxf.Tables.Linetype.Dashed));
+            retorno.Add(dxf.AddLine(l, esc.puL - esc.puE, 0, esc.puL - esc.puE, comp, Linetype.Dashed));
             foreach (var furo in parte.ESQ.Furos)
             {
                 if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
@@ -104,7 +650,7 @@ namespace DLM.desenho
 
             //direita
             retorno.Add(dxf.AddRec(l, 0, 0, esc.puL, comp));
-            retorno.Add(dxf.AddLine(l, esc.puE, 0, esc.puE, comp, netDxf.Tables.Linetype.Dashed));
+            retorno.Add(dxf.AddLine(l, esc.puE, 0, esc.puE, comp, Linetype.Dashed));
             foreach (var furo in parte.DIR.Furos)
             {
                 if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
@@ -136,7 +682,7 @@ namespace DLM.desenho
             }
             return retorno;
         }
-        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, netDxf.Tables.Layer l, EM2Parte parte, double x, EM2 esc)
+        public static List<EntityObject> AddPerfil_ULateral(this DxfDocument dxf, Layer l, EM2Parte parte, double x, EM2 esc)
         {
 
             var retorno = new List<netDxf.Entities.EntityObject>();
@@ -196,7 +742,7 @@ namespace DLM.desenho
 
             return retorno;
         }
-        public static List<EntityObject> AddPerfil_U(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, Orientacao lado, double alt, double esp, double larg = 0, double comp = 0)
+        public static List<EntityObject> AddPerfil_U(this DxfDocument dxf, Layer l, double X, double Y, Orientacao lado, double alt, double esp, double larg = 0, double comp = 0)
         {
             var retorno = new List<EntityObject>();
 
@@ -322,7 +868,7 @@ namespace DLM.desenho
             retorno.Add(block_ent);
             return retorno;
         }
-        public static List<EntityObject> AddPerfilL(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, Orientacao lado, double comp = 0, double larg = 0, double esp = 0)
+        public static List<EntityObject> AddPerfilL(this DxfDocument dxf, Layer l, double X, double Y, Orientacao lado, double comp = 0, double larg = 0, double esp = 0)
         {
             var retorno = new List<EntityObject>();
 
@@ -430,7 +976,7 @@ namespace DLM.desenho
 
                         };
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l });
-                block.AddLine(l, 0 - m_comp, 0 + esp, 0 + m_comp, 0 + esp, netDxf.Tables.Linetype.Dashed);
+                block.AddLine(l, 0 - m_comp, 0 + esp, 0 + m_comp, 0 + esp, Linetype.Dashed);
             }
             else if (lado == Orientacao.HDI | lado == Orientacao.HEI)
             {
@@ -444,7 +990,7 @@ namespace DLM.desenho
 
                         };
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l });
-                block.AddLine(l, 0 - m_comp, 0 - esp, 0 + m_comp, 0 - esp, netDxf.Tables.Linetype.Dashed);
+                block.AddLine(l, 0 - m_comp, 0 - esp, 0 + m_comp, 0 - esp, Linetype.Dashed);
 
             }
             else if (lado == Orientacao.HDV)
@@ -458,7 +1004,7 @@ namespace DLM.desenho
                             new Vector3(0, 0, 0),
                         };
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l });
-                block.AddLine(l, 0 + esp, 0, 0 + esp, 0 - comp, netDxf.Tables.Linetype.Dashed);
+                block.AddLine(l, 0 + esp, 0, 0 + esp, 0 - comp, Linetype.Dashed);
 
             }
             else if (lado == Orientacao.HEV)
@@ -472,7 +1018,7 @@ namespace DLM.desenho
                             new Vector3(0, 0, 0),
                         };
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l });
-                block.AddLine(l, 0 - esp, 0, 0 - esp, 0 - comp, netDxf.Tables.Linetype.Dashed);
+                block.AddLine(l, 0 - esp, 0, 0 - esp, 0 - comp, Linetype.Dashed);
 
             }
 
@@ -564,7 +1110,7 @@ namespace DLM.desenho
         }
 
 
-        public static Polyline2D AddRec(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, double comp, double larg)
+        public static Polyline2D AddRec(this DxfDocument dxf, Layer l, double X, double Y, double comp, double larg)
         {
             var Vetores = new List<Polyline2DVertex>();
             Vetores = new List<Polyline2DVertex> {
@@ -581,7 +1127,7 @@ namespace DLM.desenho
 
             return pol;
         }
-        public static Polyline2D AddPol(this DxfDocument dxf, netDxf.Tables.Layer l, double thick = 0, params P3d[] pts)
+        public static Polyline2D AddPol(this DxfDocument dxf, Layer l, double thick = 0, params P3d[] pts)
         {
             var Vetores = new List<Vector2>();
             foreach (var pt in pts)
@@ -602,30 +1148,13 @@ namespace DLM.desenho
 
             return pol;
         }
-        public static Line AddLine(this DxfDocument document, netDxf.Tables.Layer l, double x1, double y1, double x2, double y2, netDxf.Tables.Linetype type = null)
+        public static Line AddLine(this DxfDocument document, Layer l, double x1, double y1, double x2, double y2, Linetype type = null)
         {
             var nl = NewLine(l, x1, y1, x2, y2, ref type);
             document.Entities.Add(nl);
             return nl;
         }
-        public static Line AddLine(this netDxf.Blocks.Block block, netDxf.Tables.Layer Layer, double x1, double y1, double x2, double y2, netDxf.Tables.Linetype type = null)
-        {
-            Line l = NewLine(Layer, x1, y1, x2, y2, ref type);
-            block.Entities.Add(l);
-            return l;
-        }
-
-        private static Line NewLine(netDxf.Tables.Layer l, double x1, double y1, double x2, double y2, ref netDxf.Tables.Linetype type)
-        {
-            if (type == null)
-            {
-                type = netDxf.Tables.Linetype.ByLayer;
-            }
-            var nl = new netDxf.Entities.Line(new Vector2(x1, y1), new Vector2(x2, y2)) { Layer = l, Color = AciColor.ByLayer, Linetype = type };
-            return nl;
-        }
-
-        public static List<Line> AddXis(this DxfDocument dxf, netDxf.Tables.Layer Layer, double X, double Y, double diam)
+        public static List<Line> AddXis(this DxfDocument dxf, Layer Layer, double X, double Y, double diam)
         {
             var linhas = new List<Line>();
             double o = (diam / 4);
@@ -635,7 +1164,7 @@ namespace DLM.desenho
 
             return linhas;
         }
-        public static List<EntityObject> AddFuro(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, double diam, Desenho_Furo tipo, bool linhaDeCentro = true, Sentido sentido = Sentido.Horizontal)
+        public static List<EntityObject> AddFuro(this DxfDocument dxf, Layer l, double X, double Y, double diam, Desenho_Furo tipo, bool linhaDeCentro = true, Sentido sentido = Sentido.Horizontal)
         {
             var nome_furo = $"FURO_{diam.Round(0)}_{tipo}_{sentido}";
             var igual = dxf.Blocks.ToList().Find(x => x.Name == nome_furo);
@@ -656,8 +1185,8 @@ namespace DLM.desenho
                 {
                     double o = (diam / 2) + (diam / 3);
 
-                    itens_bloco.Add(dxf.AddLine(l, -o, 0, +o, 0, netDxf.Tables.Linetype.Dashed));
-                    itens_bloco.Add(dxf.AddLine(l, 0, -o, 0, +o, netDxf.Tables.Linetype.Dashed));
+                    itens_bloco.Add(dxf.AddLine(l, -o, 0, +o, 0, Linetype.Dashed));
+                    itens_bloco.Add(dxf.AddLine(l, 0, -o, 0, +o, Linetype.Dashed));
                 }
             }
             else if (tipo == Desenho_Furo.Corte)
@@ -680,13 +1209,29 @@ namespace DLM.desenho
 
             return new List<EntityObject> { dxf.CreateBlock(itens_bloco, nome_furo, new desenho.P3d(X, Y)) };
         }
+        public static Line AddLine(this netDxf.Blocks.Block block, Layer Layer, double x1, double y1, double x2, double y2, Linetype type = null)
+        {
+            Line l = NewLine(Layer, x1, y1, x2, y2, ref type);
+            block.Entities.Add(l);
+            return l;
+        }
+        
+        private static Line NewLine(Layer l, double x1, double y1, double x2, double y2, ref Linetype type)
+        {
+            if (type == null)
+            {
+                type = Linetype.ByLayer;
+            }
+            var nl = new netDxf.Entities.Line(new Vector2(x1, y1), new Vector2(x2, y2)) { Layer = l, Color = AciColor.ByLayer, Linetype = type };
+            return nl;
+        }
 
 
-        public static Leader AddLeader(this DxfDocument dxf, netDxf.Tables.Layer l, P3d origem, double offset, string texto, double tamanho, netDxf.Tables.DimensionStyle style)
+        public static Leader AddLeader(this DxfDocument dxf, Layer l, P3d origem, double offset, string texto, double tamanho, DimensionStyle style)
         {
             return AddLeader(dxf, l, new List<Vector2>() { origem.ToVector2(), origem.MoverX(offset).MoverY(offset).ToVector2() }, texto, tamanho, style);
         }
-        public static Leader AddLeader(this DxfDocument dxf, netDxf.Tables.Layer l, List<Vector2> Vetores, string Texto, double Tamanho, netDxf.Tables.DimensionStyle style)
+        public static Leader AddLeader(this DxfDocument dxf, Layer l, List<Vector2> Vetores, string Texto, double Tamanho, DimensionStyle style)
         {
             var leader = new netDxf.Entities.Leader(Texto, Vetores, style);
             leader.Color = AciColor.Cyan;
@@ -694,7 +1239,7 @@ namespace DLM.desenho
             return leader;
         }
 
-        public static LinearDimension AddCotaLinear(this DxfDocument dxf, netDxf.Tables.Layer l, P3d p1, P3d p2, double offset, netDxf.Tables.DimensionStyle style)
+        public static LinearDimension AddCotaLinear(this DxfDocument dxf, Layer l, P3d p1, P3d p2, double offset, DimensionStyle style)
         {
             if (p1.Distancia(p2) > 0)
             {
@@ -709,7 +1254,7 @@ namespace DLM.desenho
             }
             return null;
         }
-        public static AlignedDimension AddCota(this DxfDocument dxf, netDxf.Tables.Layer l, double x0, double y0, double x1, double y1, double offset, netDxf.Tables.DimensionStyle style)
+        public static AlignedDimension AddCota(this DxfDocument dxf, Layer l, double x0, double y0, double x1, double y1, double offset, DimensionStyle style)
         {
             //offset = Math.Abs(offset);
 
@@ -724,7 +1269,7 @@ namespace DLM.desenho
             }
             return null;
         }
-        public static void SetDimensionStyle(this DxfDocument dxf, netDxf.Tables.DimensionStyle style)
+        public static void SetDimensionStyle(this DxfDocument dxf, DimensionStyle style)
         {
             foreach (var t in dxf.Entities.Dimensions)
             {
@@ -759,7 +1304,7 @@ namespace DLM.desenho
             }
 
         }
-        public static Text AddText(this DxfDocument dxf, netDxf.Tables.Layer l, double X, double Y, string txt, double tam, netDxf.Tables.TextStyle style = null)
+        public static Text AddText(this DxfDocument dxf, Layer l, double X, double Y, string txt, double tam, TextStyle style = null)
         {
             var text = new netDxf.Entities.Text(txt, new Vector2(X, Y), tam);
             text.Color = AciColor.Cyan;
@@ -778,7 +1323,7 @@ namespace DLM.desenho
             }
             return dxf.AddMText(new List<string> { msg }, posicao, true);
         }
-        public static MText AddMText(this DxfDocument dxf, string valor, P3d posicao, double tamanho, netDxf.Tables.Layer layer = null, MTextAttachmentPoint origem = MTextAttachmentPoint.MiddleRight)
+        public static MText AddMText(this DxfDocument dxf, string valor, P3d posicao, double tamanho, Layer layer = null, MTextAttachmentPoint origem = MTextAttachmentPoint.MiddleRight)
         {
             var novo = dxf.AddMText(new List<string> { valor }, posicao, true, layer);
             if(tamanho>0)
@@ -791,7 +1336,7 @@ namespace DLM.desenho
 
             return novo;
         }
-        public static MText AddMText(this DxfDocument dxf, List<string> linhas, P3d posicao = null, bool adicionar = true, netDxf.Tables.Layer layer = null)
+        public static MText AddMText(this DxfDocument dxf, List<string> linhas, P3d posicao = null, bool adicionar = true, Layer layer = null)
         {
             if (posicao == null)
             {
@@ -799,7 +1344,7 @@ namespace DLM.desenho
             }
             var retorno = new MText();
             retorno.Height = dxf.DrawingVariables.TextSize;
-            netDxf.Tables.TextStyle estilo;
+            TextStyle estilo;
             dxf.TextStyles.TryGetValue(dxf.DrawingVariables.TextStyle, out estilo);
             retorno.Style = estilo;
             retorno.Value = string.Join(@"\P", linhas);
@@ -815,20 +1360,20 @@ namespace DLM.desenho
             return retorno;
         }
 
-        public static List<netDxf.Tables.DimensionStyle> ClonarDimensionStyles(this DxfDocument origem, DxfDocument destino)
+        public static List<DimensionStyle> ClonarDimensionStyles(this DxfDocument origem, DxfDocument destino)
         {
-            var retorno = new List<netDxf.Tables.DimensionStyle>();
+            var retorno = new List<DimensionStyle>();
             var entities = origem.Layouts.GetReferences(netDxf.Objects.Layout.ModelSpaceName);
 
 
             foreach (var dim in origem.DimensionStyles)
             {
 
-                if (dim is netDxf.Tables.DimensionStyle)
+                if (dim is DimensionStyle)
                 {
-                    var t1 = (dim as netDxf.Tables.DimensionStyle).Clone();
-                    destino.DimensionStyles.Add(t1 as netDxf.Tables.DimensionStyle);
-                    retorno.Add(t1 as netDxf.Tables.DimensionStyle);
+                    var t1 = (dim as DimensionStyle).Clone();
+                    destino.DimensionStyles.Add(t1 as DimensionStyle);
+                    retorno.Add(t1 as DimensionStyle);
                 }
 
             }
@@ -842,7 +1387,7 @@ namespace DLM.desenho
                 t.Value = Valor;
             }
         }
-        public static Insert AddBlock(this DxfDocument destino, string arquivo, P3d origem, double escala = 1, double ang = 0, netDxf.Tables.Layer l = null, bool layout = false)
+        public static Insert AddBlock(this DxfDocument destino, string arquivo, P3d origem, double escala = 1, double ang = 0, Layer l = null, bool layout = false)
         {
             try
             {
@@ -942,7 +1487,7 @@ namespace DLM.desenho
 
             return ndxf;
         }
-        public static netDxf.Tables.Layer GetLayer(this DxfDocument dxf, string name, netDxf.AciColor color, netDxf.Tables.Linetype line)
+        public static Layer GetLayer(this DxfDocument dxf, string name, netDxf.AciColor color, Linetype line)
         {
             var ss = dxf.Layers.ToList().Find(x => x.Name.ToUpper().Replace(" ", "") == name.ToUpper().Replace(" ", ""));
             if (ss != null)
@@ -950,7 +1495,7 @@ namespace DLM.desenho
                 return ss;
             }
 
-            var retorno = new netDxf.Tables.Layer(name.Replace(" ", "").ToUpper());
+            var retorno = new Layer(name.Replace(" ", "").ToUpper());
             retorno.Color = color;
             retorno.Linetype = line;
             return retorno;

@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Datagrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_DataTable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Double.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_DXF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Face.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Furo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Furo_Purlin.cs" />

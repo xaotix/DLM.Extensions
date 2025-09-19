@@ -60,7 +60,6 @@ namespace Conexoes
                     }
                 }
             }
-
         }
         public static DLM.db.Tabela GetTabela(this IRfcFunction funcao, string tabela)
         {

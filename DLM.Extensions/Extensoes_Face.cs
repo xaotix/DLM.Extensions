@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Conexoes
 {
@@ -30,6 +31,18 @@ namespace Conexoes
                 }
 
                 return peso;
+            }
+        }
+        public static double GetArea(this Face face, bool cilindro = false)
+        {
+            if (cilindro)
+            {
+                double areaCirculo = 2 * Math.PI * (face.Largura / 2) + face.Comprimento;
+                return areaCirculo;
+            }
+            else
+            {
+                return face.LivSegmentada.Area();
             }
         }
         public static Face RebaterY(this Face face,OrigemLiv OrigemLiv = OrigemLiv.Cima_Baixo)
@@ -528,18 +541,6 @@ namespace Conexoes
                 face.Soldas.Select(x => x.MoverY(valor)).ToList());
             return nFace;
         }
-        public static double GetArea(this Face face, bool cilindro = false)
-        {
-            if (cilindro)
-            {
-                double areaCirculo = 2 * Math.PI * (face.Largura / 2) + face.Comprimento;
-                return areaCirculo;
-            }
-            else
-            {
-                return face.LivSegmentada.Area();
-            }
-        }
         public static Face Rotacionar(this Face face, double angulo)
         {
             var origem = face.Origem.Clonar();
@@ -598,7 +599,7 @@ namespace Conexoes
 
             return nface;
         }
-        public static List<Furo> RebaterFuros(this Face face, Sentido_Espelho sentido)
+        public static List<Furo> GetFurosRebatidos(this Face face, Sentido_Espelho sentido)
         {
             var comp = face.Comprimento;
             var larg = face.Largura;
@@ -640,6 +641,237 @@ namespace Conexoes
             }
 
             return furos;
+        }
+
+        /// <summary>
+        /// Funciona somente em LIV1
+        /// </summary>
+        /// <param name="faces"></param>
+        /// <param name="folga_Y"></param>
+        /// <returns></returns>
+        public static Face UnirComFolga(this List<Face> faces, double folga_Y)
+        {
+            var retorno = new Face();
+
+            retorno.AddRange(faces.SelectMany(x => x.Furacoes));
+
+            if (faces.Count > 0)
+            {
+                var bordas = faces.GetBordas();
+                var bordas_corte = bordas.Cortar(folga_Y, folga_Y).MoverY(-folga_Y);
+
+                var p_contorno = faces.GetPathsD();
+                p_contorno.Add(bordas.GetPath());
+
+                var p_contorno_interno = faces.GetPathsD();
+                p_contorno_interno.Add(bordas_corte.GetPath());
+
+                var p_contornos_pecas = faces.GetPathsD();
+
+
+                var p_final = p_contorno.Union();
+                var f_final_simplificado = p_final.SimplifyPaths(0).GetFaces();
+                var f_final = p_final.GetFaces();
+
+                if (f_final_simplificado.Count == 1)
+                {
+                    retorno.AddRange(f_final_simplificado[0].Liv);
+                }
+                else if (f_final.Count == 1)
+                {
+                    retorno.AddRange(f_final[0].Liv);
+                }
+                else
+                {
+                    //não deveria chegar aqui
+                }
+
+                var p_recortes_internos = p_contorno_interno.Intersect(p_contorno);
+                var p_emendas = p_recortes_internos.Xor(p_contornos_pecas);
+                var p_recortes_internos_corte = p_contorno_interno.Intersect(p_emendas);
+
+                foreach (var emenda_interna in p_recortes_internos_corte)
+                {
+                    retorno.Add(new Recorte(emenda_interna.Select(x => new Liv(x.x, x.y)).ToList()));
+                }
+            }
+
+            return retorno;
+        }
+        public static List<Face> Rotacionar(this List<Face> faces, double angulo)
+        {
+            return faces.Select(x => x.Rotacionar(angulo)).ToList();
+        }
+
+        public static Face GetBordas(this List<Face> faces, double offset_Y = 0)
+        {
+            if (!faces.First().IsMesa())
+            {
+                var ptss = faces.SelectMany(x => x.Liv.Select(y => y.Origem)).ToList();
+
+                var x0 = ptss.OrderBy(x => x.Y).ThenBy(x => x.X).First().MoverY(-offset_Y);
+                var x1 = ptss.OrderBy(x => x.Y).ThenByDescending(x => x.X).First().MoverY(-offset_Y);
+
+                var x2 = ptss.OrderByDescending(x => x.Y).ThenByDescending(x => x.X).First().MoverY(offset_Y);
+                var x3 = ptss.OrderByDescending(x => x.Y).ThenBy(x => x.X).First().MoverY(offset_Y);
+
+                var pontos = new List<P3d> { x0, x1, x2, x3 };
+
+
+                return pontos.GetFace();
+            }
+
+            return faces.GetContornoExterno().GetFace();
+        }
+        public static List<Face> Quebrar(this Face Origem, double comp_max)
+        {
+
+
+            if (comp_max <= 0)
+            {
+                comp_max = Cfg.Init.CAM_Quebra_Compmax;
+            }
+            int Qtd = Math.Ceiling(Origem.Comprimento / comp_max).Int();
+            var Pedacos = new List<List<Liv>>();
+            var Resto_Direito = new List<Liv>();
+
+            var Geometria = new List<Liv>();
+            Geometria.AddRange(Origem.LivSegmentada);
+
+
+            for (int i = 0; i < Qtd; i++)
+            {
+
+                var p1 = new System.Windows.Point(comp_max, -5000);
+                var p2 = new System.Windows.Point(comp_max, 50000);
+                PathGeometry Esq;
+                PathGeometry Dir;
+                if (Qtd > 2)
+                {
+                    if (i == 0)
+                    {
+
+
+                        Geometria.GetPathGeometry().Quebrar(p1, p2, out Esq, out Dir);
+                        Pedacos.Add(Esq.ToLiv());
+                        Resto_Direito = Dir.ToLiv();
+                    }
+                    else
+                    {
+                        if (Resto_Direito.Comprimento() > comp_max)
+                        {
+                            Resto_Direito.GetPathGeometry(false).Quebrar(p1, p2, out Esq, out Dir);
+                            Pedacos.Add(Esq.ToLiv());
+                            Resto_Direito = Dir.ToLiv();
+                        }
+                        else
+                        {
+                            Pedacos.Add(Resto_Direito);
+                        }
+                    }
+                }
+                else
+                {
+                    Geometria.GetPathGeometry().Quebrar(p1, p2, out Esq, out Dir);
+                    Pedacos.Add(Esq.ToLiv());
+                    Pedacos.Add(Dir.ToLiv());
+                    break;
+                }
+
+
+            }
+
+            double P0 = 0;
+            double P1 = comp_max;
+
+            var retorno = new List<Face>();
+            var furos = new List<Furo>();
+            furos.AddRange(Origem.Furacoes);
+            foreach (var Pedaco in Pedacos)
+            {
+                var n_face = new Face(Pedaco);
+                var Furacoes = furos.FindAll(x => x.Origem.X >= P0 && x.Origem.X <= P1);
+
+
+                foreach (var furo in Furacoes)
+                {
+                    var nf = new Furo(furo);
+                    nf.Origem.X = nf.Origem.X - P0;
+                    n_face.Add(nf);
+                    furos.Remove(furo);
+                }
+
+                retorno.Add(n_face);
+                P0 += comp_max;
+                P1 += comp_max;
+            }
+
+            return retorno;
+        }
+        public static Face MoverEUnir(this List<Face> Faces, Sentido sentido = Sentido.Horizontal)
+        {
+            var nfaces = new List<Face>();
+
+            double Acum = 0;
+            foreach (var Face in Faces)
+            {
+                var nFace = new Face();
+                if (sentido == Sentido.Horizontal)
+                {
+                    nFace = Face.MoverX(Acum);
+                    Acum += Face.Comprimento;
+                }
+                else
+                {
+                    Face.MoverY(-Acum);
+                    Acum += Face.Largura;
+                }
+                nfaces.Add(nFace);
+            }
+
+
+            var contorno = nfaces.GetPathsD();
+            var uniao = contorno.Union(Clipper2Lib.FillRule.EvenOdd).GetFaces();
+
+            var faces = new Face();
+
+            faces.AddRange(nfaces.SelectMany(x => x.Furacoes));
+            faces.AddRange(nfaces.SelectMany(x => x.RecortesInternos));
+            faces.AddRange(nfaces.SelectMany(x => x.Dobras));
+            faces.AddRange(nfaces.SelectMany(x => x.Soldas));
+            if (uniao.Count == 1)
+            {
+                faces.AddRange(uniao[0].Liv);
+            }
+            else
+            {
+                faces.AddRange(uniao.SelectMany(x => x.Liv));
+            }
+
+
+
+            return faces;
+        }
+        
+        public static List<P3d> GetContornoConvexo(this List<Face> faces)
+        {
+            if (faces.Count == 0)
+            {
+                return new List<P3d>();
+            }
+            return faces.SelectMany(x => x.Liv).Select(x => x.Origem).ToList().GetContornoConvexoHull(faces.First().IsMesa() ? TipoLiv.Z : TipoLiv.Y);
+        }
+        public static List<P3d> GetContornoExterno(this List<Face> faces, double offset_X = 0, double offset_Y = 0, double offset_Z = 0)
+        {
+            var pts = new List<P3d>();
+            if (faces.Count > 0)
+            {
+                pts.Add(new P3d(faces.Min(x => x.MinX - offset_X), faces.Min(x => x.MinY - offset_Y), faces.Min(x => x.MinZ - offset_Z)));
+                pts.Add(new P3d(faces.Max(x => x.MaxX + offset_X), faces.Min(x => x.MinY - offset_Y), faces.Min(x => x.MinZ - offset_Z)));
+                pts.Add(new P3d(faces.Max(x => x.MaxX + offset_X), faces.Max(x => x.MaxY + offset_Y), faces.Max(x => x.MaxZ + offset_Z)));
+                pts.Add(new P3d(faces.Min(x => x.MinX - offset_X), faces.Max(x => x.MaxY + offset_Y), faces.Max(x => x.MaxZ + offset_Z)));
+            }
+            return pts;
         }
     }
 }
