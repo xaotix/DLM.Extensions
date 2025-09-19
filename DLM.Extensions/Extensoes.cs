@@ -197,7 +197,7 @@ namespace Conexoes
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
