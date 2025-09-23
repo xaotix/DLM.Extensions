@@ -550,6 +550,11 @@ namespace Conexoes
             if (Arquivo == null) { return false; }
             return new List<Arquivo> { Arquivo }.Abrir(argumentos, wait);
         }
+
+        public static void Abrir(this List<string> Arquivos)
+        {
+            Arquivos.Select(x => new Conexoes.Arquivo(x)).ToList().Abrir();
+        }
         public static bool Abrir(this List<Conexoes.Arquivo> Arquivos, string argumentos = "", bool wait = false)
         {
 

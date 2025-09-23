@@ -6,6 +6,27 @@ using System.Text.RegularExpressions;
 
 namespace Conexoes
 {
+    public static class Extensoes_HTML
+    {
+        public static string RemoverAtributoHTML(this string html, string atributo, string substituto = "")
+        {
+            // Regex para encontrar o atributo dentro de qualquer tag
+            string pattern = $@"\s{atributo}\s*=\s*""[^""]*""";
+
+            // Remove todas as ocorrências do atributo
+            string resultado = Regex.Replace(html, pattern, substituto, RegexOptions.IgnoreCase);
+
+            return resultado;
+        }
+        public static string RemoverTagHtml(this string html, string tag, string substituto = "")
+        {
+            // Regex para remover a tag de abertura e fechamento
+            string pattern = $@"</?{tag}\b[^>]*>";
+            string resultado = Regex.Replace(html, pattern, substituto, RegexOptions.IgnoreCase);
+
+            return resultado;
+        }
+    }
     public static class Extensoes_String
     {
         public static string ToPEP(this string valor)

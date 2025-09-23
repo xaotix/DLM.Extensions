@@ -6,8 +6,124 @@ using System.Linq;
 
 namespace Conexoes
 {
+    public static class Extensoes_NC1
+    {
+        public static TAB_NC1_CODE_FAMILY GetFamilia(this TAB_NC1_CODE code)
+        {
+            switch (code)
+            {
+                case TAB_NC1_CODE.E0:
+                case TAB_NC1_CODE.E1:
+                case TAB_NC1_CODE.E2:
+                case TAB_NC1_CODE.E3:
+                case TAB_NC1_CODE.E4:
+                case TAB_NC1_CODE.E5:
+                case TAB_NC1_CODE.E6:
+                case TAB_NC1_CODE.E7:
+                case TAB_NC1_CODE.E8:
+                case TAB_NC1_CODE.E9:
+                case TAB_NC1_CODE.ST:
+                case TAB_NC1_CODE.EN:
+                    return TAB_NC1_CODE_FAMILY.Ini_Fim;
+
+                case TAB_NC1_CODE.S0:
+                case TAB_NC1_CODE.S1:
+                case TAB_NC1_CODE.S2:
+                case TAB_NC1_CODE.S3:
+                case TAB_NC1_CODE.S4:
+                case TAB_NC1_CODE.S5:
+                case TAB_NC1_CODE.S6:
+                case TAB_NC1_CODE.S7:
+                case TAB_NC1_CODE.S8:
+                case TAB_NC1_CODE.S9:
+                case TAB_NC1_CODE.SI:
+                    return TAB_NC1_CODE_FAMILY.Indicacao;
+
+                case TAB_NC1_CODE.B0:
+                case TAB_NC1_CODE.B1:
+                case TAB_NC1_CODE.B2:
+                case TAB_NC1_CODE.B3:
+                case TAB_NC1_CODE.B4:
+                case TAB_NC1_CODE.B5:
+                case TAB_NC1_CODE.B6:
+                case TAB_NC1_CODE.B7:
+                case TAB_NC1_CODE.B8:
+                case TAB_NC1_CODE.B9:
+                case TAB_NC1_CODE.BO:
+                    return TAB_NC1_CODE_FAMILY.Furo;
+
+                case TAB_NC1_CODE.A0:
+                case TAB_NC1_CODE.A1:
+                case TAB_NC1_CODE.A2:
+                case TAB_NC1_CODE.A3:
+                case TAB_NC1_CODE.A4:
+                case TAB_NC1_CODE.A5:
+                case TAB_NC1_CODE.A6:
+                case TAB_NC1_CODE.A7:
+                case TAB_NC1_CODE.A8:
+                case TAB_NC1_CODE.A9:
+                case TAB_NC1_CODE.AK:
+                    return TAB_NC1_CODE_FAMILY.Contorno_EXT;
+
+                case TAB_NC1_CODE.I0:
+                case TAB_NC1_CODE.I1:
+                case TAB_NC1_CODE.I2:
+                case TAB_NC1_CODE.I3:
+                case TAB_NC1_CODE.I4:
+                case TAB_NC1_CODE.I5:
+                case TAB_NC1_CODE.I6:
+                case TAB_NC1_CODE.I7:
+                case TAB_NC1_CODE.I8:
+                case TAB_NC1_CODE.I9:
+                case TAB_NC1_CODE.IK:
+                    return TAB_NC1_CODE_FAMILY.Contorno_INT;
+
+                case TAB_NC1_CODE.PU:
+                case TAB_NC1_CODE.KO:
+                case TAB_NC1_CODE.SC:
+                case TAB_NC1_CODE.TO:
+                case TAB_NC1_CODE.UE:
+                case TAB_NC1_CODE.PR:
+                case TAB_NC1_CODE.KA:
+                case TAB_NC1_CODE.P0:
+                case TAB_NC1_CODE.P1:
+                case TAB_NC1_CODE.P2:
+                case TAB_NC1_CODE.P3:
+                case TAB_NC1_CODE.P4:
+                case TAB_NC1_CODE.P5:
+                case TAB_NC1_CODE.P6:
+                case TAB_NC1_CODE.P7:
+                case TAB_NC1_CODE.P8:
+                case TAB_NC1_CODE.P9:
+                case TAB_NC1_CODE.K0:
+                case TAB_NC1_CODE.K1:
+                case TAB_NC1_CODE.K2:
+                case TAB_NC1_CODE.K3:
+                case TAB_NC1_CODE.K4:
+                case TAB_NC1_CODE.K5:
+                case TAB_NC1_CODE.K6:
+                case TAB_NC1_CODE.K7:
+                case TAB_NC1_CODE.K8:
+                case TAB_NC1_CODE.K9:
+                case TAB_NC1_CODE._:
+                    return TAB_NC1_CODE_FAMILY.Outro;
+            }
+
+            return TAB_NC1_CODE_FAMILY._;
+
+        }
+    }
+
     public static class Extensoes_ReadCAM
     {
+        public static void Abrir(this Cam cam)
+        {
+            new List<Arquivo> { new Arquivo(cam.Arquivo) }.Abrir();
+        }
+        public static void Abrir(this List<DLM.cam.ReadCAM> Arquivos)
+        {
+            Arquivos.Select(x => new Conexoes.Arquivo(x.Arquivo)).ToList().Abrir();
+        }
         public static List<Report> VerificarFuros(this ReadCAM readCAM)
         {
             var Reports = new List<Report>();
