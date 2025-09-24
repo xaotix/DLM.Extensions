@@ -8,6 +8,10 @@ namespace Conexoes
 {
     public static class Extensoes_NC1
     {
+        public static List<Furo> AsFuro(this List<NC1_Obj> lista, bool inverter_y = true)
+        {
+            return lista.Select(x => new Furo(x.X, x.Y * (inverter_y ? -1 : 1), x.Diam, x.Slot, x.Slot_Angle)).ToList();
+        }
         public static TAB_NC1_CODE_FAMILY GetFamilia(this TAB_NC1_CODE code)
         {
             switch (code)

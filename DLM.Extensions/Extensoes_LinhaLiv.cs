@@ -365,6 +365,26 @@ namespace DLM.cam
             }
 
         }
+
+        public static List<Liv> YParaZ(this List<Liv> livs, bool inverver_y = false)
+        {
+            var retorno = new List<Liv>();
+
+            foreach (var liv in livs)
+            {
+                retorno.Add(new Liv()
+                {
+                    Raio = liv.Raio,
+                    Ang1 = liv.Ang1,
+                    Ang2 = liv.Ang2,
+                    Quadrante = liv.Quadrante,
+                    Espessura = liv.Espessura,
+                    Origem = new P3d(liv.Origem.X, liv.Origem.Z, liv.Origem.Y * (inverver_y?-1:1))
+                });
+            }
+
+            return retorno;
+        }
         public static List<Liv> ChapaParaMesa(this List<Liv> livs, double algura, double largura_mesa)
         {
             var retorno = new List<Liv>();
