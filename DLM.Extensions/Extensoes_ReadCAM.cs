@@ -8,9 +8,74 @@ namespace Conexoes
 {
     public static class Extensoes_NC1
     {
-        public static List<Furo> AsFuro(this List<NC1_Obj> lista, bool inverter_y = true)
+        public static TAB_CAM_TIPO_SOLDA GetInverso(this TAB_CAM_TIPO_SOLDA tipo)
         {
-            return lista.Select(x => new Furo(x.X, x.Y * (inverter_y ? -1 : 1), x.Diam, x.Slot, x.Slot_Angle)).ToList();
+            switch (tipo)
+            {
+                case TAB_CAM_TIPO_SOLDA.W001:
+                    return TAB_CAM_TIPO_SOLDA.W015;
+                case TAB_CAM_TIPO_SOLDA.W002:
+                    return TAB_CAM_TIPO_SOLDA.W016;
+                case TAB_CAM_TIPO_SOLDA.W003:
+                    return TAB_CAM_TIPO_SOLDA.W017;
+                case TAB_CAM_TIPO_SOLDA.W004:
+                    return TAB_CAM_TIPO_SOLDA.W018;
+                case TAB_CAM_TIPO_SOLDA.W005:
+                    return TAB_CAM_TIPO_SOLDA.W005;
+                case TAB_CAM_TIPO_SOLDA.W006:
+                    return TAB_CAM_TIPO_SOLDA.W006;
+                case TAB_CAM_TIPO_SOLDA.W007:
+                    return TAB_CAM_TIPO_SOLDA.W026;
+                case TAB_CAM_TIPO_SOLDA.W008:
+                    return TAB_CAM_TIPO_SOLDA.W027;
+                case TAB_CAM_TIPO_SOLDA.W013:
+                    return TAB_CAM_TIPO_SOLDA.W021;
+                case TAB_CAM_TIPO_SOLDA.W014:
+                    return TAB_CAM_TIPO_SOLDA.W022;
+                case TAB_CAM_TIPO_SOLDA.W015:
+                    return TAB_CAM_TIPO_SOLDA.W001;
+                case TAB_CAM_TIPO_SOLDA.W016:
+                    return TAB_CAM_TIPO_SOLDA.W002;
+                case TAB_CAM_TIPO_SOLDA.W017:
+                    return TAB_CAM_TIPO_SOLDA.W003;
+                case TAB_CAM_TIPO_SOLDA.W018:
+                    return TAB_CAM_TIPO_SOLDA.W004;
+                case TAB_CAM_TIPO_SOLDA.W021:
+                    return TAB_CAM_TIPO_SOLDA.W013;
+                case TAB_CAM_TIPO_SOLDA.W022:
+                    return TAB_CAM_TIPO_SOLDA.W014;
+                case TAB_CAM_TIPO_SOLDA.W026:
+                    return TAB_CAM_TIPO_SOLDA.W007;
+                case TAB_CAM_TIPO_SOLDA.W027:
+                    return TAB_CAM_TIPO_SOLDA.W008;
+                case TAB_CAM_TIPO_SOLDA.W028:
+                    return TAB_CAM_TIPO_SOLDA.W029;
+                case TAB_CAM_TIPO_SOLDA.W029:
+                    return TAB_CAM_TIPO_SOLDA.W028;
+
+
+
+
+                case TAB_CAM_TIPO_SOLDA.W009:
+                case TAB_CAM_TIPO_SOLDA.W010:
+                case TAB_CAM_TIPO_SOLDA.W011:
+                case TAB_CAM_TIPO_SOLDA.W012:
+                case TAB_CAM_TIPO_SOLDA.W019:
+                case TAB_CAM_TIPO_SOLDA.W020:
+                case TAB_CAM_TIPO_SOLDA.W023:
+                case TAB_CAM_TIPO_SOLDA.W024:
+                case TAB_CAM_TIPO_SOLDA.W025:
+                case TAB_CAM_TIPO_SOLDA.W100:
+                case TAB_CAM_TIPO_SOLDA.W101:
+                case TAB_CAM_TIPO_SOLDA._:
+                default:
+                    return TAB_CAM_TIPO_SOLDA._;
+            }
+
+        }
+        public static List<Furo> AsFuro(this List<NC1_Obj> lista, bool inverter_y = true, double offset_y = 0)
+        {
+            return lista.Select(x => new Furo(x.X, (x.Y * (inverter_y ? -1 : 1)) - offset_y, x.Diam, x.Slot, x.Slot_Angle)).ToList();
         }
         public static TAB_NC1_CODE_FAMILY GetFamilia(this TAB_NC1_CODE code)
         {

@@ -8,6 +8,22 @@ namespace DLM.cam
 {
     public static class Extensoes_Furo
     {
+        public static List<Furo> MoverY(this List<Furo> lista, double valor)
+        {
+            return lista.Select(x => x.MoverY(valor)).ToList();
+        }
+        public static List<Furo> InverterY(this List<Furo> lista)
+        {
+            return lista.Select(x => x.InverterY()).ToList();
+        }
+        public static List<Furo> MoverX(this List<Furo> lista, double valor)
+        {
+            return lista.Select(x => x.MoverX(valor)).ToList();
+        }
+        public static List<Furo> MoverZ(this List<Furo> lista, double valor)
+        {
+            return lista.Select(x => x.MoverZ(valor)).ToList();
+        }
         public static TecnoPlotFuro GetDB(this Furo fr)
         {
             return Conexoes.DBases.GetDBTecnoPlot().Get(fr.Diametro, fr.Oblongo);
@@ -20,7 +36,7 @@ namespace DLM.cam
                 var meio = largura_mesa / 2;
                 foreach (var item in items)
                 {
-                    var nliv = new Furo(item.Origem.X, item.Origem.Y + meio, item.Diametro,item.Oblongo,item.Angulo, algura);
+                    var nliv = new Furo(item.Origem.X, item.Origem.Y + meio, item.Diametro, item.Oblongo, item.Angulo, algura);
                     retorno.Add(nliv);
                 }
             }

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Xceed.Wpf.DataGrid;
 
 namespace Conexoes
 {
@@ -743,6 +744,20 @@ namespace Conexoes
             }
 
             return reports;
+        }
+
+
+        public static List<Liv> MoverY(this List<Liv> lista, double valor)
+        {
+            return lista.Select(x=>x.MoverY(valor)).ToList();   
+        }
+        public static List<Liv> MoverX(this List<Liv> lista, double valor)
+        {
+            return lista.Select(x => x.MoverX(valor)).ToList();
+        }
+        public static List<Liv> MoverZ(this List<Liv> lista, double valor)
+        {
+            return lista.Select(x => x.MoverZ(valor)).ToList();
         }
     }
 }

@@ -26,6 +26,12 @@ namespace DLM.cam
             p1.Origem = p1.Origem.MoverX(valor);
             return p1;
         }
+        public static Liv MoverZ(this Liv pt, double valor)
+        {
+            var p1 = pt.Clonar();
+            p1.Origem = p1.Origem.MoverZ(valor);
+            return p1;
+        }
         public static Liv Mover(this Liv p1, double angulo, double distancia, int decimais = 10)
         {
             var pt = p1.Clonar();
@@ -366,7 +372,7 @@ namespace DLM.cam
 
         }
 
-        public static List<Liv> YParaZ(this List<Liv> livs, bool inverver_y = false)
+        public static List<Liv> YParaZ(this List<Liv> livs, double offset_z = 0, double offset_y = 0, bool inverver_y = false)
         {
             var retorno = new List<Liv>();
 
@@ -379,21 +385,21 @@ namespace DLM.cam
                     Ang2 = liv.Ang2,
                     Quadrante = liv.Quadrante,
                     Espessura = liv.Espessura,
-                    Origem = new P3d(liv.Origem.X, liv.Origem.Z, liv.Origem.Y * (inverver_y?-1:1))
+                    Origem = new P3d(liv.Origem.X, liv.Origem.Z + offset_z, (liv.Origem.Y * (inverver_y?-1:1)) + offset_y)
                 });
             }
 
             return retorno;
         }
-        public static List<Liv> ChapaParaMesa(this List<Liv> livs, double algura, double largura_mesa)
+        public static List<Liv> ChapaParaMesa(this List<Liv> livs, double offset_z, double largura_mesa)
         {
             var retorno = new List<Liv>();
             if (livs.Count >= 3)
             {
-                var meio = largura_mesa / 2;
+                var centro = largura_mesa / 2;
                 foreach (var liv in livs)
                 {
-                    var nliv = new Liv(liv.Origem.X, algura, liv.Origem.Y + meio);
+                    var nliv = new Liv(liv.Origem.X, offset_z, liv.Origem.Y + centro);
                     retorno.Add(nliv);
                 }
             }
