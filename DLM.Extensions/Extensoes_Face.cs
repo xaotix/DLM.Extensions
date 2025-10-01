@@ -12,7 +12,18 @@ namespace Conexoes
 {
     public static class Extensoes_Face
     {
-
+        public static double GetArea(this Face face, bool cilindro = false)
+        {
+            if (cilindro)
+            {
+                double areaCirculo = 2 * Math.PI * (face.Largura / 2) + face.Comprimento;
+                return areaCirculo;
+            }
+            else
+            {
+                return face.LivSegmentada.Area();
+            }
+        }
         public static double GetPeso(this Face face, Perfil Perfil)
         {
             if (Perfil.Cilindro)
@@ -33,19 +44,8 @@ namespace Conexoes
                 return peso;
             }
         }
-        public static double GetArea(this Face face, bool cilindro = false)
-        {
-            if (cilindro)
-            {
-                double areaCirculo = 2 * Math.PI * (face.Largura / 2) + face.Comprimento;
-                return areaCirculo;
-            }
-            else
-            {
-                return face.LivSegmentada.Area();
-            }
-        }
-        public static Face RebaterY(this Face face,OrigemLiv OrigemLiv = OrigemLiv.Cima_Baixo)
+
+        public static Face RebaterY(this Face face, OrigemLiv OrigemLiv = OrigemLiv.Cima_Baixo)
         {
             var pts = new List<Liv>();
             var frs = new List<Furo>();
@@ -94,9 +94,9 @@ namespace Conexoes
             frs = face.Furacoes.Select(x => x.SetX(face.Comprimento - x.Origem.X)).ToList();
             recs = face.RecortesInternos.Select(x => x.SetX(face.Comprimento - x.Origem.X)).ToList();
             soldas = face.Soldas.Select(x => x.Clonar()).ToList();
-            foreach(var furo in frs)
+            foreach (var furo in frs)
             {
-                if(furo.Angulo!=0)
+                if (furo.Angulo != 0)
                 {
                     furo.Angulo = 180 - furo.Angulo;
                 }
@@ -109,7 +109,7 @@ namespace Conexoes
                 dobs,
                 soldas);
         }
-        public static Face AlinharFuros_X(this Face face,double tolerancia)
+        public static Face AlinharFuros_X(this Face face, double tolerancia)
         {
             var ptos = new List<Liv>();
             var fros = new List<Furo>();
@@ -153,7 +153,7 @@ namespace Conexoes
             if (face.IsMesa())
             {
                 var liv = face.LivSegmentada.MesaParaChapa(false);
-                if(liv.Count==0)
+                if (liv.Count == 0)
                 {
                     liv = Retangulo.New(comprimento, largura, esp).Get(TipoREC.Cima_Baixo);
                 }
@@ -551,24 +551,24 @@ namespace Conexoes
             var nSoldas = new List<Solda>();
             var nDobras = new List<Dobra>();
 
-            foreach(var liv in face.Liv)
+            foreach (var liv in face.Liv)
             {
                 var nliv = liv.Clonar();
                 nliv.Origem = nliv.Origem.Rotacionar(origem, angulo);
                 nLivs.Add(nliv);
             }
-            foreach(var furo in face.Furacoes)
+            foreach (var furo in face.Furacoes)
             {
                 var nfuro = furo.Clonar();
                 nfuro.Origem = nfuro.Origem.Rotacionar(origem, angulo);
-                if(nfuro.Oblongo>0)
+                if (nfuro.Oblongo > 0)
                 {
                     nfuro.Angulo += angulo;
                     nfuro.Angulo = nfuro.Angulo.Normalizar(180);
                 }
                 nFuracoes.Add(nfuro);
             }
-            foreach(var recorte in face.RecortesInternos)
+            foreach (var recorte in face.RecortesInternos)
             {
                 var livs = recorte.Coordenadas.Segmentar();
 
@@ -852,7 +852,7 @@ namespace Conexoes
 
             return faces;
         }
-        
+
         public static List<P3d> GetContornoConvexo(this List<Face> faces)
         {
             if (faces.Count == 0)
