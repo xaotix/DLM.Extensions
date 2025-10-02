@@ -154,7 +154,7 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor);
                 }
-                else if (prop == "double")
+                else if (prop == "double" | prop == "decimal")
                 {
                     Propriedade.SetValue(Objeto, Valor.Double(20));
                 }

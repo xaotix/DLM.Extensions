@@ -256,18 +256,16 @@ namespace Conexoes
                 }
             }
         }
-
         public static void TreeView_Drop(object sender, DragEventArgs e)
         {
             var treeview = sender as TreeViewItem;
             var pasta = treeview.Tag as Pasta;
             var arquivos = (List<Arquivo>)e.Data.GetData("Selecao");
-            if(arquivos.Count>0 && pasta.Exists())
+            if (arquivos.Count > 0 && pasta.Exists())
             {
                 arquivos.Mover(pasta.Endereco);
             }
         }
-
         public static void Datagrid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -278,12 +276,5 @@ namespace Conexoes
                 DragDrop.DoDragDrop(list, obj, DragDropEffects.Copy);
             }
         }
-
-
-
-      
-
-
-
     }
 }

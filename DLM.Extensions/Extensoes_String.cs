@@ -67,6 +67,15 @@ namespace Conexoes
 
             return retorno;
         }
+        public static int LenghtStr(this object valor)
+        {
+            if(valor!=null)
+            {
+                return valor.ToString().Length;
+            }
+
+            return 0;
+        }
         public static bool Vazio(this object valor)
         {
             if (valor == null) { return true; }
