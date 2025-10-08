@@ -364,10 +364,10 @@ namespace Conexoes
         /// <typeparam name="T"></typeparam>
         /// <param name="lista"></param>
         /// <returns></returns>
-        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true)
+        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, string nome = "")
         {
 
-            var retorno = new DLM.db.Tabela();
+            var retorno = new DLM.db.Tabela(nome);
             if (lista.Count > 0)
             {
                 var listagem = new List<PropertyInfo>();
@@ -409,7 +409,7 @@ namespace Conexoes
                         if (igual != null)
                         {
                             cel.DisplayName = igual.GetDisplayName();
-                            cel.StringFormat = igual.GetDisplayFormatString();
+                            cel.StringFormat = igual.GetDataFormatString();
                             try
                             {
                                 cel.Set(igual.GetValue(item));
@@ -550,17 +550,23 @@ namespace Conexoes
 
             return property.Name;
         }
-        private static string GetDisplayFormatString(this PropertyInfo property)
+        private static string GetDataFormatString(this PropertyInfo property)
         {
-            // Verifica se há MetadataTypeAttribute
-            var metadataAttrs = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
+            var displayFormatAttr = property.GetCustomAttribute<DisplayFormatAttribute>();
+            if(displayFormatAttr!= null)
+            {
+                return displayFormatAttr.DataFormatString;
+            }
+
+                // Verifica se há MetadataTypeAttribute
+                var metadataAttrs = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
             if (metadataAttrs.Length > 0)
             {
                 var metaAttr = metadataAttrs[0] as MetadataTypeAttribute;
                 var metaProperty = metaAttr.MetadataClassType.GetProperty(property.Name);
                 if (metaProperty != null)
                 {
-                    return metaProperty.GetDisplayFormatString();
+                    return metaProperty.GetDataFormatString();
                 }
             }
 

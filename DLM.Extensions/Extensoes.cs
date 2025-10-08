@@ -94,7 +94,7 @@ namespace Conexoes
                     var type_cel = Celula_Tipo_Valor.NULL;
                     var valor = v.GetValue();
                     var valorstr = "";
-                    if (!valor.Vazio())
+                    if (!valor.IsNullOrEmpty())
                     {
                         valorstr = valor.ToString();
                         var type = v.Metadata.DataType;

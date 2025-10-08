@@ -76,7 +76,7 @@ namespace Conexoes
 
             return 0;
         }
-        public static bool Vazio(this object valor)
+        public static bool IsNullOrEmpty(this object valor)
         {
             if (valor == null) { return true; }
             var vlr = valor.ToString().Replace(" ", "").Replace(".","").Replace(",","").Replace("0","").Replace("'","").Replace("0000-00-00", "");

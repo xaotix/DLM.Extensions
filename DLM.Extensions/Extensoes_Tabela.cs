@@ -396,7 +396,7 @@ namespace Conexoes
 
         public static void SetValor(this ExcelRange Excel_cel, Celula cel)
         {
-            if (!cel.Valor.Vazio())
+            if (!cel.Valor.IsNullOrEmpty())
             {
                 switch (cel.Tipo)
                 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Conexoes
 {
@@ -40,6 +41,117 @@ namespace Conexoes
             }
             return ret;
         }
+        public static string ToPeso(this object value)
+        {
+            var _value = "";
+            var negativo = false;
+            var culture = Utilz._BR;
+            if (value is double doubleValue)
+            {
+                if (doubleValue < 0)
+                {
+                    negativo = true;
+                }
+
+                doubleValue = doubleValue.Abs();
+                if (doubleValue == 0)
+                {
+                    _value = "";
+                }
+                else if (doubleValue > 9999)
+                {
+                    _value = string.Format(culture, "{0:N2} mil t", doubleValue / 1000);
+                }
+                else if (doubleValue > 999)
+                {
+                    _value = string.Format(culture, "{0:N0} t", doubleValue);
+                }
+                else if (doubleValue > 99)
+                {
+                    _value = string.Format(culture, "{0:N1} t", doubleValue);
+                }
+                else if (doubleValue > 9)
+                {
+                    _value = string.Format(culture, "{0:N2} t", doubleValue);
+                }
+                else if (doubleValue > 1)
+                {
+                    _value = string.Format(culture, "{0:N3} t", doubleValue);
+                }
+                else if (doubleValue > 0)
+                {
+                    _value = string.Format(culture, "{0:N0} Kg", doubleValue * 1000);
+                }
+                else
+                {
+                    _value = "";
+                }
+            }
+            else
+            {
+                _value = "";
+            }
+
+            if (negativo)
+            {
+                _value = $"-{_value}";
+            }
+
+            return _value;
+        }
+
+        public static string ToMoeda(this object value)
+        {
+            string _value = "";
+            bool negativo = false;
+            var culture = Utilz._BR;
+            if (value is double doubleValue)
+            {
+                if (doubleValue < 0)
+                {
+                    negativo = true;
+                    doubleValue = Math.Abs(doubleValue);
+                }
+
+                if (doubleValue == 0)
+                {
+                    _value = "";
+                }
+                else if (doubleValue > 999_999_999)
+                {
+                    _value = $"R$ {(doubleValue / 1_000_000_000).ToString("0.###", culture)} bi";
+                }
+                else if (doubleValue > 99_999_999)
+                {
+                    _value = $"R$ {(doubleValue / 1_000_000).ToString("0.##", culture)} mi";
+                }
+                else if (doubleValue > 999_999)
+                {
+                    _value = $"R$ {(doubleValue / 1_000_000).ToString("0.###", culture)} mi";
+                }
+                else if (doubleValue > 9_999)
+                {
+                    _value = $"R$ {(doubleValue / 1_000).ToString("0.#", culture)} mil";
+                }
+                else if (doubleValue > 999)
+                {
+                    _value = $"R$ {(doubleValue / 1_000).ToString("0.##", culture)} mil";
+                }
+                else
+                {
+                    _value = $"R$ {doubleValue.ToString("0.##", culture)}";
+                }
+            }
+
+            if (negativo && !string.IsNullOrEmpty(_value))
+            {
+                _value = $"({_value})";
+            }
+
+            return _value;
+        }
+
+
         public static string ToKMB(this double num, string prefix = "")
         {
             if (num == 0)
