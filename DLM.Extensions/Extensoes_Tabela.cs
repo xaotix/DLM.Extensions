@@ -428,7 +428,7 @@ namespace Conexoes
                         break;
                 }
 
-                if (cel.Tipo == Celula_Tipo_Valor.Moeda)
+                if (cel.Tipo == Celula_Tipo_Valor.Moeda | cel.StringFormat == "C")
                 {
                     Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
                 }
