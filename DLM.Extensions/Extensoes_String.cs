@@ -140,6 +140,10 @@ namespace Conexoes
         }
         public static bool StartsW(this string txt, params string[] valores)
         {
+            if(txt.IsNullOrEmpty())
+            {
+                return false;
+            }
             foreach (var valor in valores)
             {
                 var tem = txt.TrimStart().StartsWith(valor);

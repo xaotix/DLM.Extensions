@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -162,15 +163,15 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor.Boolean());
                 }
-                else if (prop.StartsWith("long"))
+                else if (prop.StartsW("long"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Long());
                 }
-                else if (prop.StartsWith("int64"))
+                else if (prop.StartsW("int64"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Long());
                 }
-                else if (prop.StartsWith("int"))
+                else if (prop.StartsW("int"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Int());
                 }
@@ -364,7 +365,7 @@ namespace Conexoes
         /// <typeparam name="T"></typeparam>
         /// <param name="lista"></param>
         /// <returns></returns>
-        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, string nome = "")
+        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, [CallerMemberName] string nome = "")
         {
 
             var retorno = new DLM.db.Tabela(nome);

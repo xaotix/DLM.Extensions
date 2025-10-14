@@ -237,7 +237,7 @@ namespace DLM
         private static string GetTranslation(List<string> txts, string value)
         {
             string txt = null;
-            var trans = txts.Find(x => x.TrimStart("_").StartsWith($"{value.TrimStart("_")}|"));
+            var trans = txts.Find(x => x.TrimStart("_").StartsW($"{value.TrimStart("_")}|"));
             if (trans != null)
             {
                 txt = trans.Split('|')[1];
