@@ -365,7 +365,7 @@ namespace Conexoes
         /// <typeparam name="T"></typeparam>
         /// <param name="lista"></param>
         /// <returns></returns>
-        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, [CallerMemberName] string nome = "")
+        public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, string nome = "")
         {
 
             var retorno = new DLM.db.Tabela(nome);
