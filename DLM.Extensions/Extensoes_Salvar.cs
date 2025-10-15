@@ -11,11 +11,25 @@ namespace Conexoes
 {
     public static class Extensoes_Arquivo
     {
-        public static string SalvarArquivo(this string extensao, string mensagem = "Salvar o arquivo")
+        public static string SalvarArquivo(this string extensao, string mensagem = "Salvar o arquivo", string arquivo = "", string pasta_raiz = "")
         {
             var saveFileDialog1 = new SaveFileDialog();
+            if(!pasta_raiz.IsNullOrEmpty())
+            {
+                saveFileDialog1.InitialDirectory = pasta_raiz;
+            }
+            else
+            {
+                saveFileDialog1.RestoreDirectory = true;
+            }
+
+
             saveFileDialog1.Filter = $"{extensao.ToUpper()}| *.{extensao.Replace("*.", "").Replace("*", "")}";
             saveFileDialog1.Title = mensagem + extensao;
+            if (!arquivo.IsNullOrEmpty())
+            {
+                saveFileDialog1.FileName = arquivo;
+            }
             saveFileDialog1.ShowDialog();
 
             if (saveFileDialog1.FileName != "")
