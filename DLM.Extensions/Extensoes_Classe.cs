@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
+using Xceed.Wpf.DataGrid;
 
 
 namespace Conexoes
@@ -373,6 +374,14 @@ namespace Conexoes
             {
                 var listagem = new List<PropertyInfo>();
                 listagem.AddRange(lista[0].GetPropriedades());
+                var colunas_props = new List<Celula>();
+                foreach(var item in listagem)
+                {
+                    var ncel = new Celula(item.Name);
+                    ncel.DisplayName = item.GetDisplayName();
+                    ncel.StringFormat = item.GetDataFormatString();
+                    colunas_props.Add(ncel);
+                }
 
                 if (simple_properties)
                 {
@@ -406,11 +415,11 @@ namespace Conexoes
                     {
                         var igual = props.Find(x => x.Name == colunas[c]);
                         var cel = new DLM.db.Celula(colunas[c]);
+                        var ccel = colunas_props.Find(x=>x.Coluna == colunas[c]);
 
                         if (igual != null)
                         {
-                            cel.DisplayName = igual.GetDisplayName();
-                            cel.StringFormat = igual.GetDataFormatString();
+
                             try
                             {
                                 cel.Set(igual.GetValue(item));
@@ -420,6 +429,14 @@ namespace Conexoes
 
                             }
                         }
+
+
+                        if (ccel != null)
+                        {
+                            cel.DisplayName = ccel.DisplayName;
+                            cel.StringFormat = ccel.StringFormat;
+                        }
+
                         linha.Add(cel);
                     }
                     retorno.Add(linha);
@@ -553,29 +570,38 @@ namespace Conexoes
         }
         private static string GetDataFormatString(this PropertyInfo property)
         {
-            var displayFormatAttr = property.GetCustomAttribute<DisplayFormatAttribute>();
-            if(displayFormatAttr!= null)
+            try
             {
-                return displayFormatAttr.DataFormatString;
-            }
+                var displayFormatAttr = property.GetCustomAttribute<DisplayFormatAttribute>();
+                if (displayFormatAttr != null)
+                {
+                    return displayFormatAttr.DataFormatString;
+                }
 
                 // Verifica se há MetadataTypeAttribute
                 var metadataAttrs = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
-            if (metadataAttrs.Length > 0)
-            {
-                var metaAttr = metadataAttrs[0] as MetadataTypeAttribute;
-                var metaProperty = metaAttr.MetadataClassType.GetProperty(property.Name);
-                if (metaProperty != null)
+                if (metadataAttrs.Length > 0)
                 {
-                    return metaProperty.GetDataFormatString();
+                    var metaAttr = metadataAttrs[0] as MetadataTypeAttribute;
+                    var metaProperty = metaAttr.MetadataClassType.GetProperty(property.Name);
+                    if (metaProperty != null)
+                    {
+                        return metaProperty.GetDataFormatString();
+                    }
                 }
+
+                // Verifica se há DisplayFormatAttribute diretamente
+                var formatAttr = property.GetCustomAttributes(typeof(DisplayFormatAttribute), true)
+                                         .FirstOrDefault() as DisplayFormatAttribute;
+
+                return formatAttr?.DataFormatString ?? "";
+            }
+            catch (Exception)
+            {
+
             }
 
-            // Verifica se há DisplayFormatAttribute diretamente
-            var formatAttr = property.GetCustomAttributes(typeof(DisplayFormatAttribute), true)
-                                     .FirstOrDefault() as DisplayFormatAttribute;
-
-            return formatAttr?.DataFormatString ?? "";
+            return "";
         }
 
 

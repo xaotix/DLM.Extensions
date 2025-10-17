@@ -79,7 +79,18 @@ namespace Conexoes
         public static bool IsNullOrEmpty(this object valor)
         {
             if (valor == null) { return true; }
-            var vlr = valor.ToString().Replace(" ", "").Replace(".","").Replace(",","").Replace("0","").Replace("'","").Replace("0000-00-00", "");
+            var str = valor.ToString();
+            if (str.Length == 1)
+            {
+                if (str == "") { return true; }
+                if (str == " ") { return true; }
+                if (str == "0") { return true; }
+                if (str == ".") { return true; }
+                if (str == ",") { return true; }
+                if (str == "'") { return true; }
+            }
+
+            var vlr = str.Replace(" ", "").Replace(".","").Replace(",","").Replace("0","").Replace("'","").Replace("0000-00-00", "");
             return vlr.Length == 0;
         }
         public static string GetKey(this string txt)
