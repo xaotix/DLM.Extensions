@@ -11,7 +11,7 @@ namespace Conexoes
     {
         public static string String(this double Valor, int decimais, int padleft = 0, char padding = '0')
         {
-            if(decimais>=0)
+            if (decimais >= 0)
             {
                 return Valor.Round(decimais).ToString($"F{decimais}", CultureInfo.InvariantCulture).PadLeft(padleft, padding);
             }
@@ -61,10 +61,10 @@ namespace Conexoes
                     str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;
                 }
-               
+
                 if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._BR, out valor_final))
                 {
-                   
+
                 }
                 else if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._US, out valor_final))
                 {
@@ -143,7 +143,14 @@ namespace Conexoes
         public static bool Boolean<T>(this T obj)
         {
             if (obj == null) { return false; }
-            var valor = obj.ToString().ToUpper().Replace(" ", "");
+            var valor = obj.ToString();
+
+            if (valor == "1" | valor == "X" | valor == "x" | valor == "Y" | valor == "S" | valor == "true" | valor == "True")
+            {
+                return true;
+            }
+
+            valor = valor.ToUpper().Replace(" ", "");
             if (valor == "TRUE" | valor == "1" | valor == "X" | valor == "YES" | valor == "SIM" | valor == "Y" | valor == "S" | valor == "ON")
             {
                 return true;

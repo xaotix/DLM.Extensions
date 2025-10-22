@@ -211,17 +211,18 @@ namespace Conexoes
         }
         public static Pasta AsPasta(this string Diretorio, Pasta pai = null)
         {
-            if (Diretorio.ToUpper().EndsWith($@"{Cfg.Init.EXT_Obra.ToUpper()}\"))
+            Diretorio = Diretorio.ToUpper();
+            if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Obra}\"))
             {
                 var n_Pasta = new ObraTecnoMetal(Diretorio, pai);
                 return n_Pasta;
             }
-            else if (Diretorio.ToUpper().EndsWith($@"{Cfg.Init.EXT_Pedido.ToUpper()}\"))
+            else if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Pedido}\"))
             {
                 var n_Pasta = new PedidoTecnoMetal(Diretorio, (ObraTecnoMetal)pai);
                 return n_Pasta;
             }
-            else if (Diretorio.ToUpper().EndsWith($@"{Cfg.Init.EXT_Pedido.ToUpper()}\"))
+            else if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Pedido}\"))
             {
                 var n_Pasta = new SubEtapaTecnoMetal(Diretorio, (PedidoTecnoMetal)pai);
                 return n_Pasta;
