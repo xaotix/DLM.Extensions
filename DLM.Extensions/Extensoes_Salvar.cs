@@ -14,7 +14,7 @@ namespace Conexoes
         public static string SalvarArquivo(this string extensao, string mensagem = "Salvar o arquivo", string arquivo = "", string pasta_raiz = "")
         {
             var saveFileDialog1 = new SaveFileDialog();
-            if(!pasta_raiz.IsNullOrEmpty())
+            if (!pasta_raiz.IsNullOrEmpty())
             {
                 saveFileDialog1.InitialDirectory = pasta_raiz;
             }
@@ -30,11 +30,14 @@ namespace Conexoes
             {
                 saveFileDialog1.FileName = arquivo;
             }
-            saveFileDialog1.ShowDialog();
+            var result = saveFileDialog1.ShowDialog();
 
-            if (saveFileDialog1.FileName != "")
+            if (result == DialogResult.OK)
             {
-                return saveFileDialog1.FileName;
+                if (saveFileDialog1.FileName.Length > 0)
+                {
+                    return saveFileDialog1.FileName;
+                }
             }
             return null;
         }
