@@ -238,7 +238,7 @@ namespace Conexoes
                             }
                             catch (Exception ex)
                             {
-                                if (Utilz.Pergunta("Ocorreu um erro ao tentar substituir o arquivo " + arquivo.ToString() + "\n\n" + ex.Message + "\n\nTentar Novamente?"))
+                                if ($"Ocorreu um erro ao tentar substituir o arquivo {arquivo.ToString()}\n\n{ex.Message}\n\nTentar Novamente?".Pergunta())
                                 {
                                     goto denovo;
                                 }
@@ -252,7 +252,7 @@ namespace Conexoes
                             {
                                 if (!arq_template.Copiar(destino))
                                 {
-                                    Utilz.Alerta($"Não foi possível copiar o template {arq_template}  \n para o destino\n {destino}");
+                                    $"Não foi possível copiar o template {arq_template}  \n para o destino\n {destino}".Alerta();
                                     return false;
                                 }
                             }

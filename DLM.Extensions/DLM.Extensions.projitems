@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Eventos.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensoesNetDxfEM1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Alerta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_ArquivoPasta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_CAM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_CAM_PERFIL_TIPO.cs" />

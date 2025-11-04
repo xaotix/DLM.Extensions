@@ -169,7 +169,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                Conexoes.Utilz.Alerta(ex);
+                ex.Alerta();
             }
 
             return;

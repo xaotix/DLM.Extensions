@@ -3,22 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
-using Xceed.Wpf.DataGrid;
 
 
 namespace Conexoes
 {
+
     public static class ExtensoesClasse
     {
         public static void SalvarIni<T>(this T objeto, string arquivo)
@@ -86,7 +80,7 @@ namespace Conexoes
                             }
                             catch (Exception ex)
                             {
-                                Conexoes.Utilz.Alerta(ex);
+                                ex.Alerta();
                             }
                         }
 
@@ -316,7 +310,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                Utilz.Alerta(ex);
+                ex.Alerta();
                 texto = "";
             }
 
@@ -338,7 +332,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                Conexoes.Utilz.Alerta(ex);
+                ex.Alerta();
             }
 
             return (T)Convert.ChangeType(null, typeof(T));

@@ -33,7 +33,11 @@ namespace Conexoes
             {
                 valores.AddRange((objeto as Acessos.User).Linha);
             }
-
+            else if(objeto is Exception)
+            {
+                var obj = objeto as Exception;
+                obj.Alerta();
+            }
             else if (objeto is Linha)
             {
                 valores.AddRange((objeto as Linha));

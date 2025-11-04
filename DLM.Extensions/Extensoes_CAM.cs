@@ -519,7 +519,7 @@ namespace Conexoes
                     }
                     catch (Exception ex)
                     {
-                        Conexoes.Utilz.Alerta(ex);
+                        ex.Alerta();
                     }
                     c++;
                 }
@@ -675,7 +675,7 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    Conexoes.Utilz.Alerta(ex);
+                    ex.Alerta();
                 }
 
 

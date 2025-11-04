@@ -28,7 +28,7 @@ namespace Conexoes
             if (String.IsNullOrEmpty(_filter.Text))
                 return true;
 
-            return Utilz.Contem(item, _filter.Text);
+            return item.Contem(_filter.Text);
         }
         private void _itemsource_changed(object sender, EventArgs e)
         {

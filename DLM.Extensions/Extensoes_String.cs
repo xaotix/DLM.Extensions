@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLM.db;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,60 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        public static bool Contem(this object item, string valor, double porcentagem = 70)
+        {
+            if (item == null) { return false; }
+            if (valor == null) { return true; }
+            else if (valor == "") { return true; }
+            else
+            {
+
+                if (String.IsNullOrEmpty(valor))
+                    return true;
+
+                valor = valor.ToUpper().TrimStart().TrimEnd();
+                var descricao_item = item.ToString().ToUpper();
+
+                if (item is Celula)
+                {
+                    var cel = item as Celula;
+                    descricao_item = $"{cel.ColunaUpper}={cel.ToString()}";
+                }
+
+                if (valor == descricao_item)
+                {
+                    return true;
+                }
+                else if (descricao_item.Contains(valor))
+                {
+                    return true;
+                }
+                else
+                {
+                    var chaves = valor.Replace("  ", " ").Split(' ').ToList().FindAll(y => y.Replace(" ", "").Count() > 2);
+
+                    int cc = 0;
+                    foreach (string chave in chaves)
+                    {
+                        if (descricao_item.Contains(chave))
+                        {
+                            cc++;
+                        }
+                    }
+
+                    if (cc > 0)
+                    {
+                        double x = 100 * cc / chaves.Count().Double();
+                        return (x >= porcentagem);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+            }
+        }
         public static string ToPEP(this string valor)
         {
             var retorno = "";

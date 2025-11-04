@@ -118,7 +118,7 @@ namespace Conexoes
                     var erro = ex.Message + "\n\n\n" + ex.StackTrace;
                     if (msg)
                     {
-                        if (Conexoes.Utilz.Pergunta($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}"))
+                        if ($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}".Pergunta())
                         {
                             goto retentar;
                         }
@@ -140,7 +140,7 @@ namespace Conexoes
                 {
                     if (msg)
                     {
-                        if (Conexoes.Utilz.Pergunta($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}"))
+                        if ($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}".Pergunta())
                         {
                             goto retentar;
                         }
@@ -346,7 +346,7 @@ namespace Conexoes
                     }
                     catch (Exception ex)
                     {
-                        Conexoes.Utilz.Alerta(ex);
+                        ex.Alerta();
                         return "";
                     }
                 }
@@ -466,7 +466,7 @@ namespace Conexoes
                     if (mensagem)
                     {
 
-                        if (Utilz.Pergunta("Tentar novamente?\n\n\n" + erro))
+                        if ($"Tentar novamente?\n\n\n{ex.GetTexto($"Não foi possível criar o diretório {Destino_Pasta_Ou_Arquivo}.\n\n")}".Pergunta())
                         {
                             goto inicio;
                         }
@@ -503,7 +503,7 @@ namespace Conexoes
                 {
                     if (mensagem)
                     {
-                        if (Utilz.Pergunta($"Falha ao tentar apagar o arquivo existente para substituir pelo novo: {arquivo_destino}\n\nTentar novamente ?\n{ex.Message}\n\n\n\n{ex.StackTrace}"))
+                        if ($"Falha ao tentar apagar o arquivo existente para substituir pelo novo: {arquivo_destino}\n\nTentar novamente ?\n{ex.Message}\n\n\n\n{ex.StackTrace}".Pergunta())
                         {
                             goto retentar;
                         }
@@ -529,7 +529,7 @@ namespace Conexoes
             {
                 if (mensagem)
                 {
-                    if (Utilz.Pergunta("Falha ao tentar copiar o arquivo " + arquivo_origem + " para o destino: " + Destino_Pasta_Ou_Arquivo + "\n\nTentar novamente ?\n\n\n\n\n\n" + ex.Message + "\n\n\n\n" + ex.StackTrace))
+                    if ($"Falha ao tentar copiar o arquivo {arquivo_origem} para o destino: {Destino_Pasta_Ou_Arquivo}\n\nTentar novamente?\n\n{ex.Message}\n\n\n\n{ex.StackTrace}".Pergunta())
                     {
                         goto retentar;
                     }
@@ -594,7 +594,7 @@ namespace Conexoes
                 }
                 if (!exe.Exists())
                 {
-                    Conexoes.Utilz.Alerta("Arquivo executável do TecnoPlot não encontrado.");
+                    "Arquivo executável do TecnoPlot não encontrado.".Alerta();
                     return false;
                 }
                 DLM.vars.TecnoMetalVars.SalvarTecnoPlot(cams);
@@ -782,7 +782,7 @@ namespace Conexoes
                 catch (Exception ex2)
                 {
 
-                    Utilz.Alerta(arquivo + "\n\n" + ex2.Message);
+                    ex2.Alerta(arquivo);
                     return false;
                 }
 
@@ -804,8 +804,7 @@ namespace Conexoes
                 }
                 catch (Exception ex2)
                 {
-
-                    Utilz.Alerta(arquivo + "\n\n" + ex2.Message);
+                    ex2.Alerta(arquivo);
                     return false;
                 }
             }

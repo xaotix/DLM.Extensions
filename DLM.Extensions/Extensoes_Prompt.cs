@@ -115,7 +115,6 @@ namespace Conexoes
             }
             return retorno;
         }
-
         public static List<string> PromptLista(this string titulo, int max_lenght = 100)
         {
             var mm = new ListaStringManual(titulo, max_lenght);
@@ -127,8 +126,6 @@ namespace Conexoes
             }
             return retorno;
         }
-
-
         public static string Prompt(this string valor, string titulo = "Digite", int max_lenght = 50, bool multilinha = false, bool salvar_carregar = false, [CallerMemberName] string salvar_carregar_chave = "")
         {
             var retorno = MainPrompt(titulo, valor, salvar_carregar, "", multilinha, max_lenght);
@@ -141,7 +138,6 @@ namespace Conexoes
                 return retorno.ToString();
             }
         }
-
         public static int? Prompt(this int valor, string titulo = "Digite")
         {
             var retorno = ((double)valor).Prompt(titulo, 0,"N0");
@@ -151,9 +147,6 @@ namespace Conexoes
             }
             return null;
         }
-
-
-
         public static double? Prompt(this double valor, string titulo = "Digite", int decimais = -1, string string_format = null, bool gravar_carregar = false, string chave = "")
         {
             if (decimais < 0)
@@ -170,6 +163,5 @@ namespace Conexoes
                 return retorno.Double(decimais);
             }
         }
-
     }
 }

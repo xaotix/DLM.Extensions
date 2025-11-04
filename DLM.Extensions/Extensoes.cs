@@ -210,7 +210,7 @@ namespace Conexoes
                 var colunas = grid.ColumnCount - 1;
                 if (grid.Rows.Count > 0)
                 {
-                    if (Conexoes.Utilz.Pergunta("Substituir valores atuais?"))
+                    if ("Substituir valores atuais?".Pergunta())
                     {
                         grid.Rows.Clear();
                     }
