@@ -61,6 +61,16 @@ namespace Conexoes
             var last = new DateTime(data.Year, data.Month, diasNoMes);
             return last;
         }
+        public static DateTime LastDayOfYear(this DateTime data)
+        {
+            var last = new DateTime(data.Year, 12, 31);
+            return last;
+        }
+        public static DateTime FirstDayOfYear(this DateTime data)
+        {
+            var last = new DateTime(data.Year, 01, 01);
+            return last;
+        }
         public static DateTime AddWeeks(this DateTime data, int weeks, DayOfWeek primeiroDiaSemana = System.DayOfWeek.Sunday)
         {
             var firs = data.FirstDayOfWeek(primeiroDiaSemana);

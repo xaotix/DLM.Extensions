@@ -99,8 +99,7 @@ namespace Conexoes
 
             return _value;
         }
-
-        public static string ToMoeda(this object value)
+        public static string ToMoeda(this object value, string prefix = "R$ ")
         {
             string _value = "";
             bool negativo = false;
@@ -119,29 +118,31 @@ namespace Conexoes
                 }
                 else if (doubleValue > 999_999_999)
                 {
-                    _value = $"R$ {(doubleValue / 1_000_000_000).ToString("0.###", culture)} bi";
+                    _value = $"{(doubleValue / 1_000_000_000).ToString("0.###", culture)} bi";
                 }
                 else if (doubleValue > 99_999_999)
                 {
-                    _value = $"R$ {(doubleValue / 1_000_000).ToString("0.##", culture)} mi";
+                    _value = $"{(doubleValue / 1_000_000).ToString("0.##", culture)} mi";
                 }
                 else if (doubleValue > 999_999)
                 {
-                    _value = $"R$ {(doubleValue / 1_000_000).ToString("0.###", culture)} mi";
+                    _value = $"{(doubleValue / 1_000_000).ToString("0.###", culture)} mi";
                 }
                 else if (doubleValue > 9_999)
                 {
-                    _value = $"R$ {(doubleValue / 1_000).ToString("0.#", culture)} mil";
+                    _value = $"{(doubleValue / 1_000).ToString("0.#", culture)} mil";
                 }
                 else if (doubleValue > 999)
                 {
-                    _value = $"R$ {(doubleValue / 1_000).ToString("0.##", culture)} mil";
+                    _value = $"{(doubleValue / 1_000).ToString("0.##", culture)} mil";
                 }
                 else
                 {
-                    _value = $"R$ {doubleValue.ToString("0.##", culture)}";
+                    _value = $"{doubleValue.ToString("0.##", culture)}";
                 }
             }
+
+            _value = $"{prefix}{_value}";
 
             if (negativo && !string.IsNullOrEmpty(_value))
             {
@@ -150,30 +151,43 @@ namespace Conexoes
 
             return _value;
         }
-
-
         public static string ToKMB(this double num, string prefix = "")
         {
+            var retorno = "";
+            var neg = num < 0;
+            if (neg)
+            {
+                num = num.Abs();
+            }
             if (num == 0)
             {
-                return "";
+                retorno = "";
             }
             else if (num > 999999999 || num < -999999999)
             {
-                return prefix + num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
+                retorno = num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
             }
             else if (num > 999999 || num < -999999)
             {
-                return prefix + num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
+                retorno = num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
             }
             else if (num > 999 || num < -999)
             {
-                return prefix + num.ToString("0,.K", CultureInfo.InvariantCulture);
+                retorno = num.ToString("0,.K", CultureInfo.InvariantCulture);
             }
             else
             {
-                return prefix + num.ToString(CultureInfo.InvariantCulture);
+                retorno = prefix + (num/1000).ToString("N1") +  " K";
             }
+
+            retorno = $"{prefix}{retorno}";
+
+            if (neg)
+            {
+                retorno = $"({retorno})";
+            }
+
+            return retorno;
         }
         public static string ToKg(this double num)
         {
