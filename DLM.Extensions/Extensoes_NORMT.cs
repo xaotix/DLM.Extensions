@@ -499,7 +499,7 @@ namespace Conexoes
                     break;
             }
 
-            if (Nome.EndsWith("_A"))
+            if (Nome.EndsW("_A"))
             {
                 return TAB_NORMT.ALMOX_FABRICACAO;
             }

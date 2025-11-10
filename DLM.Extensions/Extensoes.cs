@@ -87,17 +87,17 @@ namespace Conexoes
             foreach (var l in tabela.ToList())
             {
                 var nl = new DLM.db.Linha();
-                var valores = l.ToList();
+                var values = l.ToList();
 
-                foreach (var v in valores)
+                foreach (var value in values)
                 {
                     var type_cel = Celula_Tipo_Valor.NULL;
-                    var valor = v.GetValue();
+                    var valor = value.GetValue();
                     var valorstr = "";
                     if (!valor.IsNullOrEmpty())
                     {
                         valorstr = valor.ToString();
-                        var type = v.Metadata.DataType;
+                        var type = value.Metadata.DataType;
                         switch (type)
                         {
                             case RfcDataType.XSTRING:
@@ -163,7 +163,7 @@ namespace Conexoes
                         valorstr = null;
                     }
 
-                    var nc = nl.Add(v.Metadata.Name, valorstr, type_cel);
+                    var nc = nl.Add(value.Metadata.Name, valorstr, type_cel);
                 }
                 retorno.Add(nl);
             }
@@ -508,55 +508,24 @@ namespace Conexoes
         /// <summary>
         /// Classifica a peça pelo final do Nome, usando o padrão TecnoMetal de CAM
         /// </summary>
-        /// <param name="NomeCAM"></param>
+        /// <param name="nomeCAM"></param>
         /// <returns></returns>
-        public static CAM_TIPO_DESMEMBRADO GetTipoDesmembrado(this string NomeCAM)
+        public static CAM_TIPO_DESMEMBRADO GetTipoDesmembrado(this string nomeCAM)
         {
-            if (
-                NomeCAM.EndsWith("_1") |
-                NomeCAM.EndsWith("_4") |
-                NomeCAM.EndsWith("_7") |
-                NomeCAM.EndsWith("_10") |
-                NomeCAM.EndsWith("_13") |
-                NomeCAM.EndsWith("_16") |
-                NomeCAM.EndsWith("_19") |
-                NomeCAM.EndsWith("_22") |
-                NomeCAM.EndsWith("_25")
-                )
+            if (nomeCAM.EndsW("_1", "_4", "_7", "_10", "_13", "_16", "_19", "_22", "_25"))
             {
                 return CAM_TIPO_DESMEMBRADO.Alma;
             }
-            else if (
-                NomeCAM.EndsWith("_2") |
-                NomeCAM.EndsWith("_5") |
-                NomeCAM.EndsWith("_8") |
-                NomeCAM.EndsWith("_11") |
-                NomeCAM.EndsWith("_14") |
-                NomeCAM.EndsWith("_17") |
-                NomeCAM.EndsWith("_20") |
-                NomeCAM.EndsWith("_23") |
-                NomeCAM.EndsWith("_26")
-
-                )
+            else if (nomeCAM.EndsW("_2", "_5", "_8", "_11", "_14", "_17", "_20", "_23", "_26"))
             {
                 return CAM_TIPO_DESMEMBRADO.Mesa_S;
             }
-            else if (
-               NomeCAM.EndsWith("_3") |
-               NomeCAM.EndsWith("_6") |
-               NomeCAM.EndsWith("_9") |
-               NomeCAM.EndsWith("_12") |
-               NomeCAM.EndsWith("_15") |
-               NomeCAM.EndsWith("_18") |
-               NomeCAM.EndsWith("_21") |
-               NomeCAM.EndsWith("_24") |
-               NomeCAM.EndsWith("_27")
-                )
+            else if (nomeCAM.EndsW("_3", "_6", "_9", "_12", "_15", "_18", "_21", "_24", "_27"))
             {
                 return CAM_TIPO_DESMEMBRADO.Mesa_I;
             }
 
-            else if (NomeCAM.EndsWith("_U"))
+            else if (nomeCAM.EndsW("_U"))
             {
                 return CAM_TIPO_DESMEMBRADO.Planificado;
             }

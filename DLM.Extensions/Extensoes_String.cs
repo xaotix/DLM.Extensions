@@ -1,4 +1,5 @@
-﻿using DLM.db;
+﻿using Clipper2Lib;
+using DLM.db;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -33,13 +34,11 @@ namespace Conexoes
         public static bool Contem(this object item, string valor, double porcentagem = 70)
         {
             if (item == null) { return false; }
-            if (valor == null) { return true; }
-            else if (valor == "") { return true; }
+            if (valor.IsNullOrEmpty()) { return true; }
             else
             {
 
-                if (String.IsNullOrEmpty(valor))
-                    return true;
+
 
                 valor = valor.ToUpper().TrimStart().TrimEnd();
                 var descricao_item = item.ToString().ToUpper();
@@ -54,7 +53,7 @@ namespace Conexoes
                 {
                     return true;
                 }
-                else if (descricao_item.Contains(valor))
+                else if (descricao_item.Contem(valor))
                 {
                     return true;
                 }
@@ -65,7 +64,7 @@ namespace Conexoes
                     int cc = 0;
                     foreach (string chave in chaves)
                     {
-                        if (descricao_item.Contains(chave))
+                        if (descricao_item.Contem(chave))
                         {
                             cc++;
                         }
@@ -124,33 +123,38 @@ namespace Conexoes
         }
         public static int LenghtStr(this object valor)
         {
-            if(valor!=null)
+            if (valor != null)
             {
                 return valor.ToString().Length;
             }
 
             return 0;
         }
-        public static bool IsNullOrEmpty(this object valor)
+        public static bool IsNullOrEmpty(this object valor, bool decimais = true)
         {
             if (valor == null) { return true; }
             var str = valor.ToString();
-            if (str.Length == 1)
+            if (decimais)
             {
-                if (str == "") { return true; }
-                if (str == " ") { return true; }
-                if (str == "0") { return true; }
-                if (str == ".") { return true; }
-                if (str == ",") { return true; }
-                if (str == "'") { return true; }
+                if (str.Length == 1)
+                {
+                    if (str == "") { return true; }
+                    if (str == " ") { return true; }
+                    if (str == "0") { return true; }
+                    if (str == ".") { return true; }
+                    if (str == ",") { return true; }
+                    if (str == "'") { return true; }
+                }
+                else
+                {
+                    return str.Replace("0000-00-00", "").Length == 0;
+                }
             }
-
-            var vlr = str.Replace(" ", "").Replace(".","").Replace(",","").Replace("0","").Replace("'","").Replace("0000-00-00", "");
-            return vlr.Length == 0;
+            return false;
         }
         public static string GetKey(this string txt)
         {
-            if (!txt.IsNullOrEmpty())
+            if (!txt.IsNullOrEmpty(false))
             {
                 return txt.ToUpper().Replace(" ", "").Replace(".", "");
             }
@@ -203,16 +207,54 @@ namespace Conexoes
         }
         public static bool StartsW(this string text, params string[] values)
         {
-            if(text.IsNullOrEmpty())
+            if (text.IsNullOrEmpty(false))
             {
                 return false;
             }
             foreach (var value in values)
             {
-                var has = text.TrimStart().StartsWith(value);
-                if (has)
+                if (!value.IsNullOrEmpty(false))
                 {
-                    return has;
+                    if (text.TrimStart().StartsWith(value))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public static bool EndsW(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (!value.IsNullOrEmpty(false))
+                {
+                    if (text.TrimStart().EndsWith(value))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public static bool Contem(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (!value.IsNullOrEmpty(false))
+                {
+                    if (text.TrimStart().Contains(value))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -276,10 +318,8 @@ namespace Conexoes
         }
         public static string TrimStart(this string target, string trimString)
         {
-            if (string.IsNullOrEmpty(trimString)) return target;
-
             string result = target;
-            while (result.StartsWith(trimString))
+            while (result.StartsW(trimString))
             {
                 result = result.Substring(trimString.Length);
             }
@@ -288,10 +328,8 @@ namespace Conexoes
         }
         public static string TrimEnd(this string target, string trimString)
         {
-            if (string.IsNullOrEmpty(trimString)) return target;
-
             string result = target;
-            while (result.EndsWith(trimString))
+            while (result.EndsW(trimString))
             {
                 result = result.Substring(0, result.Length - trimString.Length);
             }

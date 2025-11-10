@@ -1516,18 +1516,20 @@ namespace DLM.desenho
 
             return new P3d(X, Y);
         }
-        public static List<EntityObject> GetTextos(this DxfDocument dxf, string contem = null)
+        public static List<EntityObject> GetTextos(this DxfDocument dxf, string txt = null)
         {
             var retorno = new List<netDxf.Entities.EntityObject>();
-            if (contem == null)
+           
+            if (txt == null)
             {
                 retorno.AddRange(dxf.Entities.MTexts);
                 retorno.AddRange(dxf.Entities.Texts);
             }
             else
             {
-                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contains(contem.ToUpper())));
-                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contains(contem.ToUpper())));
+                txt = txt.ToUpper();
+                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contem(txt)));
+                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contem(txt)));
             }
 
 

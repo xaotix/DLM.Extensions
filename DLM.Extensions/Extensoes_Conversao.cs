@@ -56,7 +56,7 @@ namespace Conexoes
             try
             {
                 var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsWith("-") | str.StartsW("-"))
+                if (str.EndsW("-") | str.StartsW("-"))
                 {
                     str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;
@@ -173,9 +173,9 @@ namespace Conexoes
             {
                 try
                 {
-                    if (!vlr.Contains("0000") && !vlr.Contains("0001"))
+                    if (!vlr.Contem("0000") && !vlr.Contem("0001"))
                     {
-                        if (vlr.Contains(@"/") | vlr.Contains("-"))
+                        if (vlr.Contem(@"/", "-"))
                         {
                             var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
                             if (pcs.Count() >= 3)

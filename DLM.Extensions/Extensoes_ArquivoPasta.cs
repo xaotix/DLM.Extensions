@@ -88,7 +88,7 @@ namespace Conexoes
         {
             if (Dir == null) { return ""; }
             if (Dir.Length == 0) { return ""; }
-            if (!Dir.EndsWith(@"\")) { Dir = Dir + @"\"; }
+            if (!Dir.EndsW(@"\")) { Dir = Dir + @"\"; }
             return System.IO.Path.GetFullPath(System.IO.Path.Combine(Dir, @"..\")).ToUpper();
         }
 
@@ -212,17 +212,17 @@ namespace Conexoes
         public static Pasta AsPasta(this string Diretorio, Pasta pai = null)
         {
             Diretorio = Diretorio.ToUpper();
-            if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Obra}\"))
+            if (Diretorio.EndsW($@"{Cfg.Init.EXT_Obra}\"))
             {
                 var n_Pasta = new ObraTecnoMetal(Diretorio, pai);
                 return n_Pasta;
             }
-            else if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (Diretorio.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
             {
                 var n_Pasta = new PedidoTecnoMetal(Diretorio, (ObraTecnoMetal)pai);
                 return n_Pasta;
             }
-            else if (Diretorio.EndsWith($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (Diretorio.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
             {
                 var n_Pasta = new SubEtapaTecnoMetal(Diretorio, (PedidoTecnoMetal)pai);
                 return n_Pasta;
@@ -275,16 +275,16 @@ namespace Conexoes
 
         public static string CreateDirectory(this string pasta)
         {
-            if (pasta.Contains(@"\"))
+            if (pasta.Contem(@"\"))
             {
-                if (!pasta.EndsWith(@"\"))
+                if (!pasta.EndsW(@"\"))
                 {
                     pasta += @"\";
                 }
             }
-            else if (pasta.Contains(@"/"))
+            else if (pasta.Contem(@"/"))
             {
-                if (!pasta.EndsWith(@"/"))
+                if (!pasta.EndsW(@"/"))
                 {
                     pasta += @"/";
                 }
@@ -296,7 +296,7 @@ namespace Conexoes
             }
             try
             {
-                if (pasta.Contains(@"\") | pasta.Contains(@"/"))
+                if (pasta.Contem(@"\", @"/"))
                 {
                     Directory.CreateDirectory(pasta);
                 }
@@ -310,33 +310,33 @@ namespace Conexoes
             return pasta;
         }
 
-        public static string GetSubPasta(this string Raiz, string Pasta, bool criar = true)
+        public static string GetSubPasta(this string root, string folder, bool create = true)
         {
-            var novo_dir = Raiz.ToUpper();
-            if (novo_dir.Contains($@"\") && !novo_dir.EndsWith($@"\"))
+            var novo_dir = root.ToUpper();
+            if (novo_dir.Contem($@"\") && !novo_dir.EndsW($@"\"))
             {
                 novo_dir += $@"\";
             }
-            else if (novo_dir.Contains($@"/") && !novo_dir.EndsWith($@"/"))
+            else if (novo_dir.Contem($@"/") && !novo_dir.EndsW($@"/"))
             {
                 novo_dir += $@"/";
             }
 
-            novo_dir += Pasta;
+            novo_dir += folder;
 
 
 
-            if (novo_dir.Contains($@"\") && !novo_dir.EndsWith($@"\"))
+            if (novo_dir.Contem($@"\") && !novo_dir.EndsW($@"\"))
             {
                 novo_dir += $@"\";
             }
-            else if (novo_dir.Contains($@"/") && !novo_dir.EndsWith($@"/"))
+            else if (novo_dir.Contem($@"/") && !novo_dir.EndsW($@"/"))
             {
                 novo_dir += $@"/";
             }
 
 
-            if (criar)
+            if (create)
             {
                 if (!Directory.Exists(novo_dir))
                 {
@@ -356,25 +356,25 @@ namespace Conexoes
             return novo_dir;
         }
 
-        public static void CriarPastas(this string Raiz, params string[] Pastas)
+        public static void CriarPastas(this string root, params string[] folders)
         {
-            foreach (string Pasta in Pastas)
+            foreach (string Pasta in folders)
             {
-                Raiz.GetSubPasta(Pasta);
+                root.GetSubPasta(Pasta);
             }
         }
 
 
-        public static bool Exists(this string arquivo)
+        public static bool Exists(this string file)
         {
-            if (arquivo == null) { return false; }
-            if (arquivo.Length == 0) { return false; }
+            if (file == null) { return false; }
+            if (file.Length == 0) { return false; }
 
-            if (arquivo.E_Diretorio())
+            if (file.E_Diretorio())
             {
                 try
                 {
-                    return Directory.Exists(arquivo);
+                    return Directory.Exists(file);
                 }
                 catch (Exception)
                 {
@@ -385,7 +385,7 @@ namespace Conexoes
 
             try
             {
-                return File.Exists(arquivo);
+                return File.Exists(file);
             }
             catch (Exception)
             {
@@ -395,7 +395,7 @@ namespace Conexoes
         }
         public static bool E_Diretorio(this string dir)
         {
-            if (dir.EndsWith(@"\") | dir.EndsWith(@"/"))
+            if (dir.EndsW(@"\") | dir.EndsW(@"/"))
             {
                 return true;
             }
@@ -440,11 +440,11 @@ namespace Conexoes
             string arquivo_destino = Destino_Pasta_Ou_Arquivo;
             if (E_Diretorio(arquivo_destino))
             {
-                if (arquivo_destino.Contains(@"\") && !arquivo_destino.EndsWith(@"\"))
+                if (arquivo_destino.Contem(@"\") && !arquivo_destino.EndsW(@"\"))
                 {
                     arquivo_destino = arquivo_destino + @"\";
                 }
-                else if (arquivo_destino.Contains(@"/") && !arquivo_destino.EndsWith(@"/"))
+                else if (arquivo_destino.Contem(@"/") && !arquivo_destino.EndsW(@"/"))
                 {
                     arquivo_destino = arquivo_destino + @"/";
                 }
@@ -653,7 +653,7 @@ namespace Conexoes
 
         public static bool Abrir(this string arquivo_ou_pasta, string argumentos = "", bool wait = false)
         {
-            if (arquivo_ou_pasta.Contains("%"))
+            if (arquivo_ou_pasta.Contem("%"))
             {
                 arquivo_ou_pasta = Environment.ExpandEnvironmentVariables(arquivo_ou_pasta);
             }
@@ -687,7 +687,7 @@ namespace Conexoes
 
             string filePath = Environment.ExpandEnvironmentVariables(@"%windir%\system32\cmd.exe");
 
-            if (appToRun.Contains("%"))
+            if (appToRun.Contem("%"))
             {
                 appToRun = Environment.ExpandEnvironmentVariables(appToRun);
             }

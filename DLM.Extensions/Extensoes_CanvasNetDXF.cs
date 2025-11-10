@@ -63,7 +63,7 @@ namespace Conexoes
 
 
 
-                var size_frame = pai.ActualWidth> pai.ActualHeight? pai.ActualWidth: pai.ActualHeight;
+                var size_frame = pai.ActualWidth > pai.ActualHeight ? pai.ActualWidth : pai.ActualHeight;
 
                 if (size_frame == 0)
                 {
@@ -74,7 +74,7 @@ namespace Conexoes
                 var canvas_scale = (size_frame / size_dxf).Round(4);
 
                 var v_width = viewBox.ActualWidth;
-                drawing.AddRange(dxf.GetCanvas(out maxx, out maxy, 0,0,blocks, type));
+                drawing.AddRange(dxf.GetCanvas(out maxx, out maxy, 0, 0, blocks, type));
 
                 var canvas = new Canvas();
                 canvas.Width = comp;
@@ -97,7 +97,7 @@ namespace Conexoes
                     }
                 }
                 viewBox.Child = canvas;
-                canvas.SetCache(canvas_scale*2);
+                canvas.SetCache(canvas_scale * 2);
 
             }
             catch (Exception ex)
@@ -129,21 +129,16 @@ namespace Conexoes
             var ys = new List<double>();
             if (type == CanvasDXFType.Medajoist)
             {
-                foreach (var s in dxf.Entities.Texts)
+                foreach (var txt in dxf.Entities.Texts)
                 {
-                    if ((type == CanvasDXFType.Medajoist) && (
-                        s.Value.Contains("PARAFUSO")
-                     || s.Value.ToUpper().Contains("VERSION")
-                     || s.Value.ToUpper().Contains("NSD")
-                     || s.Value.ToUpper().Contains("TIP")
-                     )
-                     )
+                    var vlr = txt.Value.ToUpper();
+                    if ((type == CanvasDXFType.Medajoist) && txt.Value.Contem("PARAFUSO", "VERSION", "NSD", "TIP"))
                     {
                         continue;
                     }
-                    xs.Add(s.Position.X);
-                    ys.Add(s.Position.Y + (s.Height / 2));
-                    ys.Add(s.Position.Y - (s.Height / 2));
+                    xs.Add(txt.Position.X);
+                    ys.Add(txt.Position.Y + (txt.Height / 2));
+                    ys.Add(txt.Position.Y - (txt.Height / 2));
                 }
                 foreach (var s in dxf.Entities.Polylines3D)
                 {
@@ -323,13 +318,8 @@ namespace Conexoes
             }
             foreach (var text in dxf.Entities.Texts)
             {
-                if ((type == CanvasDXFType.Medajoist) && (
-                    text.Value.Contains("PARAFUSO")
-                 || text.Value.ToUpper().Contains("VERSION")
-                 || text.Value.ToUpper().Contains("NSD")
-                 || text.Value.ToUpper().Contains("TIP")
-                 )
-                 )
+                var vlr = text.Value.ToUpper();
+                if ((type == CanvasDXFType.Medajoist) && vlr.Contem("PARAFUSO","VERSION","NSD","TIP"))
                 {
                     continue;
                 }
@@ -412,7 +402,7 @@ namespace Conexoes
             {
                 var s = (t as System.Windows.Controls.Label);
 
-                var tam = (2.5/scale).Round(2);
+                var tam = (2.5 / scale).Round(2);
                 //if(s.Tag is netDxf.Entities.Text)
                 //{
                 //   var txt = s.Tag as netDxf.Entities.Text;
@@ -450,7 +440,7 @@ namespace Conexoes
         }
         private static List<UIElement> GetCanvas(this netDxf.Entities.Insert insert, double X0, double Y0, double thick = 1)
         {
-           var objects = new List<UIElement>();
+            var objects = new List<UIElement>();
             foreach (var p in insert.Explode())
             {
                 if (p is netDxf.Entities.Arc)
@@ -672,7 +662,7 @@ namespace Conexoes
             return GetText(text as netDxf.Entities.EntityObject, X0, Y0);
 
         }
-        private static Border GetText(netDxf.Entities.EntityObject entity,double X0 =0, double Y0 = 0)
+        private static Border GetText(netDxf.Entities.EntityObject entity, double X0 = 0, double Y0 = 0)
         {
             if (entity is netDxf.Entities.Text | entity is netDxf.Entities.MText)
             {
@@ -778,7 +768,7 @@ namespace Conexoes
             }
 
             return null;
-            
+
         }
 
         public static void GetAlignment(this netDxf.Entities.TextAlignment TextAlignment, out HorizontalAlignment HorizontalAlignment, out VerticalAlignment VerticalAlignment)
@@ -860,7 +850,7 @@ namespace Conexoes
             }
             else if (entity.Color.IsByBlock)
             {
-             
+
             }
             else
             {
@@ -868,7 +858,7 @@ namespace Conexoes
             }
 
             var cl = Cor.Color;
-            if(cl.R ==0 && cl.G == 0 && cl.B == 0)
+            if (cl.R == 0 && cl.G == 0 && cl.B == 0)
             {
                 Cor = Brushes.White;
             }

@@ -171,7 +171,7 @@ namespace Conexoes
                     Propriedade.SetValue(Objeto, Valor.Int());
                 }
 
-                else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contains("System.DateTime")))
+                else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.DateTime")))
                 {
                     Propriedade.SetValue(Objeto, Valor.DataNull());
                 }
@@ -182,7 +182,7 @@ namespace Conexoes
                         var et = Enum.ToObject(Propriedade.PropertyType, Valor.Int());
                         Propriedade.SetValue(Objeto, et);
                     }
-                    else if (!Valor.Contains(" ") && Valor.Length > 0)
+                    else if (!Valor.Contem(" ") && Valor.Length > 0)
                     {
                         var et = Enum.Parse(Propriedade.PropertyType, Valor);
                         Propriedade.SetValue(Objeto, et);
@@ -228,7 +228,7 @@ namespace Conexoes
                     }
 
                 }
-                else if (arquivo.Contains("?xml"))
+                else if (arquivo.Contem("?xml"))
                 {
                     xml = arquivo;
                 }
@@ -248,7 +248,7 @@ namespace Conexoes
                     catch (Exception ex)
                     {
                         ex.Alerta($"Erro ao tentar ler o XML" +
-                            (!arquivo.Contains("?xml") ? $"\n[Arquivo ={arquivo}]" : "") +
+                            (!arquivo.Contem("?xml") ? $"\n[Arquivo ={arquivo}]" : "") +
                             $"\n[XML]" +
                             $"\n{xml}", "DeSerializar");
                     }
@@ -369,7 +369,7 @@ namespace Conexoes
                 var listagem = new List<PropertyInfo>();
                 listagem.AddRange(lista[0].GetPropriedades());
                 var colunas_props = new List<Celula>();
-                foreach(var item in listagem)
+                foreach (var item in listagem)
                 {
                     var ncel = new Celula(item.Name);
                     ncel.DisplayName = item.GetDisplayName();
@@ -409,7 +409,7 @@ namespace Conexoes
                     {
                         var igual = props.Find(x => x.Name == colunas[c]);
                         var cel = new DLM.db.Celula(colunas[c]);
-                        var ccel = colunas_props.Find(x=>x.Coluna == colunas[c]);
+                        var ccel = colunas_props.Find(x => x.Coluna == colunas[c]);
 
                         if (igual != null)
                         {
@@ -499,7 +499,7 @@ namespace Conexoes
                 else if (prop == "nullable`1")
                 {
                     var full = l.PropertyType.FullName;
-                    if (full.Contains("System.DateTime") | full.Contains("System.Double") | full.Contains("System.Decimal"))
+                    if (full.Contem("System.DateTime", "System.Double", "System.Decimal"))
                     {
                         retorno.Add(l);
                     }

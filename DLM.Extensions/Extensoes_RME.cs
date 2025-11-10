@@ -703,14 +703,8 @@ namespace Conexoes
         public static List<Report> GerarCAMsDiagonais(this List<RME> rmes, string Destino_CAM)
         {
             var erros = new List<Report>();
-            var fbus = rmes.FindAll(x => x.TIPO.Contains("FLANGE BRACE"));
-            var diags_mdj = rmes
-                .FindAll(x => x.TIPO.StartsW("DSD")
-                            | x.TIPO.StartsW("MTD")
-                            | x.TIPO.StartsW("DLD")
-                            | x.TIPO.StartsW("MTE")
-                            | x.TIPO.StartsW("MTI"))
-                ;
+            var fbus = rmes.FindAll(x => x.TIPO.Contem("FLANGE BRACE"));
+            var diags_mdj = rmes.FindAll(x => x.TIPO.StartsW("DSD","MTD","DLD","MTE","MTI"));
 
             var diags_medabar = rmes.FindAll(x => x.TIPO == "MD");
 

@@ -33,7 +33,7 @@ namespace Conexoes
                     {
                         if (chave.Length > 2)
                         {
-                            bt.Visibility = bt.Content.ToString().ToUpper().Contains(chave)
+                            bt.Visibility = bt.Content.ToString().ToUpper().Contem(chave)
                                 ? Visibility.Visible
                                 : Visibility.Collapsed;
                         }
