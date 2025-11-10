@@ -56,7 +56,7 @@ namespace Conexoes
             try
             {
                 var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsWith("-") | str.StartsWith("-"))
+                if (str.EndsWith("-") | str.StartsW("-"))
                 {
                     str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;

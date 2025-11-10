@@ -150,12 +150,9 @@ namespace Conexoes
         }
         public static string GetKey(this string txt)
         {
-            if (txt != null)
+            if (!txt.IsNullOrEmpty())
             {
-                if (txt.Length > 0)
-                {
-                    return txt.ToUpper().Replace(" ", "").Replace(".", "");
-                }
+                return txt.ToUpper().Replace(" ", "").Replace(".", "");
             }
             return txt;
         }
@@ -204,18 +201,18 @@ namespace Conexoes
                 return str_join;
             }
         }
-        public static bool StartsW(this string txt, params string[] valores)
+        public static bool StartsW(this string text, params string[] values)
         {
-            if(txt.IsNullOrEmpty())
+            if(text.IsNullOrEmpty())
             {
                 return false;
             }
-            foreach (var valor in valores)
+            foreach (var value in values)
             {
-                var tem = txt.TrimStart().StartsWith(valor);
-                if (tem)
+                var has = text.TrimStart().StartsWith(value);
+                if (has)
                 {
-                    return tem;
+                    return has;
                 }
             }
             return false;

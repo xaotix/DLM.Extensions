@@ -61,6 +61,12 @@ namespace DLM.cam
             pt.Origem = pt.Origem.SetY(valor);
             return pt;
         }
+        public static Liv SetZ(this Liv p1, double valor)
+        {
+            var pt = p1.Clonar();
+            pt.Origem = pt.Origem.SetZ(valor);
+            return pt;
+        }
         public static Liv SetX(this Liv p1, double valor)
         {
             var pt = p1.Clonar();
@@ -372,7 +378,7 @@ namespace DLM.cam
 
         }
 
-        public static List<Liv> YParaZ(this List<Liv> livs, double offset_z = 0, double offset_y = 0, bool inverver_y = false)
+        public static List<Liv> YParaZ(this List<Liv> livs, double offset_z = 0, double offset_y = 0)
         {
             var retorno = new List<Liv>();
 
@@ -385,7 +391,7 @@ namespace DLM.cam
                     Ang2 = liv.Ang2,
                     Quadrante = liv.Quadrante,
                     Espessura = liv.Espessura,
-                    Origem = new P3d(liv.Origem.X, liv.Origem.Z + offset_z, (liv.Origem.Y * (inverver_y?-1:1)) + offset_y)
+                    Origem = new P3d(liv.Origem.X, liv.Origem.Z + offset_z, liv.Origem.Y + offset_y)
                 });
             }
 

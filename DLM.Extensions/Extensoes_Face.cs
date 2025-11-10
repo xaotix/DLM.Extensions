@@ -61,10 +61,10 @@ namespace Conexoes
             }
             else if (OrigemLiv == OrigemLiv.Centro)
             {
-                pts = face.Liv.Select(x => x.SetY(-x.Origem.Y + face.Largura)).ToList();
-                frs = face.Furacoes.Select(x => x.SetY(-x.Origem.Y)).ToList();
-                recs = face.RecortesInternos.Select(x => x.SetY(Math.Abs(x.Origem.Y) - face.Largura)).ToList();
-                soldas = face.Soldas.Select(x => x.SetY(Math.Abs(x.Linha.P1.Y) - face.Largura, Math.Abs(x.Linha.P2.Y) - face.Largura)).ToList();
+                pts = face.Liv.Select(x => x.SetZ(x.Origem.Z * -1)).ToList();
+                frs = face.Furacoes.Select(x => x.SetY(x.Origem.Y * -1)).ToList();
+                recs = face.RecortesInternos.Select(x => x.SetY(Math.Abs(x.Origem.Y) * -1)).ToList();
+                soldas = face.Soldas.Select(x => x.SetY(Math.Abs(x.Linha.P1.Y) * -1, Math.Abs(x.Linha.P2.Y) * -1)).ToList();
             }
 
             foreach (var furo in frs)
