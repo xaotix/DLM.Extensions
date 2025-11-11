@@ -41,13 +41,20 @@ namespace Conexoes
             }
             return ret;
         }
-        public static string ToPeso(this object value)
+        /// <summary>
+        /// Valor padrão em toneladas
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="multiplo"></param>
+        /// <returns></returns>
+        public static string ToPeso(this object value, double multiplo = 1)
         {
             var _value = "";
             var negativo = false;
             var culture = Utilz._BR;
             if (value is double doubleValue)
             {
+                doubleValue = doubleValue / multiplo;
                 if (doubleValue < 0)
                 {
                     negativo = true;
@@ -72,11 +79,11 @@ namespace Conexoes
                 }
                 else if (doubleValue > 9)
                 {
-                    _value = string.Format(culture, "{0:N2} t", doubleValue);
+                    _value = string.Format(culture, "{0:N1} t", doubleValue);
                 }
                 else if (doubleValue > 1)
                 {
-                    _value = string.Format(culture, "{0:N3} t", doubleValue);
+                    _value = string.Format(culture, "{0:N2} t", doubleValue);
                 }
                 else if (doubleValue > 0)
                 {
@@ -177,7 +184,7 @@ namespace Conexoes
             }
             else
             {
-                retorno = prefix + (num/1000).ToString("N1") +  " K";
+                retorno = prefix + (num / 1000).ToString("N1") + " K";
             }
 
             retorno = $"{prefix}{retorno}";
@@ -188,21 +195,6 @@ namespace Conexoes
             }
 
             return retorno;
-        }
-        public static string ToKg(this double num)
-        {
-            if (num == 0)
-            {
-                return "";
-            }
-            else if (num > 999 | num < -999)
-            {
-                num = num / 1000;
-
-                return num.ToString("N0") + " t";
-            }
-
-            return num.ToString("N0") + " kg";
         }
         public static double Stretch_X(this double mm_comp, double mm_metro_adicional)
         {
