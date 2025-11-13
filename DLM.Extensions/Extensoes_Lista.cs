@@ -1,10 +1,8 @@
-﻿using Conexoes.Macros.Escada;
-using DLM.db;
+﻿using DLM.db;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web.UI;
 
 namespace Conexoes
 {
@@ -97,7 +95,7 @@ namespace Conexoes
 
         public static List<T> MoveTop<T>(this List<T> list, List<T> mover)
         {
-           var retorno = new List<T>();
+            var retorno = new List<T>();
             retorno.AddRange(list);
             foreach (var item in mover)
             {
@@ -117,7 +115,7 @@ namespace Conexoes
             {
                 retorno.Remove(item);
             }
-            foreach(var item in mover)
+            foreach (var item in mover)
             {
                 retorno.Add(item);
             }

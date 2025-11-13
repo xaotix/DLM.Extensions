@@ -1,7 +1,7 @@
-﻿using netDxf;
+﻿using DLM.vars;
+using netDxf;
 using netDxf.Entities;
 using System.Collections.Generic;
-using DLM.vars;
 
 namespace DLM.desenho
 {

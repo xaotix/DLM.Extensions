@@ -1,5 +1,4 @@
-﻿using Clipper2Lib;
-using Conexoes;
+﻿using Conexoes;
 using DLM.desenho;
 using DLM.vars;
 using System;

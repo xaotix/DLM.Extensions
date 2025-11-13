@@ -1,12 +1,10 @@
 ﻿using DLM.desenho;
 using DLM.mdj;
-using DLM.medabar;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Conexoes
 {

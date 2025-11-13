@@ -1,6 +1,5 @@
 ﻿using Conexoes;
 using DLM.vars;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -72,7 +71,7 @@ namespace Conexoes.Macros
             furos = furos.OrderBy(x => x.X).ToList();
             return furos;
         }
-        public static  List<Furo_Purlin> Rebater(this List<Furo_Purlin> furos, double Comprimento, bool Rebater_Furos_Ignorar = true, double Dist_Min = 25)
+        public static List<Furo_Purlin> Rebater(this List<Furo_Purlin> furos, double Comprimento, bool Rebater_Furos_Ignorar = true, double Dist_Min = 25)
         {
             var retorno = new List<Furo_Purlin>();
             foreach (var s in furos)

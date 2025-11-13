@@ -1,10 +1,7 @@
 ﻿using DLM.cam;
 using DLM.vars;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -102,7 +99,7 @@ namespace Conexoes
                     _Perfil = DLM.cam.Perfil.Chapa(Valores[2][1], Valores[2][2], Descricao, tipo);
                     break;
                 case CAM_PERFIL_TIPO.Chapa:
-                    _Perfil = DLM.cam.Perfil.Chapa(Valores[2][1], Valores[2][2],"", tipo);
+                    _Perfil = DLM.cam.Perfil.Chapa(Valores[2][1], Valores[2][2], "", tipo);
                     break;
             }
 

@@ -1,5 +1,4 @@
-﻿using Conexoes.Macros.Escada;
-using DLM;
+﻿using DLM;
 using DLM.ini;
 using DLM.vars;
 using System;
@@ -7,13 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Conexoes.Utilz;
 
 namespace Conexoes
 {
@@ -421,7 +414,7 @@ namespace Conexoes
         {
             if (!arquivo_origem.Exists())
             {
-                if(mensagem)
+                if (mensagem)
                 {
                     $"Arquivo de origem não econtrado. {arquivo_origem}".Alerta();
                 }
@@ -430,7 +423,7 @@ namespace Conexoes
             }
             if (Destino_Pasta_Ou_Arquivo == "")
             {
-                if(mensagem)
+                if (mensagem)
                 {
                     $"Destino em branco.".Alerta();
                 }
@@ -693,7 +686,7 @@ namespace Conexoes
             }
 
             string fullCommand = $"/C start \"\" \"{appToRun}\" {arguments}";
-            if (arguments == "" | arguments ==null)
+            if (arguments == "" | arguments == null)
             {
                 fullCommand = $"/C start \"\" \"{appToRun}\"";
             }

@@ -5,8 +5,6 @@ using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -704,7 +702,7 @@ namespace Conexoes
         {
             var erros = new List<Report>();
             var fbus = rmes.FindAll(x => x.TIPO.Contem("FLANGE BRACE"));
-            var diags_mdj = rmes.FindAll(x => x.TIPO.StartsW("DSD","MTD","DLD","MTE","MTI"));
+            var diags_mdj = rmes.FindAll(x => x.TIPO.StartsW("DSD", "MTD", "DLD", "MTE", "MTI"));
 
             var diags_medabar = rmes.FindAll(x => x.TIPO == "MD");
 

@@ -319,7 +319,7 @@ namespace Conexoes
             foreach (var text in dxf.Entities.Texts)
             {
                 var vlr = text.Value.ToUpper();
-                if ((type == CanvasDXFType.Medajoist) && vlr.Contem("PARAFUSO","VERSION","NSD","TIP"))
+                if ((type == CanvasDXFType.Medajoist) && vlr.Contem("PARAFUSO", "VERSION", "NSD", "TIP"))
                 {
                     continue;
                 }

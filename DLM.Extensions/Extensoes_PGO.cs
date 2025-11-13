@@ -5,9 +5,6 @@ using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DLM
 {
@@ -114,10 +111,10 @@ namespace DLM
 
         public static void VincularRotas(this List<PGO_Obra> lista_agrupado)
         {
-            var w = Conexoes.Utilz.Wait(5,"Vinculando rotas das obras...");
+            var w = Conexoes.Utilz.Wait(5, "Vinculando rotas das obras...");
             var obras_end = lista_agrupado.GroupBy(x => x.Cidade + ";" + x.Estado + ";" + x.Pais).ToList();
             obras_end = obras_end.OrderBy(x => x.Key).ToList();
-             w.SetProgresso(1, obras_end.Count, "Procurando rotas das obras...");
+            w.SetProgresso(1, obras_end.Count, "Procurando rotas das obras...");
             /*carrega todas as rotas*/
             DBases.GetPGO().GetRotas();
             foreach (var obra_end in obras_end)

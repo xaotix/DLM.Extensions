@@ -1,11 +1,7 @@
 ﻿using DLM.ini;
 using DLM.vars;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -40,14 +36,14 @@ namespace Conexoes
                     retorno = mm.Input.Text.Esquerda(maxlenght, false);
                 }
             }
-            else if(Valor is string)
+            else if (Valor is string)
             {
                 var mm = new Digita_Texto(titulo, maxlenght, Valor, titulo);
                 mm.caixa_texto.TextWrapping = System.Windows.TextWrapping.WrapWithOverflow;
                 mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-   
+
                 mm.caixa_texto.MaxLength = maxlenght;
-                if(maxlenght > 100)
+                if (maxlenght > 100)
                 {
                     mm.caixa_texto.Height = 150;
                     mm.caixa_texto.Width = 450;
@@ -58,7 +54,7 @@ namespace Conexoes
                     mm.caixa_texto.AcceptsReturn = false;
                     mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled;
                 }
-     
+
                 mm.ShowDialog();
                 if (mm.DialogResult.HasValue && mm.DialogResult.Value)
                 {
@@ -140,7 +136,7 @@ namespace Conexoes
         }
         public static int? Prompt(this int valor, string titulo = "Digite")
         {
-            var retorno = ((double)valor).Prompt(titulo, 0,"N0");
+            var retorno = ((double)valor).Prompt(titulo, 0, "N0");
             if (retorno != null)
             {
                 return (int)retorno;
@@ -153,7 +149,7 @@ namespace Conexoes
             {
                 decimais = Decimais;
             }
-            var retorno = MainPrompt(titulo, valor, gravar_carregar, chave, false, 15,string_format);
+            var retorno = MainPrompt(titulo, valor, gravar_carregar, chave, false, 15, string_format);
             if (retorno == null)
             {
                 return null;

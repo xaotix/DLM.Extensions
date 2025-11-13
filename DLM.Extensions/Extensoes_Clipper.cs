@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Clipper2Lib;
+﻿using Clipper2Lib;
 using DLM.cam;
 using DLM.desenho;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Conexoes
 {

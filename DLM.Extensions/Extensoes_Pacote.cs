@@ -1,18 +1,10 @@
-﻿using DLM.cam;
-using DLM.vars;
-using DLM.ep;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Conexoes
 {
-   public static class ExtensoesPacote
+    public static class ExtensoesPacote
     {
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int WNetGetConnection(

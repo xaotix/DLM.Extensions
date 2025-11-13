@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -39,20 +34,20 @@ namespace Conexoes
         {
             try
             {
-                if(_filter.Text == Msg)
+                if (_filter.Text == Msg)
                 {
                     return;
                 }
                 else if (_list.ItemsSource != null)
                 {
-                  
+
                     if (_list.ItemsSource is DataView)
                     {
                         var dt = _list.ItemsSource as DataView;
                         var chave = $"";
-                        foreach(DataColumn c in dt.Table.Columns)
+                        foreach (DataColumn c in dt.Table.Columns)
                         {
-                            if(chave.Length > 0)
+                            if (chave.Length > 0)
                             {
                                 chave += " or ";
                             }

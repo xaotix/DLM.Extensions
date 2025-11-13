@@ -145,7 +145,7 @@ namespace DLM.desenho
             return pts.Select(x => new Vector2(x.X, x.Y)).ToList();
         }
 
- 
+
 
         public static AciColor ToAciColor(this System.Windows.Media.SolidColorBrush mediacolor)
         {
@@ -1519,7 +1519,7 @@ namespace DLM.desenho
         public static List<EntityObject> GetTextos(this DxfDocument dxf, string txt = null)
         {
             var retorno = new List<netDxf.Entities.EntityObject>();
-           
+
             if (txt == null)
             {
                 retorno.AddRange(dxf.Entities.MTexts);

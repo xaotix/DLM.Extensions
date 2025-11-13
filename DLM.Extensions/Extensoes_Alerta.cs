@@ -4,7 +4,6 @@ using DLM.WPF;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Windows;
 
@@ -96,18 +95,18 @@ namespace Conexoes
         }
         private static void JanelaErro(this string texto, string titulo)
         {
-                new Action(() =>
-                {
-                    var mm = new VerTextoReport();
-                    mm.texto.Text = $"{titulo}\n\n{texto}";
-                    mm.Title = $"Erro! {titulo.Esquerda(30)}";
-                    mm.Topmost = true;
-                    mm.texto.Foreground = System.Windows.Media.Brushes.Red;
-                    mm.texto.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                    mm.texto.TextAlignment = TextAlignment.Left;
-                    mm.texto.VerticalAlignment = VerticalAlignment.Stretch;
-                    mm.Show();
-                }).NovaInstancia();
+            new Action(() =>
+            {
+                var mm = new VerTextoReport();
+                mm.texto.Text = $"{titulo}\n\n{texto}";
+                mm.Title = $"Erro! {titulo.Esquerda(30)}";
+                mm.Topmost = true;
+                mm.texto.Foreground = System.Windows.Media.Brushes.Red;
+                mm.texto.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                mm.texto.TextAlignment = TextAlignment.Left;
+                mm.texto.VerticalAlignment = VerticalAlignment.Stretch;
+                mm.Show();
+            }).NovaInstancia();
         }
         public static void JanelaTexto(this string mensagem, string titulo = "", bool top = true, bool pendurar = false)
         {

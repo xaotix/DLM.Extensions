@@ -422,7 +422,7 @@ namespace Conexoes
                 case CAM_PERFIL_TIPO.Z_Purlin:
                 case CAM_PERFIL_TIPO.C_Enrigecido:
                     var purlin = DBases.GetMBS_Perfil_Purlin(Perfil);
-                    if(purlin!=null)
+                    if (purlin != null)
                     {
                         if (purlin.Enrigecida)
                         {

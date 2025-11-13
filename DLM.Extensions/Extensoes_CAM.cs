@@ -3,17 +3,12 @@ using Conexoes;
 using DLM.cam;
 using DLM.desenho;
 using DLM.encoder;
-using DLM.mdj6;
 using DLM.vars;
-using Microsoft.Isam.Esent.Interop;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using Xceed.Wpf.DataGrid;
 
 namespace Conexoes
 {
@@ -749,7 +744,7 @@ namespace Conexoes
 
         public static List<Liv> MoverY(this List<Liv> lista, double valor)
         {
-            return lista.Select(x=>x.MoverY(valor)).ToList();   
+            return lista.Select(x => x.MoverY(valor)).ToList();
         }
         public static List<Liv> MoverX(this List<Liv> lista, double valor)
         {

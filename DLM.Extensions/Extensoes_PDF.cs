@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -167,7 +165,7 @@ namespace Conexoes
                                 }
                                 var chk = new Chunk(valor, fonte);
                                 ls.Add(chk);
-                              
+
                                 var celula = new PdfPCell(new Phrase(chk));
                                 celula.BackgroundColor = cor;
                                 table.AddCell(celula);
@@ -180,8 +178,8 @@ namespace Conexoes
                         larguras.Add(ls);
                     }
 
-                  
-                   
+
+
                     var tams = larguras.Inverter().Select(x => x.Select(y => (float)(y.GetWidthPoint() * 1.3)).ToList()).ToList();
                     var tamanhos_finais = tams.Select(x => x.Max()).ToArray();
 
@@ -190,7 +188,7 @@ namespace Conexoes
                     table.SetWidths(tamanhos_finais);
                     table.TotalWidth = total_largura;
                     table.LockedWidth = true;
-                    
+
 
                     /*coordenada Y de cima para baixo*/
                     table.WriteSelectedRows(0, tabela.Linhas, (float)tabela.Origem.X, (float)(tamanho.Height - tabela.Origem.Y), stamper.GetOverContent(1));

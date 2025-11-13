@@ -1,5 +1,4 @@
 ﻿using Conexoes;
-using DLM.desenho;
 using DLM.encoder;
 using System.Collections.Generic;
 using System.Linq;

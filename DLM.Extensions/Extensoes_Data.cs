@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Conexoes
 {
@@ -39,7 +38,7 @@ namespace Conexoes
             DateTime inicioPrimeiraSemana = primeiroDiaDoAno.AddDays(diasParaPrimeiroDiaSemana);
 
             // Calcula o primeiro dia da semana desejada
-            DateTime primeiroDiaDaSemana = inicioPrimeiraSemana.AddDays((semana-1) * 7);
+            DateTime primeiroDiaDaSemana = inicioPrimeiraSemana.AddDays((semana - 1) * 7);
 
             // Verifica se a data resultante está dentro do ano especificado
             if (primeiroDiaDaSemana.Year > ano)

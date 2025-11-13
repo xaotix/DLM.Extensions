@@ -1,43 +1,25 @@
 ﻿using DLM;
 using DLM.cam;
-using DLM.cam.Addons;
 using DLM.db;
-using DLM.desenho;
 using DLM.encoder;
 using DLM.macros;
 using DLM.sap;
 using DLM.vars;
-using Ionic.Zip;
-using iTextSharp.text.pdf;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Security.AccessControl;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-using static System.Net.WebRequestMethods;
 
 namespace Conexoes
 {

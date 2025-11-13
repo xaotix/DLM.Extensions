@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,7 +19,7 @@ namespace Conexoes
                 foreach (var column in columns)
                 {
                     var header = column.Header.ToString();
-                    if(header !="")
+                    if (header != "")
                     {
                         var igual = selecao.Find(x => x == header);
                         if (igual != null)

@@ -1,6 +1,7 @@
-﻿using DLM.vars;
+﻿using DLM;
+using DLM.vars;
+using Microsoft.Isam.Esent.Interop;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -32,6 +33,14 @@ namespace Conexoes
         public static double Double(this decimal? valor)
         {
             return valor != null ? (double)valor.Value : 0;
+        }
+        public static PesoStr PesoStr(this string valor, int decimais = 8)
+        {
+            return new PesoStr(valor.Double(decimais));
+        }
+        public static RSStr RSStr(this string valor, int decimais = 8)
+        {
+            return new RSStr(valor.Double(decimais));
         }
         public static double Double<T>(this T comp, int Decimais = 8)
         {

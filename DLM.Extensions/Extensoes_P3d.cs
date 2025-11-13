@@ -5,7 +5,6 @@ using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace Conexoes
 {
@@ -78,7 +77,7 @@ namespace Conexoes
 
             return Retorno;
         }
-        public static netDxf.Vector2 ToVector2(this P3d  p3D)
+        public static netDxf.Vector2 ToVector2(this P3d p3D)
         {
             return new netDxf.Vector2(p3D.X, p3D.Y);
         }
@@ -275,7 +274,7 @@ namespace Conexoes
             return new P3d(p3d.X.Round(decimais), p3d.Y.Round(decimais), p3d.Z.Round(decimais));
         }
 
-        public static List<P3d> Round(this List<P3d> p3Ds,int decimais)
+        public static List<P3d> Round(this List<P3d> p3Ds, int decimais)
         {
             return p3Ds.Select(x => x.Round(decimais)).ToList();
         }
@@ -513,19 +512,19 @@ namespace Conexoes
             return lista;
         }
 
-        public static List<P3d> RemoverDistMinX(this List<P3d>pts, double distx)
+        public static List<P3d> RemoverDistMinX(this List<P3d> pts, double distx)
         {
             var retorno = new List<P3d>();
             var ps = pts.OrderBy(x => x.X).ToList().Aninhar();
             for (int i = 0; i < ps.Count; i++)
             {
-                if(i==0)
+                if (i == 0)
                 {
                     retorno.Add(ps[i]);
                 }
                 else
                 {
-                   if(ps[i].Distancia(retorno.Last())>=distx)
+                    if (ps[i].Distancia(retorno.Last()) >= distx)
                     {
                         retorno.Add(ps[i]);
                     }

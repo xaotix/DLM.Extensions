@@ -1,4 +1,5 @@
-﻿using DLM.db;
+﻿using DLM;
+using DLM.db;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -141,6 +142,8 @@ namespace Conexoes
                 Propriedade.PropertyType.IsEnum |
                 Propriedade.PropertyType.IsPrimitive |
                 prop == "string" |
+                prop == nameof(PesoStr).ToLower() |
+                prop == nameof(RSStr).ToLower() |
                 prop == "datetime" |
                 prop == "nullable`1"
                 )
@@ -150,10 +153,19 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor);
                 }
+                else if (prop == nameof(PesoStr).ToLower())
+                {
+                    Propriedade.SetValue(Objeto, Valor.PesoStr(20));
+                }
+                else if (prop == nameof(RSStr).ToLower())
+                {
+                    Propriedade.SetValue(Objeto, Valor.RSStr(20));
+                }
                 else if (prop == "double" | prop == "decimal")
                 {
                     Propriedade.SetValue(Objeto, Valor.Double(20));
                 }
+
                 else if (prop == "boolean")
                 {
                     Propriedade.SetValue(Objeto, Valor.Boolean());
@@ -492,7 +504,7 @@ namespace Conexoes
             foreach (var l in lista)
             {
                 var prop = l.PropertyType.Name.ToLower();
-                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime")
+                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "pesostr")
                 {
                     retorno.Add(l);
                 }

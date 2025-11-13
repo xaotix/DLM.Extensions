@@ -73,7 +73,7 @@ namespace Conexoes
             {
                 return (objeto as ListView).Selecao<T>();
             }
-            else if(objeto is ComboBox)
+            else if (objeto is ComboBox)
             {
                 return (objeto as ComboBox).Selecao<T>();
             }
@@ -104,7 +104,7 @@ namespace Conexoes
         public static T Selecao<T>(this System.Windows.Controls.ComboBox lista)
         {
 
-            if (lista.SelectedItem!=null)
+            if (lista.SelectedItem != null)
             {
                 try
                 {

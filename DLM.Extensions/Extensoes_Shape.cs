@@ -1,12 +1,9 @@
-﻿using Clipper2Lib;
-using DLM.cam;
+﻿using DLM.cam;
 using DLM.desenho;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -168,7 +165,7 @@ namespace Conexoes
                 }
 
             }
-            else if(shape.Perfil.Familia == CAM_FAMILIA.Dobrado | shape.Perfil.Primitivo == CAM_PRIMITIVO._)
+            else if (shape.Perfil.Familia == CAM_FAMILIA.Dobrado | shape.Perfil.Primitivo == CAM_PRIMITIVO._)
             {
                 return planificada.GetPeso(shape.Perfil);
             }
@@ -181,7 +178,7 @@ namespace Conexoes
         }
         public static Face GetPlanificada(this Shape shape)
         {
-            if(shape.Perfil.Familia == CAM_FAMILIA.Chapa)
+            if (shape.Perfil.Familia == CAM_FAMILIA.Chapa)
             {
                 return shape.LIV1;
             }
@@ -449,7 +446,7 @@ namespace Conexoes
         }
         public static Face GetLIV3_MesaParaChapa(this Shape shape)
         {
-            return shape.LIV3.MesaParaChapa(shape.Perfil,shape.Comprimento, shape.Perfil.Largura_MI,shape.Perfil.Esp_MI);
+            return shape.LIV3.MesaParaChapa(shape.Perfil, shape.Comprimento, shape.Perfil.Largura_MI, shape.Perfil.Esp_MI);
         }
         public static Face GetLIV2_MesaParaChapa(this Shape shape)
         {

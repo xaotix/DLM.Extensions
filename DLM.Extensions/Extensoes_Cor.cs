@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Media;
 
 namespace Conexoes
@@ -30,7 +28,7 @@ namespace Conexoes
         }
         public static System.Windows.Media.Color ToColor(this string hex)
         {
-            if(hex==null)
+            if (hex == null)
             {
                 return System.Windows.Media.Colors.Transparent;
             }
@@ -45,7 +43,7 @@ namespace Conexoes
 
             if (hex.Length != 8)
             {
-               return  System.Windows.Media.Colors.Transparent;
+                return System.Windows.Media.Colors.Transparent;
             }
 
             // Converte os componentes ARGB
