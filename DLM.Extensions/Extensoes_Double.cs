@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static DLM.RSStr ToRS(this double value)
+        {
+            return new DLM.RSStr(value);
+        }
+        public static DLM.PesoStr ToPesoStr(this double value)
+        {
+            return new DLM.PesoStr(value);
+        }
         public static bool IsValid(this double d)
         {
             if (Double.IsNaN(d) || Double.IsPositiveInfinity(d) || Double.IsNegativeInfinity(d))
@@ -148,12 +157,16 @@ namespace Conexoes
                 }
             }
 
-            _value = $"{prefix}{_value}";
-
-            if (negativo && !string.IsNullOrEmpty(_value))
+            if (_value.Length > 0)
             {
-                _value = $"({_value})";
+                _value = $"{prefix}{_value}";
+
+                if (negativo && !string.IsNullOrEmpty(_value))
+                {
+                    _value = $"({_value})";
+                }
             }
+
 
             return _value;
         }
