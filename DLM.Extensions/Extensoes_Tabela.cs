@@ -428,6 +428,18 @@ namespace Conexoes
                 {
                     Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
                 }
+                else if (cel.Tipo == Celula_Tipo_Valor.Moeda | cel.StringFormat == "$")
+                {
+                    Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
+                }
+                else if (cel.StringFormat == "Kg")
+                {
+                    Excel_cel.Style.Numberformat.Format = "#,##";
+                }
+                else if(cel.StringFormat == "P")
+                {
+                    Excel_cel.Style.Numberformat.Format = "0.00%;[Red]-0.00%";
+                }
             }
         }
 
