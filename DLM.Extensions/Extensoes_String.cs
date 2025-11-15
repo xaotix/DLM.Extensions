@@ -139,13 +139,21 @@ namespace Conexoes
                     if (str == "") { return true; }
                     if (str == " ") { return true; }
                     if (str == "0") { return true; }
+
                     if (str == ".") { return true; }
                     if (str == ",") { return true; }
                     if (str == "'") { return true; }
                 }
+                else if (str.Length == 2)
+                {
+                    if (str == "[]") { return true; }
+                    else if (str == "{}") { return true; }
+                }
                 else
                 {
-                    return str.Replace("0000-00-00", "").Length == 0;
+                    if (str == "0.0") { return true; }
+                    if (str.Replace("0000-00-00", "").Length == 0) { return true; }
+                    if (str == "0.0d") { return true; }
                 }
             }
             return false;
