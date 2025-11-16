@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Traducao.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_TreeView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Trigonometria.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_WEB.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ItemsControlFilter.cs" />
   </ItemGroup>
   <ItemGroup>
