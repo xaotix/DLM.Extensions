@@ -29,7 +29,7 @@ namespace Conexoes
                 {
                     if (item is Button bt)
                     {
-                        if (chave.Length > 2)
+                        if (chave.LenghtStr() > 2)
                         {
                             bt.Visibility = bt.Content.ToString().ToUpper().Contem(chave)
                                 ? Visibility.Visible

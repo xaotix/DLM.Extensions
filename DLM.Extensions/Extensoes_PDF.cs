@@ -142,7 +142,7 @@ namespace Conexoes
                 #region Tabela1
                 foreach (var tabela in tabelas)
                 {
-                    var largura = tabela.Colunas.Max(x => x.Sum(y => y.Length));
+                    var largura = tabela.Colunas.Max(x => x.Sum(y => y.LenghtStr()));
                     largura = largura * 4;
                     var table = new PdfPTable(tabela.Colunas.Count);
                     var fonte = new Font(FontFactory.GetFont("MonoSpace").BaseFont, (float)tabela.TamFonte);

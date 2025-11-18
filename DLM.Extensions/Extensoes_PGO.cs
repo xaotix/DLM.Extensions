@@ -41,7 +41,7 @@ namespace DLM
         public static List<LT_PMP> Explodir(this List<LT_PMP> materiais)
         {
             var mats = materiais.GroupBy(x => x.SAP).ToList();
-            var kanbans = mats.FindAll(x => x.Key.Length == 12).ToList();
+            var kanbans = mats.FindAll(x => x.Key.LenghtStr() == 12).ToList();
             var skanban = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(kanbans.Select(x => new DLM.db.Linha("MATERIAL", x.Key, "WERKS", "1202")).ToList()));
 
             var sub_bobinas = mats.FindAll(x => x.Key.Int() > 1100000 && x.Key.Int() < 9000000).ToList();

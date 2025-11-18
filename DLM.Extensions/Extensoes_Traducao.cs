@@ -118,7 +118,7 @@ namespace DLM
             }
             var arq = @$"{folder}\{Conexoes.Utilz.GetDLLInfo().FileName.getNome()}.{window.GetType().Name}.Lang";
 
-            var txts = Conexoes.Utilz.Arquivo.Ler(arq).FindAll(x => x.Replace("|", "").Replace(" ", "").Length > 0);
+            var txts = Conexoes.Utilz.Arquivo.Ler(arq).FindAll(x => x.Replace("|", "").Replace(" ", "").LenghtStr() > 0);
             if (txts.Count == 0) { return; }
 
             var menus = window.GetMenuItems();

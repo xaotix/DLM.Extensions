@@ -36,12 +36,12 @@ namespace Conexoes
             hex = hex.Replace("#", "");
 
             // Se a string tiver 6 caracteres, assume opacidade total (FF)
-            if (hex.Length == 6)
+            if (hex.LenghtStr() == 6)
             {
                 hex = "FF" + hex;
             }
 
-            if (hex.Length != 8)
+            if (hex.LenghtStr() != 8)
             {
                 return System.Windows.Media.Colors.Transparent;
             }

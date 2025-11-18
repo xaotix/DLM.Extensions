@@ -60,7 +60,7 @@ namespace Conexoes
 
             lista_pecas = lista_pecas.OrderBy(x => x.ToString()).ToList();
 
-            erros.AddRange(lista_pecas.Select(x => x[Cfg.Init.CAD_ATT_ERRO].Valor).Distinct().ToList().FindAll(x => x.Length > 0).Select(x => new Report("Erro", x, TipoReport.Critico)));
+            erros.AddRange(lista_pecas.Select(x => x[Cfg.Init.CAD_ATT_ERRO].Valor).Distinct().ToList().FindAll(x => x.LenghtStr() > 0).Select(x => new Report("Erro", x, TipoReport.Critico)));
 
             var ms = lista_pecas.Select(x => x.Nome).Distinct().ToList();
 
@@ -204,7 +204,7 @@ namespace Conexoes
                 abrir = true;
             }
             if (destino == null) { return false; }
-            if (destino.Length == 0) { return false; }
+            if (destino.LenghtStr() == 0) { return false; }
 
 
             var pasta = destino.getPasta();
@@ -260,7 +260,7 @@ namespace Conexoes
 
                             for (int i = 0; i < tabelas.Count; i++)
                             {
-                                if (tabelas[i].Nome.Replace(" ", "").Length == 0)
+                                if (tabelas[i].Nome.Replace(" ", "").LenghtStr() == 0)
                                 {
                                     tabelas[i].Nome = $"ABA_{i.String(3)}";
                                 }
@@ -367,7 +367,11 @@ namespace Conexoes
                                 }
                             }
                             nExcel.Workbook.Properties.Author = $"DLM.excel v{System.Windows.Forms.Application.ProductVersion}";
-                            nExcel.Save();
+
+                            if (nExcel.Workbook.Worksheets.Count > 0)
+                            {
+                                nExcel.Save();
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -428,15 +432,15 @@ namespace Conexoes
                 {
                     Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
                 }
-                else if (cel.Tipo == Celula_Tipo_Valor.Moeda | cel.StringFormat == "$")
+                else if (cel.StringFormat == "$")
                 {
-                    Excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
+                    Excel_cel.Style.Numberformat.Format = "$ #,##0.00;[Red]-$ #,##0.00";
                 }
                 else if (cel.StringFormat == "Kg")
                 {
                     Excel_cel.Style.Numberformat.Format = "#,##";
                 }
-                else if(cel.StringFormat == "P")
+                else if (cel.StringFormat == "P")
                 {
                     Excel_cel.Style.Numberformat.Format = "0.00%;[Red]-0.00%";
                 }

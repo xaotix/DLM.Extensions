@@ -178,7 +178,7 @@ namespace Conexoes
 
         public static DateTime? GetDateTime(this string vlr)
         {
-            if (vlr.Length > 0)
+            if (vlr.LenghtStr() > 0)
             {
                 try
                 {
@@ -204,7 +204,7 @@ namespace Conexoes
                                     var times = vlr.Split(' ');
                                     if (times.Count() > 1)
                                     {
-                                        if (times[1].Replace(":", "").Replace("0", "").Length > 0)
+                                        if (times[1].Replace(":", "").Replace("0", "").LenghtStr() > 0)
                                         {
                                             var hrs = times[1].Split(':');
                                             if (hrs.Count() == 3)

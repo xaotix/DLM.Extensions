@@ -87,42 +87,46 @@ namespace Conexoes
             var pep = valor.Replace(" ", "").Replace("-", "").Replace(".", "");
             //10-123456.P00.001.30A.F2
             //setor atividade
-            if (pep.Length > 1)
+            if (pep.LenghtStr() > 1)
             {
                 retorno += $"{pep.Substring(0, 2)}";
             }
             //contrato
-            if (pep.Length > 7)
+            if (pep.LenghtStr() > 7)
             {
                 retorno += $"-{pep.Substring(2, 6)}";
             }
             //pedido
-            if (pep.Length > 10)
+            if (pep.LenghtStr() > 10)
             {
                 retorno += $".{pep.Substring(8, 3)}";
             }
             //etapa
-            if (pep.Length > 13)
+            if (pep.LenghtStr() > 13)
             {
                 retorno += $".{pep.Substring(11, 3)}";
             }
             //sub-etapa
-            if (pep.Length > 16)
+            if (pep.LenghtStr() > 16)
             {
                 retorno += $".{pep.Substring(14, 3)}";
             }
             //pep
-            if (pep.Length > 18)
+            if (pep.LenghtStr() > 18)
             {
                 retorno += $".{pep.Substring(17, 2)}";
             }
 
             return retorno;
         }
-        public static int LenghtStr(this object valor)
+        public static int LenghtStr(this string valor)
         {
             if (valor != null)
             {
+                if(valor is string)
+                {
+                    return ((string)valor).Length;
+                }
                 return valor.ToString().Length;
             }
 
@@ -134,7 +138,7 @@ namespace Conexoes
             var str = valor.ToString();
             if (decimais)
             {
-                if (str.Length == 1)
+                if (str.LenghtStr() == 1)
                 {
                     if (str == "") { return true; }
                     if (str == " ") { return true; }
@@ -144,7 +148,7 @@ namespace Conexoes
                     if (str == ",") { return true; }
                     if (str == "'") { return true; }
                 }
-                else if (str.Length == 2)
+                else if (str.LenghtStr() == 2)
                 {
                     if (str == "[]") { return true; }
                     else if (str == "{}") { return true; }
@@ -152,7 +156,7 @@ namespace Conexoes
                 else
                 {
                     if (str == "0.0") { return true; }
-                    if (str.Replace("0000-00-00", "").Length == 0) { return true; }
+                    if (str.Replace("0000-00-00", "").LenghtStr() == 0) { return true; }
                     if (str == "0.0d") { return true; }
                 }
             }
@@ -173,11 +177,11 @@ namespace Conexoes
             {
                 return null;
             }
-            else if (text.Length == 0)
+            else if (text.LenghtStr() == 0)
             {
                 return "";
             }
-            else if (text.Length == 1)
+            else if (text.LenghtStr() == 1)
             {
                 return text.ToUpper();
             }
@@ -192,9 +196,9 @@ namespace Conexoes
                     {
                         str_join += " ";
                     }
-                    if (st.Length > 0)
+                    if (st.LenghtStr() > 0)
                     {
-                        if (st.Length == 1)
+                        if (st.LenghtStr() == 1)
                         {
                             str_join += st.ToUpper();
                         }
@@ -305,7 +309,7 @@ namespace Conexoes
             {
                 return false;
             }
-            if (str.Length == 0)
+            if (str.LenghtStr() == 0)
             {
                 return false;
             }
@@ -327,7 +331,7 @@ namespace Conexoes
             string result = target;
             while (result.StartsW(trimString))
             {
-                result = result.Substring(trimString.Length);
+                result = result.Substring(trimString.LenghtStr());
             }
 
             return result;
@@ -337,7 +341,7 @@ namespace Conexoes
             string result = target;
             while (result.EndsW(trimString))
             {
-                result = result.Substring(0, result.Length - trimString.Length);
+                result = result.Substring(0, result.LenghtStr() - trimString.LenghtStr());
             }
 
             return result;
@@ -349,7 +353,7 @@ namespace Conexoes
         public static string Esquerda(this string Origem, int MaxComp, bool pontilhado = false)
         {
             string txt = Origem;
-            if (txt.Length > MaxComp)
+            if (txt.LenghtStr() > MaxComp)
             {
                 txt = Origem.Substring(0, MaxComp) + (pontilhado ? "..." : "");
             }
@@ -359,9 +363,9 @@ namespace Conexoes
         public static string Direita(this string Origem, int Comp)
         {
             string txt = Origem;
-            if (Comp < txt.Length)
+            if (Comp < txt.LenghtStr())
             {
-                return txt.Substring(txt.Length - Comp, Comp);
+                return txt.Substring(txt.LenghtStr() - Comp, Comp);
             }
 
             return Origem;
@@ -387,14 +391,14 @@ namespace Conexoes
         {
             if (texto == null) { return null; }
             texto = texto.TrimStart().TrimEnd();
-            if (texto.Length == 0)
+            if (texto.LenghtStr() == 0)
             {
                 return "";
             }
             var normalizar = texto.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder(capacity: normalizar.Length);
+            var stringBuilder = new StringBuilder(capacity: normalizar.LenghtStr());
 
-            for (int i = 0; i < normalizar.Length; i++)
+            for (int i = 0; i < normalizar.LenghtStr(); i++)
             {
                 char c = normalizar[i];
                 var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);

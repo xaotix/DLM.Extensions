@@ -157,7 +157,7 @@ namespace Conexoes
                 }
             }
 
-            if (_value.Length > 0)
+            if (_value.LenghtStr() > 0)
             {
                 _value = $"{prefix}{_value}";
 

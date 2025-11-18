@@ -71,7 +71,7 @@ namespace Conexoes
                             {
                                 if (valor != null && somente_preenchido)
                                 {
-                                    if ((valor.ToString().Length > 0 && somente_preenchido))
+                                    if ((valor.ToString().LenghtStr() > 0 && somente_preenchido))
                                         igual_para.SetValue(Para, valor);
                                 }
                                 else if (!somente_preenchido)
@@ -194,7 +194,7 @@ namespace Conexoes
                         var et = Enum.ToObject(Propriedade.PropertyType, Valor.Int());
                         Propriedade.SetValue(Objeto, et);
                     }
-                    else if (!Valor.Contem(" ") && Valor.Length > 0)
+                    else if (!Valor.Contem(" ") && Valor.LenghtStr() > 0)
                     {
                         var et = Enum.Parse(Propriedade.PropertyType, Valor);
                         Propriedade.SetValue(Objeto, et);
@@ -214,7 +214,7 @@ namespace Conexoes
         {
             string xml = "";
             var serializer = new XmlSerializer(typeof(T));
-            if (arquivo.Length > 0)
+            if (arquivo.LenghtStr() > 0)
             {
                 if (File.Exists(arquivo))
                 {
@@ -247,7 +247,7 @@ namespace Conexoes
 
 
 
-                if (xml.Length > 0)
+                if (xml.LenghtStr() > 0)
                 {
                     try
                     {

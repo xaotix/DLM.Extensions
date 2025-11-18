@@ -77,12 +77,11 @@ namespace Conexoes
             }
             return true;
         }
-        public static string getUpdir(this string Dir)
+        public static string getUpdir(this string dir)
         {
-            if (Dir == null) { return ""; }
-            if (Dir.Length == 0) { return ""; }
-            if (!Dir.EndsW(@"\")) { Dir = Dir + @"\"; }
-            return System.IO.Path.GetFullPath(System.IO.Path.Combine(Dir, @"..\")).ToUpper();
+            if (dir.LenghtStr() == 0) { return ""; }
+            if (!dir.EndsW(@"\")) { dir = dir + @"\"; }
+            return System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\")).ToUpper();
         }
 
 
@@ -361,7 +360,7 @@ namespace Conexoes
         public static bool Exists(this string file)
         {
             if (file == null) { return false; }
-            if (file.Length == 0) { return false; }
+            if (file.LenghtStr() == 0) { return false; }
 
             if (file.E_Diretorio())
             {

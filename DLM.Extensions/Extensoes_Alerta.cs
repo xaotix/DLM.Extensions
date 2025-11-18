@@ -47,13 +47,13 @@ namespace Conexoes
             {
                 titulo = Cfg.Init.GetNomeProduto();
             }
-            if (mensagem.Length > 300)
+            if (mensagem.LenghtStr() > 300)
             {
                 var report = new Report(titulo, mensagem, tipo);
                 var reports = new List<Report>() { report };
                 reports.Show();
             }
-            else if (mensagem.Length > 0)
+            else if (mensagem.LenghtStr() > 0)
             {
                 switch (icone)
                 {

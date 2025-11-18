@@ -30,7 +30,7 @@ namespace Conexoes
 
             if (result == DialogResult.OK)
             {
-                if (saveFileDialog1.FileName.Length > 0)
+                if (saveFileDialog1.FileName.LenghtStr() > 0)
                 {
                     return saveFileDialog1.FileName;
                 }
