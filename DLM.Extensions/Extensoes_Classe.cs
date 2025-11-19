@@ -504,7 +504,7 @@ namespace Conexoes
             foreach (var l in lista)
             {
                 var prop = l.PropertyType.Name.ToLower();
-                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "pesostr")
+                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "pesostr" | prop == "rsstr")
                 {
                     retorno.Add(l);
                 }
