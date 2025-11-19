@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Navigation;
 
 namespace Conexoes
 {
     public static class Extensoes_Data
     {
+        public static string ToString(this DateTime? data, string stringformat = "yyyy.MM.dd")
+        {
+            return data != null ? data.Value.ToString(stringformat) : "";
+        }
         public static string DayOfWeek(this DateTime data)
         {
             CultureInfo cultura = Conexoes.Utilz._BR;
