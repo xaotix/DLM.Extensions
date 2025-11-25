@@ -34,9 +34,16 @@ namespace Conexoes
             try
             {
                 var rfc_tbl = funcao.GetTable(tabela);
-                var tbl = rfc_tbl.GetTabelaRFC();
-                tbl.Nome = tabela;
-                return tbl;
+                if(rfc_tbl != null)
+                {
+                    var tbl = rfc_tbl.GetTabelaRFC();
+                    tbl.Nome = tabela;
+                    return tbl;
+                }
+                else
+                {
+
+                }
             }
             catch (Exception ex)
             {
