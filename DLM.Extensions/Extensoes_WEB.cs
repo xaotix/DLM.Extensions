@@ -20,7 +20,7 @@ namespace Conexoes
     public static class Web
     {
 
-        public static void DownloadSiteFiles(string url, string pasta_raiz_destino, int max_segundos)
+        public static bool DownloadSiteFiles(string url, string pasta_raiz_destino, int max_segundos)
         {
             // Cria um token de cancelamento com timeout de 10 segundos
             using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
@@ -37,18 +37,22 @@ namespace Conexoes
                         if (links.Count > 0)
                         {
                             Download(links);
+                            return true;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Tempo limite excedido. Operação cancelada.");
+                        return false;
+                        //Console.WriteLine("Tempo limite excedido. Operação cancelada.");
                     }
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("Operação cancelada pelo token.");
+                    return false;
+                    //Console.WriteLine("Operação cancelada pelo token.");
                 }
             }
+            return true;
         }
 
         //public static void DownloadSiteFiles(string url, string pasta_raiz_destino)
