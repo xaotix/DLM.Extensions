@@ -8,9 +8,9 @@ namespace Conexoes
 {
     public static class Extensoes_Lista
     {
-        public static DLM.db.Tabela GetTabela<T>(this List<T> Origem)
+        public static DLM.db.Tabela GetTabela<T>(this List<T> Origem, [System.Runtime.CompilerServices.CallerMemberName] string nome = "")
         {
-            return new DLM.db.Tabela(Origem.Select(x => x.GetLinha()).ToList());
+            return new DLM.db.Tabela(Origem.Select(x => x.GetLinha()).ToList(), nome);
         }
         public static List<T> Mirror<T>(this List<T> Origem)
         {

@@ -123,7 +123,7 @@ namespace Conexoes
         {
             if (valor != null)
             {
-                if(valor is string)
+                if (valor is string)
                 {
                     return ((string)valor).Length;
                 }
@@ -135,7 +135,15 @@ namespace Conexoes
         public static bool IsNullOrEmpty(this object valor, bool decimais = true)
         {
             if (valor == null) { return true; }
+
+
+
             var str = valor.ToString();
+            if (valor is Celula)
+            {
+                str = ((Celula)valor).Valor;
+            }
+
             if (decimais)
             {
                 if (str.LenghtStr() == 1)
@@ -157,6 +165,7 @@ namespace Conexoes
                 {
                     if (str == "0.0") { return true; }
                     if (str.Replace("0000-00-00", "").LenghtStr() == 0) { return true; }
+                    if (str.Replace("0", "").Replace(",","").Replace(".","").LenghtStr() == 0) { return true; }
                     if (str == "0.0d") { return true; }
                 }
             }

@@ -104,7 +104,7 @@ namespace Conexoes
             }
             return Para;
         }
-        public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "")
+        public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "", bool ignorar_vazias = false)
         {
             var props_para = Para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
             foreach (var prop_para in props_para)
@@ -113,7 +113,14 @@ namespace Conexoes
 
                 if (valor != null)
                 {
-                    SetValor(Para, prop_para, valor.Valor);
+                    if (ignorar_vazias && valor.IsNullOrEmpty())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        SetValor(Para, prop_para, valor.Valor);
+                    }
                 }
                 else
                 {
