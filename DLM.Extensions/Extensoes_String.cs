@@ -132,6 +132,10 @@ namespace Conexoes
 
             return 0;
         }
+        public static bool NotNullOrEmpty(this object valor, bool decimais = true)
+        {
+            return !valor.IsNullOrEmpty(decimais);
+        }
         public static bool IsNullOrEmpty(this object valor, bool decimais = true)
         {
             if (valor == null) { return true; }

@@ -308,6 +308,14 @@ namespace Conexoes
         {
             return Math.Abs(valor);
         }
+        public static decimal Abs(this decimal valor)
+        {
+            return Math.Abs(valor);
+        }
+        public static decimal Round(this decimal valor, int decimais = 4)
+        {
+            return Math.Round(valor, decimais);
+        }
         public static bool E_Multiplo(this double valor, double divisor)
         {
             if (divisor != 0)

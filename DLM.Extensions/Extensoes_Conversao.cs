@@ -26,9 +26,34 @@ namespace Conexoes
         {
             return Valor.ToString().PadLeft(padleft, padding);
         }
+        public static string String(this DateTimeOffset? Valor, string format = "dd/MM/yyyy")
+        {
+            return Valor != null ? Valor.Value.String(format) : "";
+        }
+        public static string String(this DateTimeOffset Valor, string format = "dd/MM/yyyy")
+        {
+            return Valor != null ? Valor.ToString(format) : "";
+        }
+        public static string String(this DateTime? Valor, string format = "dd/MM/yyyy")
+        {
+           return Valor!=null?Valor.Value.ToString(format) : "";
+        }
+        public static string String(this string Valor, int padleft = 0, char padding = '0')
+        {
+            return Valor.ToString().PadLeft(padleft, padding);
+        }
+        public static string String<TEnum>(this TEnum value, int padLeft = 0, char padding = '0') where TEnum : Enum
+        {
+            return value.ToString().PadLeft(padLeft, padding);
+        }
+
         public static string String(this long Valor, int padleft = 0, char padding = '0')
         {
             return Valor.ToString().PadLeft(padleft, padding);
+        }
+        public static string String(this long? valor, int padleft = 0, char padding = '0')
+        {
+            return valor != null ? valor.Value.String(padleft, padding) : null;
         }
         public static double Double(this decimal? valor)
         {
@@ -101,10 +126,14 @@ namespace Conexoes
                 return valor_final_retorno;
             }
         }
+
+        public static long? LongNull<T>(this T comp)
+        {
+            if(comp == null) { return null; }
+            return comp.Long();
+        }
         public static long Long<T>(this T comp)
         {
-
-
             if (comp == null) { return 0; }
             string comps = comp.ToString();
             if (comps == "") { comps = "0"; }
@@ -116,7 +145,6 @@ namespace Conexoes
             {
                 return 0;
             }
-
         }
         public static int Int<T>(this T comp)
         {
