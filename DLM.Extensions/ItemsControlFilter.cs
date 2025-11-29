@@ -79,8 +79,9 @@ namespace Conexoes
             SetFilter();
         }
 
-        public ItemsControlFilter(ItemsControl _list, TextBox filter)
+        public ItemsControlFilter(ItemsControl _list, TextBox filter, string msg)
         {
+            this.Msg = msg;
             this._filter = filter;
             this._list = _list;
 

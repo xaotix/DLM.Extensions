@@ -44,9 +44,9 @@ namespace Conexoes
             }
         }
 
-        public static ItemsControlFilter SetFiltro(this System.Windows.Controls.ItemsControl _lista, System.Windows.Controls.TextBox _filtro)
+        public static ItemsControlFilter SetFiltro(this System.Windows.Controls.ItemsControl _lista, System.Windows.Controls.TextBox _filtro, string msg = "Pesquisar...")
         {
-            var filtro = new ItemsControlFilter(_lista, _filtro);
+            var filtro = new ItemsControlFilter(_lista, _filtro, msg);
             return filtro;
         }
         public static void ResetSource(this System.Windows.Controls.DataGrid grid)

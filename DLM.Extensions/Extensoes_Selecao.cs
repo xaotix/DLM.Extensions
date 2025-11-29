@@ -83,13 +83,13 @@ namespace Conexoes
             menu.Lista.ItemsSource = objetos;
             menu.ShowDialog();
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo)
+        public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo, string msg_filtro = "Filtrar...")
         {
             if (Objetos.Count == 0 | Objetos == null)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            var selecionar = new JanelaSelecionar(false, Selecao);
+            var selecionar = new JanelaSelecionar(false, Selecao, msg_filtro);
             selecionar.Title = titulo;
             selecionar._lista.ItemsSource = Objetos;
             selecionar.ShowDialog();
@@ -214,11 +214,11 @@ namespace Conexoes
         {
             return ListaSelecionarVarios(Objetos, false, true, titulo, window, Selecionar);
         }
-        private static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null)
+        private static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
         {
             if (!duas_colunas)
             {
-                var mm = new JanelaSelecionar(selecionar_tudo);
+                var mm = new JanelaSelecionar(selecionar_tudo,null,msg_filtro);
                 mm.Title = Titulo;
                 mm._lista.ItemsSource = Objetos;
                 mm._lista.SelectionMode = System.Windows.Controls.SelectionMode.Extended;
@@ -246,7 +246,7 @@ namespace Conexoes
                 {
                     selecao = Selecionar.Cast<object>().ToList();
                 }
-                var mm = new JanelaAdicionarDuasColunas(Objetos.Cast<object>().ToList(), selecao);
+                var mm = new JanelaAdicionarDuasColunas(Objetos.Cast<object>().ToList(), selecao, msg_filtro);
                 mm.Title = Titulo;
                 if (window != null)
                 {
