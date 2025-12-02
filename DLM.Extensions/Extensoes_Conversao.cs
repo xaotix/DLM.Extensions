@@ -67,6 +67,11 @@ namespace Conexoes
         {
             return new RSStr(valor.Double(decimais));
         }
+        public static double? DoubleNull<T>(this T comp, int decimais = 8)
+        {
+            if (comp == null) { return null; }
+            return comp.Double(decimais);
+        }
         public static double Double<T>(this T comp, int Decimais = 8)
         {
             bool negativo = false;
@@ -126,7 +131,11 @@ namespace Conexoes
                 return valor_final_retorno;
             }
         }
-
+        public static decimal? DecimalNull<T>(this T comp, int decimais = 8)
+        {
+            if(comp == null) { return null; }
+            return comp.Decimal(decimais);
+        }
         public static decimal Decimal<T>(this T comp, int Decimais = 8)
         {
             bool negativo = false;
@@ -187,10 +196,20 @@ namespace Conexoes
             }
         }
 
+
         public static long? LongNull<T>(this T comp)
         {
             if (comp == null) { return null; }
-            return comp.Long();
+            string comps = comp.ToString();
+            if (comps == "") { comps = "0"; }
+            try
+            {
+                return Convert.ToInt64(Math.Ceiling(Double(comps.Replace(".", ","))));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         public static long Long<T>(this T comp)
         {
@@ -204,6 +223,21 @@ namespace Conexoes
             catch (Exception)
             {
                 return 0;
+            }
+        }
+        public static int? IntNull<T>(this T comp)
+        {
+
+            if (comp == null) { return null; }
+            string comps = comp.ToString().Replace(" ", "");
+            if (comps == "") { comps = "0"; }
+            try
+            {
+                return Convert.ToInt32(Math.Ceiling(Double(comps.Replace(".", ","))));
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
         public static int Int<T>(this T comp)
@@ -236,6 +270,11 @@ namespace Conexoes
         public static int Int(this double vlr)
         {
             return (int)vlr.Round(0);
+        }
+        public static bool? BooleanNull<T>(this T obj)
+        {
+            if(obj == null) { return null; }
+            return obj.Boolean();
         }
         public static bool Boolean<T>(this T obj)
         {

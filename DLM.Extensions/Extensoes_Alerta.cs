@@ -86,9 +86,13 @@ namespace Conexoes
                 $"======================================================================================" +
                 $"\n");
         }
-        public static void Alerta(this Exception ex, string descricao = "", [CallerMemberName] String propertyName = "")
+        public static void Alerta(this Exception ex, string descricao = "", [CallerMemberName] String propertyName = "", string logfile = null)
         {
-            DLM.log.Log(ex, null, propertyName, descricao);
+            if(propertyName == null)
+            {
+                propertyName = "Erro";
+            }
+            DLM.log.Log(ex, logfile, propertyName, descricao);
             var texto = ex.GetTexto();
             var desc = $"{descricao} [{propertyName}]";
             texto.JanelaErro(desc);

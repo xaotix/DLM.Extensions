@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Conexoes
@@ -23,6 +24,10 @@ namespace Conexoes
             return pastas.Select(x => x.Endereco).Distinct().ToList();
         }
 
+        public static bool CopiarPara(this Arquivo arquivo, string pasta_ou_arquivo, bool msg = false, bool log = true)
+        {
+            return arquivo.Endereco.Copiar(pasta_ou_arquivo,msg,log);
+        }
 
         public static List<string> GetPastas(this string raiz, string busca = "*", SearchOption opcao = SearchOption.TopDirectoryOnly)
         {
@@ -201,27 +206,27 @@ namespace Conexoes
             var nPasta = new Arquivo(Arquivo, pai);
             return nPasta;
         }
-        public static Pasta AsPasta(this string Diretorio, Pasta pai = null)
+        public static Pasta AsPasta(this string dir, Pasta pai = null)
         {
-            Diretorio = Diretorio.ToUpper();
-            if (Diretorio.EndsW($@"{Cfg.Init.EXT_Obra}\"))
+            dir = dir.ToUpper();
+            if (dir.EndsW($@"{Cfg.Init.EXT_Obra}\"))
             {
-                var n_Pasta = new ObraTecnoMetal(Diretorio, pai);
+                var n_Pasta = new ObraTecnoMetal(dir, pai);
                 return n_Pasta;
             }
-            else if (Diretorio.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (dir.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
             {
-                var n_Pasta = new PedidoTecnoMetal(Diretorio, (ObraTecnoMetal)pai);
+                var n_Pasta = new PedidoTecnoMetal(dir, (ObraTecnoMetal)pai);
                 return n_Pasta;
             }
-            else if (Diretorio.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (dir.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
             {
-                var n_Pasta = new SubEtapaTecnoMetal(Diretorio, (PedidoTecnoMetal)pai);
+                var n_Pasta = new SubEtapaTecnoMetal(dir, (PedidoTecnoMetal)pai);
                 return n_Pasta;
             }
             else
             {
-                var n_Pasta = new Pasta(Diretorio, pai);
+                var n_Pasta = new Pasta(dir, pai);
                 return n_Pasta;
             }
         }
@@ -295,7 +300,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta($"Erro ao tentar criar a pasta \n\n{pasta}");
+                ex.Alerta($"Erro ao tentar criar a pasta_ou_arquivo \n\n{pasta}");
                 return "";
             }
 

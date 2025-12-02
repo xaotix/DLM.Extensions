@@ -144,7 +144,7 @@ namespace Conexoes
             if (Valor == null) { return; }
             var prop = Propriedade.PropertyType.Name.ToLower();
 
-            if (Propriedade.CanWrite && Propriedade.CanRead 
+            if (Propriedade.CanWrite && Propriedade.CanRead
                 //&&
                 //(
                 //Propriedade.PropertyType.IsEnum |
@@ -170,32 +170,46 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor.RSStr(20));
                 }
+                else if ((prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.Double")))
+                {
+                    Propriedade.SetValue(Objeto, Valor.DoubleNull(20));
+                }
                 else if (prop == "double")
                 {
                     Propriedade.SetValue(Objeto, Valor.Double(20));
+                }
+                else if ((prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.Decimal")))
+                {
+                    Propriedade.SetValue(Objeto, Valor.DecimalNull(20));
                 }
                 else if (prop == "decimal")
                 {
                     Propriedade.SetValue(Objeto, Valor.Decimal(20));
                 }
-
+                else if (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.Boolean"))
+                {
+                    Propriedade.SetValue(Objeto, Valor.BooleanNull());
+                }
                 else if (prop == "boolean")
                 {
                     Propriedade.SetValue(Objeto, Valor.Boolean());
                 }
-                else if (prop.StartsW("long"))
+                else if (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.Int64"))
+                {
+                    Propriedade.SetValue(Objeto, Valor.LongNull());
+                }
+                else if (prop.StartsW("long") || prop.StartsW("int64"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Long());
                 }
-                else if (prop.StartsW("int64"))
+                else if ((prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.Int32")))
                 {
-                    Propriedade.SetValue(Objeto, Valor.Long());
+                    Propriedade.SetValue(Objeto, Valor.IntNull());
                 }
                 else if (prop.StartsW("int"))
                 {
                     Propriedade.SetValue(Objeto, Valor.Int());
                 }
-
                 else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.DateTime")))
                 {
                     Propriedade.SetValue(Objeto, Valor.DataNull());
@@ -524,7 +538,14 @@ namespace Conexoes
                 else if (prop == "nullable`1")
                 {
                     var full = l.PropertyType.FullName;
-                    if (full.Contem("System.DateTime", "System.Double", "System.Decimal"))
+                    if (full.Contem(
+                        "System.DateTime",
+                        "System.Double",
+                        "System.Decimal",
+                        "System.Int16",
+                        "System.Int32",
+                        "System.Int64"
+                        ))
                     {
                         retorno.Add(l);
                     }
