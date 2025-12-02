@@ -144,16 +144,18 @@ namespace Conexoes
             if (Valor == null) { return; }
             var prop = Propriedade.PropertyType.Name.ToLower();
 
-            if (Propriedade.CanWrite && Propriedade.CanRead &&
-                (
-                Propriedade.PropertyType.IsEnum |
-                Propriedade.PropertyType.IsPrimitive |
-                prop == "string" |
-                prop == nameof(PesoStr).ToLower() |
-                prop == nameof(RSStr).ToLower() |
-                prop == "datetime" |
-                prop == "nullable`1"
-                )
+            if (Propriedade.CanWrite && Propriedade.CanRead 
+                //&&
+                //(
+                //Propriedade.PropertyType.IsEnum |
+                //Propriedade.PropertyType.IsPrimitive |
+                //prop == "string" |
+                //prop == nameof(PesoStr).ToLower() |
+                //prop == nameof(RSStr).ToLower() |
+                //prop == "datetime" |
+                //prop == "decimal" |
+                //prop == "nullable`1"
+                //)
                 )
             {
                 if (prop == "string")
@@ -168,9 +170,13 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor.RSStr(20));
                 }
-                else if (prop == "double" | prop == "decimal")
+                else if (prop == "double")
                 {
                     Propriedade.SetValue(Objeto, Valor.Double(20));
+                }
+                else if (prop == "decimal")
+                {
+                    Propriedade.SetValue(Objeto, Valor.Decimal(20));
                 }
 
                 else if (prop == "boolean")
@@ -511,7 +517,7 @@ namespace Conexoes
             foreach (var l in lista)
             {
                 var prop = l.PropertyType.Name.ToLower();
-                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "pesostr" | prop == "rsstr")
+                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "decimal" | prop == "pesostr" | prop == "rsstr")
                 {
                     retorno.Add(l);
                 }

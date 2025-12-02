@@ -36,7 +36,7 @@ namespace Conexoes
         }
         public static string String(this DateTime? Valor, string format = "dd/MM/yyyy")
         {
-           return Valor!=null?Valor.Value.ToString(format) : "";
+            return Valor != null ? Valor.Value.ToString(format) : "";
         }
         public static string String(this string Valor, int padleft = 0, char padding = '0')
         {
@@ -127,9 +127,69 @@ namespace Conexoes
             }
         }
 
+        public static decimal Decimal<T>(this T comp, int Decimais = 8)
+        {
+            bool negativo = false;
+            decimal valor_final_retorno = 0;
+            if (comp == null)
+            {
+                return 0;
+            }
+
+            if (Decimais > 10)
+            {
+                Decimais = 10;
+            }
+
+            if (comp is decimal or double or float)
+            {
+                return Convert.ToDecimal(comp).Round(Decimais);
+            }
+
+            decimal valor_final = 0;
+            try
+            {
+                var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
+                if (str.EndsW("-") | str.StartsW("-"))
+                {
+                    str = str.TrimEnd('-').TrimStart("-");
+                    negativo = true;
+                }
+
+                if (decimal.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._BR, out valor_final))
+                {
+
+                }
+                else if (decimal.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._US, out valor_final))
+                {
+                }
+            }
+            catch (Exception)
+            {
+            }
+            valor_final_retorno = valor_final;
+            if (Decimais >= 0)
+            {
+                if ((valor_final % 1) != 0)
+                {
+                    valor_final_retorno = valor_final.Round(Decimais);
+                }
+            }
+
+
+            if (negativo)
+            {
+                return -valor_final_retorno;
+            }
+            else
+            {
+                return valor_final_retorno;
+            }
+        }
+
         public static long? LongNull<T>(this T comp)
         {
-            if(comp == null) { return null; }
+            if (comp == null) { return null; }
             return comp.Long();
         }
         public static long Long<T>(this T comp)
@@ -214,7 +274,7 @@ namespace Conexoes
                     {
                         if (vlr.Contem(@"/", "-"))
                         {
-                            var pcs = vlr.Split('/', '-', ' ').Select(x => x.Int()).ToList();
+                            var pcs = vlr.Split('/', '-', ' ', 'T').Select(x => x.Int()).ToList();
                             if (pcs.Count() >= 3)
                             {
                                 var dt = new DateTime();
@@ -229,13 +289,13 @@ namespace Conexoes
 
                                 if (pcs.Count() > 3)
                                 {
-                                    var times = vlr.Split(' ');
+                                    var times = vlr.Split(' ', 'T');
                                     if (times.Count() > 1)
                                     {
                                         if (times[1].Replace(":", "").Replace("0", "").LenghtStr() > 0)
                                         {
-                                            var hrs = times[1].Split(':');
-                                            if (hrs.Count() == 3)
+                                            var hrs = times[1].Split(':', '-');
+                                            if (hrs.Count() >= 3)
                                             {
                                                 dt = dt.AddHours(hrs[0].Double());
                                                 dt = dt.AddMinutes(hrs[1].Double());
