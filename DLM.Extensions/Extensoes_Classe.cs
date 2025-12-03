@@ -267,7 +267,7 @@ namespace Conexoes
                     }
 
                 }
-                else if (arquivo.Contem("?xml"))
+                else if (arquivo.Contem("?xml", "xmlns="))
                 {
                     xml = arquivo;
                 }
@@ -441,7 +441,7 @@ namespace Conexoes
                     {
                         continue;
                     }
-                    var linha = new DLM.db.Linha();
+                    var celulas = new List<Celula>();
                     var props = item.GetPropriedades().Filter();
 
                     for (int c = 0; c < colunas.Count; c++)
@@ -455,7 +455,8 @@ namespace Conexoes
 
                             try
                             {
-                                cel.Set(igual.GetValue(item));
+                                var vlr = igual.GetValue(item);
+                                cel.Set(vlr);
                             }
                             catch (Exception)
                             {
@@ -470,9 +471,9 @@ namespace Conexoes
                             cel.StringFormat = ccel.StringFormat;
                         }
 
-                        linha.Add(cel);
+                        celulas.Add(cel);
                     }
-                    retorno.Add(linha);
+                    retorno.Add(new Linha(celulas));
                 }
 
             }

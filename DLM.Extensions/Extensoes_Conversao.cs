@@ -21,7 +21,6 @@ namespace Conexoes
                 return Valor.ToString().PadLeft(padleft, padding);
             }
         }
-
         public static string String(this int Valor, int padleft = 0, char padding = '0')
         {
             return Valor.ToString().PadLeft(padleft, padding);
@@ -67,77 +66,42 @@ namespace Conexoes
         {
             return new RSStr(valor.Double(decimais));
         }
-        public static double? DoubleNull<T>(this T comp, int decimais = 8)
-        {
-            if (comp == null) { return null; }
-            return comp.Double(decimais);
-        }
-        public static double Double<T>(this T comp, int Decimais = 8)
-        {
-            bool negativo = false;
-            double valor_final_retorno = 0;
-            if (comp == null)
-            {
-                return 0;
-            }
-
-            if (Decimais > 10)
-            {
-                Decimais = 10;
-            }
-
-            if (comp is decimal or double or float)
-            {
-                return Convert.ToDouble(comp).Round(Decimais);
-            }
-
-            double valor_final = 0;
-            try
-            {
-                var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsW("-") | str.StartsW("-"))
-                {
-                    str = str.TrimEnd('-').TrimStart("-");
-                    negativo = true;
-                }
-
-                if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._BR, out valor_final))
-                {
-
-                }
-                else if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._US, out valor_final))
-                {
-                }
-            }
-            catch (Exception)
-            {
-            }
-            valor_final_retorno = valor_final;
-            if (Decimais >= 0)
-            {
-                if ((valor_final % 1) != 0)
-                {
-                    valor_final_retorno = valor_final.Round(Decimais);
-                }
-            }
-
-
-            if (negativo)
-            {
-                return -valor_final_retorno;
-            }
-            else
-            {
-                return valor_final_retorno;
-            }
-        }
         public static decimal? DecimalNull<T>(this T comp, int decimais = 8)
         {
-            if(comp == null) { return null; }
+            if (comp is decimal)
+            {
+                var vlr = Convert.ToDecimal(comp);
+                if (vlr == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return vlr;
+                }
+            }
+            if (comp == null) { return null; }
             return comp.Decimal(decimais);
         }
         public static decimal Decimal<T>(this T comp, int Decimais = 8)
         {
+            if(comp is null) { return 0; }
+            if (comp is decimal?)
+            {
+                var cmp = comp as decimal?;
+                if (cmp != null)
+                {
+                    return cmp.Value.Round(Decimais);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else if (comp is decimal)
+            {
+                return Convert.ToDecimal(comp).Round(Decimais);
+            }
             bool negativo = false;
             decimal valor_final_retorno = 0;
             if (comp == null)
@@ -199,17 +163,21 @@ namespace Conexoes
 
         public static long? LongNull<T>(this T comp)
         {
+            if (comp is long)
+            {
+                var vlr = Convert.ToInt64(comp);
+                if (vlr == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return vlr;
+                }
+            }
+
             if (comp == null) { return null; }
-            string comps = comp.ToString();
-            if (comps == "") { comps = "0"; }
-            try
-            {
-                return Convert.ToInt64(Math.Ceiling(Double(comps.Replace(".", ","))));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return comp.Long();
         }
         public static long Long<T>(this T comp)
         {
@@ -225,24 +193,27 @@ namespace Conexoes
                 return 0;
             }
         }
+
         public static int? IntNull<T>(this T comp)
         {
+            if (comp is int)
+            {
+                var vlr = Convert.ToInt32(comp);
+                if (vlr == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return vlr;
+                }
+            }
 
             if (comp == null) { return null; }
-            string comps = comp.ToString().Replace(" ", "");
-            if (comps == "") { comps = "0"; }
-            try
-            {
-                return Convert.ToInt32(Math.Ceiling(Double(comps.Replace(".", ","))));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return comp.Int();
         }
         public static int Int<T>(this T comp)
         {
-
             if (comp == null) { return 0; }
             string comps = comp.ToString().Replace(" ", "");
             if (comps == "") { comps = "0"; }
@@ -253,6 +224,106 @@ namespace Conexoes
             catch (Exception)
             {
                 return 0;
+            }
+        }
+        public static int Int(this double vlr)
+        {
+            return (int)vlr.Round(0);
+        }
+
+        public static double? DoubleNull<T>(this T comp, int decimais = 8)
+        {
+            if (comp is double)
+            {
+                var vlr = Convert.ToDouble(comp);
+                if (vlr == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return vlr;
+                }
+            }
+
+            if (comp == null) { return null; }
+            return comp.Double(decimais);
+        }
+        public static double Double<T>(this T comp, int Decimais = 8)
+        {
+            if (comp == null) { return 0; }
+            if (comp is double?)
+            {
+                var cmp = comp as double?;
+                if (cmp != null)
+                {
+                    return cmp.Value.Round(Decimais);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else if (comp is double)
+            {
+                return Convert.ToDouble(comp).Round(Decimais);
+            }
+
+            bool negativo = false;
+            double valor_final_retorno = 0;
+            if (comp == null)
+            {
+                return 0;
+            }
+
+            if (Decimais > 10)
+            {
+                Decimais = 10;
+            }
+
+            if (comp is decimal or double or float)
+            {
+                return Convert.ToDouble(comp).Round(Decimais);
+            }
+
+            double valor_final = 0;
+            try
+            {
+                var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
+                if (str.EndsW("-") | str.StartsW("-"))
+                {
+                    str = str.TrimEnd('-').TrimStart("-");
+                    negativo = true;
+                }
+
+                if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._BR, out valor_final))
+                {
+
+                }
+                else if (double.TryParse(str, System.Globalization.NumberStyles.Float, Utilz._US, out valor_final))
+                {
+                }
+            }
+            catch (Exception)
+            {
+            }
+            valor_final_retorno = valor_final;
+            if (Decimais >= 0)
+            {
+                if ((valor_final % 1) != 0)
+                {
+                    valor_final_retorno = valor_final.Round(Decimais);
+                }
+            }
+
+
+            if (negativo)
+            {
+                return -valor_final_retorno;
+            }
+            else
+            {
+                return valor_final_retorno;
             }
         }
         public static double Double(this double vlr, int decimais = 0)
@@ -267,13 +338,14 @@ namespace Conexoes
         {
             return (double)vlr;
         }
-        public static int Int(this double vlr)
+        public static double Double(this XElement x, int decimais = 9)
         {
-            return (int)vlr.Round(0);
+            return x.Value.ToString().Double(decimais);
         }
+
         public static bool? BooleanNull<T>(this T obj)
         {
-            if(obj == null) { return null; }
+            if (obj == null) { return null; }
             return obj.Boolean();
         }
         public static bool Boolean<T>(this T obj)
@@ -293,6 +365,7 @@ namespace Conexoes
             }
             return false;
         }
+
         public static DateTime? DataNull<T>(this T Data)
         {
             if (Data != null)
@@ -302,7 +375,6 @@ namespace Conexoes
 
             return null;
         }
-
         public static DateTime? GetDateTime(this string vlr)
         {
             if (vlr.LenghtStr() > 0)
@@ -357,7 +429,6 @@ namespace Conexoes
             }
             return null;
         }
-
         public static DateTime Data<T>(this T Data)
         {
             if (Data != null)
@@ -371,10 +442,6 @@ namespace Conexoes
             }
 
             return Cfg.Init.DataDummy;
-        }
-        public static double Double(this XElement x, int decimais = 9)
-        {
-            return x.Value.ToString().Double(decimais);
         }
 
     }

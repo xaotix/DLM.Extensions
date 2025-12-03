@@ -193,11 +193,11 @@ namespace Conexoes
             }
             return retorno;
         }
-        public static bool GerarExcel(this Tabela tabela, string destino = null, bool cabecalho = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string arq_template = null, bool girar_cabecalho = false)
+        public static bool GerarExcel(this Tabela tabela, string destino = null, bool add_cab = true, bool abrir = false, bool congelar = true, bool set_null_if_zero = true, string arq_template = null, bool girar_cabecalho = false, bool auto_fit = true)
         {
-            return GerarExcel(new List<Tabela> { tabela }, destino, cabecalho, abrir, congelar, zerar_se_null, arq_template, girar_cabecalho);
+            return GerarExcel(new List<Tabela> { tabela }, destino, add_cab, abrir, congelar, set_null_if_zero, arq_template, girar_cabecalho, false, auto_fit);
         }
-        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool add_cab = true, bool abrir = false, bool congelar = true, bool zerar_se_null = true, string arq_template = null, bool gira_cab = false, bool unir_abas = false)
+        public static bool GerarExcel(this List<Tabela> tabelas, string destino = null, bool add_cab = true, bool abrir = false, bool congelar = true, bool set_null_if_zero = true, string arq_template = null, bool gira_cab = false, bool unir_abas = false, bool auto_fit = true)
         {
             if (destino == null)
             {
@@ -217,7 +217,7 @@ namespace Conexoes
                 {
                     if (tabelas.Count > 0)
                     {
-                        if (zerar_se_null)
+                        if (set_null_if_zero)
                         {
                             foreach (var aba in tabelas)
                             {
@@ -368,14 +368,15 @@ namespace Conexoes
                                 {
                                     try
                                     {
-                                        var range = aba.Cells[l_cab, c_cab, l_cab, c_cab + colunas.Count];
+                                        var range_header = aba.Cells[l_cab, c_cab, l_cab, c_cab + colunas.Count];
 
-                                        range.AutoFilter = true;
-                                        range.Style.WrapText = false;
-                                        range.Style.ShrinkToFit = true;
-                                        range.Style.TextRotation = gira_cab ? 90 : 0;
+                                        range_header.AutoFilter = true;
+                                        range_header.Style.WrapText = false;
+                                        range_header.Style.ShrinkToFit = true;
+                                        range_header.Style.TextRotation = gira_cab ? 90 : 0;
 
-                                        SetBackground(range);
+                                        SetBackground(range_header);
+
                                         aba.Cells[aba.Dimension.Address].AutoFitColumns();
                                     }
                                     catch (Exception)

@@ -400,6 +400,36 @@ namespace Conexoes
                 return Regex.Replace(Nome, "[^0-9.]", "");
             }
         }
+        public static string NormalizarTexto(this string texto)
+        {
+            if (texto.IsNullOrEmpty())
+                return texto;
+
+            // Normaliza para decompor caracteres acentuados (ex: "é" -> "e" + acento)
+            string sem_acento = texto.Normalize(NormalizationForm.FormD);
+
+            // Remove marcas de acento (diacríticos)
+            var sem_acento_diacritico = new StringBuilder();
+            foreach (var c in sem_acento)
+            {
+                var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (categoria != UnicodeCategory.NonSpacingMark)
+                    sem_acento_diacritico.Append(c);
+            }
+
+            // Normaliza de volta para FormC
+            string retorno = sem_acento_diacritico.ToString().Normalize(NormalizationForm.FormC);
+
+            // Remove caracteres especiais, deixando apenas letras, números e espaço
+            //semAcento = Regex.Replace(semAcento, @"[^a-zA-Z0-9\s]", "");
+            retorno = Regex.Replace(retorno, @"[^a-zA-Z0-9\s/\\]", "");
+
+            // Substitui múltiplos espaços por apenas um
+            retorno = Regex.Replace(retorno, @"\s+", " ");
+
+            // Remove espaços iniciais
+            return retorno.TrimStart().TrimEnd();
+        }
         public static string RemoverCaracteresEspeciais(this string texto)
         {
             if (texto == null) { return null; }

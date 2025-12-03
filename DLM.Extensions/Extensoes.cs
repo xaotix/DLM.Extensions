@@ -22,8 +22,106 @@ using System.Windows.Media.Imaging;
 
 namespace Conexoes
 {
+    public class DiffObj
+    {
+        public override string ToString()
+        {
+            return $"{Propriedade} -> [Valor1={Valor1}] [Valor2={Valor2}]";
+        }
+        public string Propriedade { get; set; }
+        public string Valor1Str => Valor1 != null ? Valor1.ToString() : "null";
+        public string Valor2Str => Valor2 != null ? Valor2.ToString() : "null";
+
+        public object Valor1 { get; set; }
+        public object Valor2 { get; set; }
+        public DiffObj() { }
+    }
     public static class Extensoes
     {
+
+        public static List<DiffObj> CompararObjetos(this object obj1, object obj2, string prefixo = "")
+        {
+            var diferentes = new List<DiffObj>();
+            if (obj1 == null && obj2 == null) return diferentes;
+
+            var tipo = obj1 != null ? obj1.GetType() : obj2.GetType();
+            foreach (var prop in tipo.GetProperties())
+            {
+                try
+                {
+                    // Ignora propriedades indexadas
+                    if (prop.GetIndexParameters().Length > 0)
+                        continue;
+
+                    var valor1 = obj1 != null ? prop.GetValue(obj1) : null;
+                    var valor2 = obj2 != null ? prop.GetValue(obj2) : null;
+
+                    string caminho = string.IsNullOrEmpty(prefixo) ? prop.Name : $"{prefixo}.{prop.Name}";
+
+                    if (valor1 == null && valor2 == null) continue;
+
+                    var propType = prop.PropertyType;
+
+                    // 🔎 Tratamento especial para listas/coleções
+                    if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propType)
+                        && propType != typeof(string))
+                    {
+                        var enum1 = valor1 as System.Collections.IEnumerable;
+                        var enum2 = valor2 as System.Collections.IEnumerable;
+
+                        var list1 = enum1?.Cast<object>().ToList() ?? new List<object>();
+                        var list2 = enum2?.Cast<object>().ToList() ?? new List<object>();
+
+                        int maxCount = Math.Max(list1.Count, list2.Count);
+                        for (int i = 0; i < maxCount; i++)
+                        {
+                            var item1 = i < list1.Count ? list1[i] : null;
+                            var item2 = i < list2.Count ? list2[i] : null;
+
+                            string itemPath = $"{caminho}[{i}]";
+
+                            if (item1 == null && item2 == null) continue;
+
+                            // recursão para objetos internos
+                            if (item1 != null && item2 != null &&
+                                !item1.GetType().IsPrimitive &&
+                                !(item1 is string) &&
+                                !(item1 is DateTime) &&
+                                !(item1 is DateTimeOffset))
+                            {
+                                diferentes.AddRange(CompararObjetos(item1, item2, itemPath));
+                            }
+                            else if (!Equals(item1, item2))
+                            {
+                                diferentes.Add(new DiffObj { Propriedade = itemPath, Valor1 = item1, Valor2 = item2 });
+                            }
+                        }
+                    }
+                    else if (
+                        !propType.IsPrimitive &&
+                        propType != typeof(string) &&
+                        propType != typeof(DateTimeOffset) &&
+                        propType != typeof(DateTimeOffset?) &&
+                        propType != typeof(DateTime?) &&
+                        propType != typeof(DateTime)
+                    )
+                    {
+                        // recursão para objetos internos
+                        diferentes.AddRange(CompararObjetos(valor1, valor2, caminho));
+                    }
+                    else if (!Equals(valor1, valor2))
+                    {
+                        diferentes.Add(new DiffObj { Propriedade = caminho, Valor1 = valor1, Valor2 = valor2 });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.Alerta();
+                }
+            }
+            return diferentes;
+        }
+
         public static string GetBackgroundColorHex(this ExcelRange celula)
         {
             try
