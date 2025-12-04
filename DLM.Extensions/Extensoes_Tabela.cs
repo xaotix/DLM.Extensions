@@ -360,8 +360,9 @@ namespace Conexoes
                                             nCel = tabela[l][colunas[c]];
                                         }
 
-                                        aba.Cells[l + l0, c + c0].SetValor(nCel);
+                                        aba.Cells[l0, c + c0].SetValor(nCel);
                                     }
+                                    l0++;
                                 }
 
                                 if (add_cab && arq_template == null)
@@ -377,7 +378,11 @@ namespace Conexoes
 
                                         SetBackground(range_header);
 
-                                        aba.Cells[aba.Dimension.Address].AutoFitColumns();
+                                        if (auto_fit)
+                                        {
+                                            aba.Cells[aba.Dimension.Address].AutoFitColumns();
+                                            //range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                        }
                                     }
                                     catch (Exception)
                                     {
@@ -418,7 +423,6 @@ namespace Conexoes
         {
             range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightCyan);
-            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
             range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
             range.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
             range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
@@ -428,7 +432,7 @@ namespace Conexoes
 
         public static void SetValor(this ExcelRange excel_cel, Celula cel)
         {
-            if (!cel.Valor.IsNullOrEmpty())
+            if (cel.Valor!=null)
             {
                 switch (cel.Tipo)
                 {
@@ -442,7 +446,7 @@ namespace Conexoes
                         break;
                     case Celula_Tipo_Valor.Decimal:
                     case Celula_Tipo_Valor.Moeda:
-                        excel_cel.Value = cel.Double();
+                        excel_cel.Value = cel.DoubleNull();
                         break;
                     case Celula_Tipo_Valor.Inteiro:
                         var valor = cel.Long();

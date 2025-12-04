@@ -160,18 +160,20 @@ namespace Conexoes
                     if (str == ",") { return true; }
                     if (str == "'") { return true; }
                 }
-                else if (str.LenghtStr() == 2)
-                {
-                    if (str == "[]") { return true; }
-                    else if (str == "{}") { return true; }
-                }
+                
                 else
                 {
                     if (str == "0.0") { return true; }
+                    if (str == "0,0") { return true; }
                     if (str.Replace("0000-00-00", "").LenghtStr() == 0) { return true; }
                     if (str.Replace("0", "").Replace(",","").Replace(".","").LenghtStr() == 0) { return true; }
                     if (str == "0.0d") { return true; }
                 }
+            }
+            else if (str.LenghtStr() == 2)
+            {
+                if (str == "[]") { return true; }
+                else if (str == "{}") { return true; }
             }
             return false;
         }
@@ -422,7 +424,7 @@ namespace Conexoes
 
             // Remove caracteres especiais, deixando apenas letras, números e espaço
             //semAcento = Regex.Replace(semAcento, @"[^a-zA-Z0-9\s]", "");
-            retorno = Regex.Replace(retorno, @"[^a-zA-Z0-9\s/\\]", "");
+            retorno = Regex.Replace(retorno, @"[^a-zA-Z0-9\s/\\,.!?%*+-]", "");
 
             // Substitui múltiplos espaços por apenas um
             retorno = Regex.Replace(retorno, @"\s+", " ");
