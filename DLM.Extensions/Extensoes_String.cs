@@ -8,6 +8,20 @@ namespace Conexoes
 {
     public static class Extensoes_HTML
     {
+        public static string ToStringNull(this object item)
+        {
+            if (item.IsNullOrEmpty())
+            {
+                return null;
+            }
+            else if (item is Celula)
+            {
+                var valor = ((Celula)item).Valor;
+
+                return valor.NotNullOrEmpty() ? valor : null;
+            }
+            return item.ToString();
+        }
         public static string RemoverAtributoHTML(this string html, string atributo, string substituto = "")
         {
             // Regex para encontrar o atributo dentro de qualquer tag
@@ -160,13 +174,13 @@ namespace Conexoes
                     if (str == ",") { return true; }
                     if (str == "'") { return true; }
                 }
-                
+
                 else
                 {
                     if (str == "0.0") { return true; }
                     if (str == "0,0") { return true; }
                     if (str.Replace("0000-00-00", "").LenghtStr() == 0) { return true; }
-                    if (str.Replace("0", "").Replace(",","").Replace(".","").LenghtStr() == 0) { return true; }
+                    if (str.Replace("0", "").Replace(",", "").Replace(".", "").LenghtStr() == 0) { return true; }
                     if (str == "0.0d") { return true; }
                 }
             }
@@ -262,6 +276,21 @@ namespace Conexoes
                     {
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+        public static bool EqualsOneItem(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (value == text)
+                {
+                    return true;
                 }
             }
             return false;
@@ -402,11 +431,26 @@ namespace Conexoes
                 return Regex.Replace(Nome, "[^0-9.]", "");
             }
         }
+        /// <summary>
+        /// Remove os espaços iniciais e finais
+        /// </summary>
+        /// <param name="texto"></param>
+        /// <returns></returns>
+        public static string TrimTxt(this string texto)
+        {
+            if(texto.NotNullOrEmpty())
+            {
+                return texto.TrimStart().TrimEnd();
+            }
+            return texto;
+        }
         public static string NormalizarTexto(this string texto)
         {
             if (texto.IsNullOrEmpty())
                 return texto;
 
+            texto = texto.Replace("°", "o");
+            texto = Regex.Replace(texto, "[\u2010-\u2015\u2212\u00AD]", "-");
             // Normaliza para decompor caracteres acentuados (ex: "é" -> "e" + acento)
             string sem_acento = texto.Normalize(NormalizationForm.FormD);
 
@@ -424,7 +468,7 @@ namespace Conexoes
 
             // Remove caracteres especiais, deixando apenas letras, números e espaço
             //semAcento = Regex.Replace(semAcento, @"[^a-zA-Z0-9\s]", "");
-            retorno = Regex.Replace(retorno, @"[^a-zA-Z0-9\s/\\,.!?%*+-]", "");
+            retorno = Regex.Replace(retorno, @"[^a-zA-Z0-9\s/\\,.!?%*+-:@]", "");
 
             // Substitui múltiplos espaços por apenas um
             retorno = Regex.Replace(retorno, @"\s+", " ");

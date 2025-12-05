@@ -155,24 +155,34 @@ namespace Conexoes
         }
         public static void Exportar(this System.Windows.Controls.DataGrid lista)
         {
-            if (lista == null) { return; }
-            try
+            lista.GetTabela().GerarExcel(null, true, true);
+        }
+
+        private static Tabela GetTabela(this DataGrid lista, string nome = null)
+        {
+            var tabela = new Tabela(nome!=null?nome:lista.Name);
+
+            var linhas = lista.Items.Cast<DataRowView>().ToList().Select(x => x.Row).ToList().Select(x => x.ItemArray.ToList()).ToList();
+
+            if (linhas.Count > 0)
             {
-                List<object> itens = lista.Items.Cast<object>().ToList();
-                if (itens.Count > 0)
+
+                var headers = lista.Items.Cast<DataRowView>().ToList()[0].Row.Table.Columns
+                            .Cast<DataColumn>().Select(c => (object)c.ColumnName).ToList();
+
+
+                foreach (var linha in linhas)
                 {
-                    var destino = "xlsx".SalvarArquivo();
-                    if (destino == null) { return; }
-                    itens.GetTabela(true).GerarExcel(destino, true, true);
+                    var l = new Linha();
+                    for (var i = 0; i < linha.Count; i++)
+                    {
+                        l.Add(headers[i].ToString(), linha[i]);
+                    }
+                    tabela.Add(l);
                 }
-
-            }
-            catch (Exception ex)
-            {
-                ex.Alerta();
             }
 
-            return;
+            return tabela;
         }
 
         public static void AlimentaDataGrid(this System.Windows.Forms.DataGridView lista, Tabela tabela)

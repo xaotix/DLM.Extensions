@@ -369,7 +369,7 @@ namespace Conexoes
                                 {
                                     try
                                     {
-                                        var range_header = aba.Cells[l_cab, c_cab, l_cab, c_cab + colunas.Count];
+                                        var range_header = aba.Cells[l_cab, c_cab, l_cab, colunas.Count];
 
                                         range_header.AutoFilter = true;
                                         range_header.Style.WrapText = false;

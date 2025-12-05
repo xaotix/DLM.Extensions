@@ -816,24 +816,24 @@ namespace Conexoes
 
 
 
-        public static void CriarCopiaRev(this string Arquivo)
+        public static void CriarCopiaRev(this string arquivo, int c = 1)
         {
-            if (Arquivo.Exists())
+            if (arquivo.Exists())
             {
-                var pasta = Arquivo.getPasta();
+                var pasta = arquivo.getPasta();
                 pasta = pasta.GetSubPasta("REVISOES");
-                var nome = Arquivo.getNome();
-                var extensao = Arquivo.getExtensao();
+                var nome = arquivo.getNome();
+                var extensao = arquivo.getExtensao();
                 var rv = "R00";
-                var arquivo = $"{pasta}{nome}.{rv}.{extensao}";
-                int c = 1;
-                while (arquivo.Exists())
+                var n_arquivo = $"{pasta}{nome}.{rv}.{extensao}";
+
+                while (n_arquivo.Exists())
                 {
                     c++;
-                    arquivo = $"{pasta}{nome}.R{c.String(2)}{extensao}";
+                    n_arquivo = $"{pasta}{nome}.R{c.String(2)}{extensao}";
                 }
                 /*Cria uma cópia do arquivo atual*/
-                Arquivo.Copiar(arquivo);
+                arquivo.Copiar(n_arquivo);
             }
         }
 

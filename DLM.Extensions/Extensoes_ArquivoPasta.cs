@@ -1,5 +1,6 @@
 ﻿using DLM;
 using DLM.ini;
+using DLM.sap.Avanco;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,11 @@ using System.Runtime.InteropServices;
 
 namespace Conexoes
 {
+
     public static class Extensoes_ArquivoPasta
     {
-        [DllImport("User32.dll")]
-        private static extern int SetForegroundWindow(IntPtr point);
+
+
         public static List<string> ToString(this List<Arquivo> arquivos)
         {
             return arquivos.Select(x => x.Endereco.ToUpper()).Distinct().ToList();
@@ -26,7 +28,7 @@ namespace Conexoes
 
         public static bool CopiarPara(this Arquivo arquivo, string pasta_ou_arquivo, bool msg = false, bool log = true)
         {
-            return arquivo.Endereco.Copiar(pasta_ou_arquivo,msg,log);
+            return arquivo.Endereco.Copiar(pasta_ou_arquivo, msg, log);
         }
 
         public static List<string> GetPastas(this string raiz, string busca = "*", SearchOption opcao = SearchOption.TopDirectoryOnly)
@@ -68,54 +70,48 @@ namespace Conexoes
             {
                 if (arquivo_backup == null)
                 {
-                    arquivo_backup = $"{Pasta.Endereco.GetSubPasta(Cfg.Init.PASTA_BACKUPS)}R00.ZIP";
+                    arquivo_backup = $@"{Pasta.Endereco.GetSubPasta(Cfg.Init.PASTA_BACKUPS)}\{Pasta.Nome}_R00.ZIP";
                 }
                 Utilz.FazerBackup(arquivo_backup, arquivos);
             }
 
-            foreach (var p in arquivos)
+            foreach (var arq in arquivos)
             {
-                if (!p.Endereco.Delete())
+                if (!arq.Endereco.Delete())
                 {
                     return false;
                 }
             }
             return true;
         }
-        public static string getUpdir(this string dir)
+
+
+
+
+
+        public static bool Delete(this string arq_ou_pasta, bool msg = true, bool log = false)
         {
-            if (dir.LenghtStr() == 0) { return ""; }
-            if (!dir.EndsW(@"\")) { dir = dir + @"\"; }
-            return System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\")).ToUpper();
-        }
-
-
-
-
-        public static bool Delete(this string Arquivo_Ou_Pasta, bool msg = true, bool log = false)
-        {
-            if (!Arquivo_Ou_Pasta.Exists())
+            if (!arq_ou_pasta.Exists())
             {
                 return true;
             }
-            if (Arquivo_Ou_Pasta == null)
+            if (arq_ou_pasta == null)
             {
                 return true;
             }
 
         retentar:
-            if (Arquivo_Ou_Pasta.E_Diretorio())
+            if (arq_ou_pasta.E_Diretorio())
             {
                 try
                 {
-                    Directory.Delete(Arquivo_Ou_Pasta, true);
+                    Directory.Delete(arq_ou_pasta, true);
                 }
                 catch (Exception ex)
                 {
-                    var erro = ex.Message + "\n\n\n" + ex.StackTrace;
                     if (msg)
                     {
-                        if ($"Não foi possível excluir o arquivo. \nTentar Novamente?\n{ex.Message}".Pergunta())
+                        if ($"Não foi possível excluir o arquivo {arq_ou_pasta}. \nTentar Novamente?\n\n{ex.Message}".Pergunta())
                         {
                             goto retentar;
                         }
@@ -127,11 +123,11 @@ namespace Conexoes
                 }
             }
 
-            if (Arquivo_Ou_Pasta.Exists())
+            if (arq_ou_pasta.Exists())
             {
                 try
                 {
-                    File.Delete(Arquivo_Ou_Pasta);
+                    File.Delete(arq_ou_pasta);
                 }
                 catch (Exception ex)
                 {
@@ -150,7 +146,7 @@ namespace Conexoes
                     return false;
                 }
             }
-            return !Arquivo_Ou_Pasta.Exists();
+            return !arq_ou_pasta.Exists();
         }
 
         public static List<Arquivo> GetArquivos(this Pasta Raiz, string chave = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
@@ -209,25 +205,33 @@ namespace Conexoes
         public static Pasta AsPasta(this string dir, Pasta pai = null)
         {
             dir = dir.ToUpper();
-            if (dir.EndsW($@"{Cfg.Init.EXT_Obra}\"))
+            if (dir.Replace(@"\","").Replace(@"/","").EndsW($@".{Cfg.Init.EXT_Obra}"))
             {
-                var n_Pasta = new ObraTecnoMetal(dir, pai);
-                return n_Pasta;
+                return new ObraTecnoMetal(dir, pai);
             }
-            else if (dir.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (dir.Replace(@"\", "").Replace(@"/", "").EndsW($@".{Cfg.Init.EXT_Pedido}"))
             {
-                var n_Pasta = new PedidoTecnoMetal(dir, (ObraTecnoMetal)pai);
-                return n_Pasta;
+                return new PedidoTecnoMetal(dir, (ObraTecnoMetal)pai);
             }
-            else if (dir.EndsW($@"{Cfg.Init.EXT_Pedido}\"))
+            else if (dir.Replace(@"\", "").Replace(@"/", "").EndsW($@".{Cfg.Init.EXT_Etapa}"))
             {
-                var n_Pasta = new SubEtapaTecnoMetal(dir, (PedidoTecnoMetal)pai);
-                return n_Pasta;
+                if(pai is not PedidoTecnoMetal && pai !=null)
+                {
+                    $"Pasta inválida: Pasta de etapa dentro de outra pasta de etapa:\n{dir}".Alerta();
+                    return new Pasta(dir, pai);
+                }
+                else if(pai !=null)
+                {
+                    return new SubEtapaTecnoMetal(dir, (PedidoTecnoMetal)pai);
+                }
+                else
+                {
+                    return new Pasta(dir);
+                }
             }
             else
             {
-                var n_Pasta = new Pasta(dir, pai);
-                return n_Pasta;
+                return new Pasta(dir, pai);
             }
         }
         public static void Copiar(this List<Conexoes.Arquivo> arquivos, string destino, bool mensagem = false, bool log = false)
@@ -307,6 +311,10 @@ namespace Conexoes
             return pasta;
         }
 
+        public static Pasta GetSubPasta(this Pasta root, string folder, bool create = true)
+        {
+            return new Pasta(root.Endereco.GetSubPasta(folder, create), root);
+        }
         public static string GetSubPasta(this string root, string folder, bool create = true)
         {
             var novo_dir = root.ToUpper();
@@ -353,11 +361,11 @@ namespace Conexoes
             return novo_dir;
         }
 
-        public static void CriarPastas(this string root, params string[] folders)
+        public static void CriarPastas(this string root, params string[] pastas)
         {
-            foreach (string Pasta in folders)
+            foreach (string pasta in pastas)
             {
-                root.GetSubPasta(Pasta);
+                root.GetSubPasta(pasta);
             }
         }
 
@@ -420,7 +428,7 @@ namespace Conexoes
             {
                 if (mensagem)
                 {
-                    $"Arquivo de origem não econtrado. {arquivo_origem}".Alerta();
+                    $"arquivo de origem não econtrado. {arquivo_origem}".Alerta();
                 }
 
                 return false;
@@ -435,7 +443,7 @@ namespace Conexoes
             }
 
             string arquivo_destino = Destino_Pasta_Ou_Arquivo;
-            if (E_Diretorio(arquivo_destino))
+            if (arquivo_destino.E_Diretorio())
             {
                 if (arquivo_destino.Contem(@"\") && !arquivo_destino.EndsW(@"\"))
                 {
@@ -543,272 +551,11 @@ namespace Conexoes
         }
 
 
-        public static bool Abrir(this Conexoes.Arquivo Arquivo, string argumentos = "", bool wait = false)
-        {
-            if (Arquivo == null) { return false; }
-            return new List<Arquivo> { Arquivo }.Abrir(argumentos, wait);
-        }
-
-        public static void Abrir(this List<string> Arquivos)
-        {
-            Arquivos.Select(x => new Conexoes.Arquivo(x)).ToList().Abrir();
-        }
-        public static bool Abrir(this List<Conexoes.Arquivo> Arquivos, string argumentos = "", bool wait = false)
-        {
-
-            var cams = new List<Arquivo>();
-            var dwgs = new List<Arquivo>();
-            var dxfs = new List<Arquivo>();
-            var outros = new List<Arquivo>();
-
-            foreach (var arq in Arquivos)
-            {
-                if (arq.Extensao == Cfg.Init.EXT_DWG)
-                {
-                    dwgs.Add(arq);
-                }
-                else if (arq.Extensao == Cfg.Init.EXT_CAM)
-                {
-                    cams.Add(arq);
-                }
-                else if (arq.Extensao == Cfg.Init.EXT_DXF)
-                {
-                    dxfs.Add(arq);
-                }
-                else
-                {
-                    outros.Add(arq);
-                }
-            }
 
 
-            if (cams.Count > 0)
-            {
-                var exe = Cfg_User.Init.EXE_TecnoPlot;
-                if (!exe.Exists())
-                {
-                    exe = Cfg_User.Init.EXE_TecnoPlot2;
-                }
-                if (!exe.Exists())
-                {
-                    "Arquivo executável do TecnoPlot não encontrado.".Alerta();
-                    return false;
-                }
-                DLM.vars.TecnoMetalVars.SalvarTecnoPlot(cams);
 
 
-                var process = Process.Start(exe);
 
-                process.WaitForInputIdle();
-                if (process != null)
-                {
-                    System.Threading.Thread.Sleep(500);
-
-                    IntPtr h = process.MainWindowHandle;
-                    SetForegroundWindow(h);
-                    System.Windows.Forms.SendKeys.SendWait("{PGUP}");
-                    System.Windows.Forms.SendKeys.SendWait("{+}");
-                    System.Windows.Forms.SendKeys.SendWait("{+}");
-                }
-            }
-            if (dwgs.Count > 0 && Buff.Pedido != null && Buff.Obra != null)
-            {
-                string cfg = $"5|0|{Cfg.Init.DIR_RAIZ_OBRAS.Replace(@"\", "")}|1|{Conexoes.Buff.Obra.Nome}|2|{Conexoes.Buff.Pedido.Nome}|5|{dwgs[0]}.DWG|";
-                INI.Set(Cfg_User.Init.TecIniWindows, "Tecno2005", "WorksManagerCurrentStatus", cfg);
-            }
-
-
-            foreach (var arq in dwgs)
-            {
-                var script = TecnoMetalVars.GetScriptTecnoMetal();
-                TecnoMetalVars.MatarExecutavelChato();
-                if (arq.Endereco.StartsW(Cfg.Init.DIR_RAIZ_OBRAS))
-                {
-                    Open(Cfg_User.Init.AcadApp, $"{script} {Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
-                }
-                else
-                {
-                    Open(Cfg_User.Init.AcadApp, $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
-                }
-                TecnoMetalVars.MatarExecutavelChato();
-            }
-            foreach (var arq in dxfs)
-            {
-                var script = TecnoMetalVars.GetScriptTecnoMetal();
-                TecnoMetalVars.MatarExecutavelChato();
-                Open(Cfg_User.Init.AcadApp, $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
-                TecnoMetalVars.MatarExecutavelChato();
-            }
-
-            foreach (var arq in outros)
-            {
-                Open(arq.Endereco, "", wait);
-            }
-
-            return true;
-        }
-
-        public static bool Abrir(this string arquivo_ou_pasta, string argumentos = "", bool wait = false)
-        {
-            if (arquivo_ou_pasta.Contem("%"))
-            {
-                arquivo_ou_pasta = Environment.ExpandEnvironmentVariables(arquivo_ou_pasta);
-            }
-            if (E_Diretorio(arquivo_ou_pasta))
-            {
-                if (Directory.Exists(arquivo_ou_pasta))
-                {
-                    Process.Start(arquivo_ou_pasta, argumentos);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return arquivo_ou_pasta.AsArquivo().Abrir(argumentos, wait);
-
-            }
-        }
-
-        public static void AbrirAsAdmin(this string appToRun, string arguments = "")
-        {
-            string domain = "medabil.com.br";
-            string username = "med.admin";
-            string usernameFull = $@"{domain}\{username}";
-            //string password = "K@$p3rsk1@2023!@";
-            string password = "B1td3f3nd3r@2025@";
-            var workingDirectory = Environment.ExpandEnvironmentVariables(@"%windir%\system32");
-
-            string filePath = Environment.ExpandEnvironmentVariables(@"%windir%\system32\cmd.exe");
-
-            if (appToRun.Contem("%"))
-            {
-                appToRun = Environment.ExpandEnvironmentVariables(appToRun);
-            }
-
-            string fullCommand = $"/C start \"\" \"{appToRun}\" {arguments}";
-            if (arguments == "" | arguments == null)
-            {
-                fullCommand = $"/C start \"\" \"{appToRun}\"";
-            }
-            try
-            {
-
-
-                var startInfo = new ProcessStartInfo
-                {
-                    UserName = username,
-                    Password = ConvertToSecureString(password),
-                    Domain = domain,
-                    WorkingDirectory = workingDirectory,
-                    FileName = filePath,
-                    Arguments = fullCommand,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    LoadUserProfile = true,
-                    CreateNoWindow = false
-                };
-
-                using (var process = new Process { StartInfo = startInfo })
-                {
-                    process.Start();
-                }
-            }
-            catch (Exception ex1)
-            {
-                ex1.Log();
-                try
-                {
-                    var startInfo = new ProcessStartInfo
-                    {
-                        Password = ConvertToSecureString("M&nfds14"),
-                        UserName = "administrador",
-                        WorkingDirectory = workingDirectory,
-                        FileName = filePath,
-                        Arguments = fullCommand,
-                        UseShellExecute = false,
-                        RedirectStandardError = true,
-                        RedirectStandardOutput = true,
-                        LoadUserProfile = true,
-                        CreateNoWindow = false
-                    };
-
-                    using (var process = new Process { StartInfo = startInfo })
-                    {
-                        process.Start();
-                    }
-                }
-                catch (Exception ex2)
-                {
-                    ex2.Log();
-                }
-            }
-        }
-        static System.Security.SecureString ConvertToSecureString(string password)
-        {
-            var securePassword = new System.Security.SecureString();
-            foreach (char c in password)
-            {
-                securePassword.AppendChar(c);
-            }
-            securePassword.MakeReadOnly();
-            return securePassword;
-        }
-
-        private static bool Open(string arquivo, string argumentos = "", bool wait = false)
-        {
-            if (!arquivo.Exists())
-            {
-                return false;
-            }
-            if (arquivo.E_Diretorio())
-            {
-                try
-                {
-                    if (Directory.Exists(arquivo))
-                    {
-                        Process.Start(arquivo, argumentos);
-                        return true;
-                    }
-
-                }
-                catch (Exception ex2)
-                {
-
-                    ex2.Alerta(arquivo);
-                    return false;
-                }
-
-            }
-            else
-            {
-                try
-                {
-                    if (File.Exists(arquivo))
-                    {
-                        var process = Process.Start(arquivo, argumentos);
-                        if (wait)
-                        {
-                            process.WaitForExit();
-                        }
-                        return true;
-                    }
-
-                }
-                catch (Exception ex2)
-                {
-                    ex2.Alerta(arquivo);
-                    return false;
-                }
-            }
-
-
-            return false;
-        }
 
 
         public static bool EMaisRecente(this string arquivo_atual, string arquivo_a_comparar)
@@ -823,6 +570,117 @@ namespace Conexoes
             return f1.LastWriteTime > f2.LastWriteTime;
         }
 
+        public static string getPasta(this string arq)
+        {
+            if (arq == null) { return ""; }
+            if (arq.Length == 0) { return ""; }
+            try
+            {
+                var retorno = System.IO.Path.GetDirectoryName(arq);
+
+                if (!retorno.EndsW(@"\") && retorno.Contem(@"\"))
+                {
+                    retorno += @"\";
+                }
+                else if (!retorno.EndsW(@"/") && retorno.Contem(@"/"))
+                {
+                    retorno += @"/";
+                }
+                return retorno;
+            }
+            catch (Exception)
+            {
+            }
+            return "";
+        }
+        public static string getNomePasta(this string arq)
+        {
+            var pasta = arq.getPasta();
+            if (pasta.Length > 0)
+            {
+                var items = pasta.Replace(@"\", "|").Replace(@"/", "|").Replace("||", "|").Split('|').ToList().FindAll(x => x != "");
+                if (items.Count > 0)
+                {
+                    return items.Last();
+                }
+            }
+
+            return "";
+        }
+        public static string getEdicaoComHoras(this string arq)
+        {
+            var dt = Cfg.Init.DataDummy;
+            if (arq == null) { return ""; }
+            if (arq.Length == 0) { return ""; }
+            if (File.Exists(arq))
+            {
+                dt = File.GetLastWriteTime(arq);
+            }
+            return dt.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+        public static string getEdicao(this string arq)
+        {
+            if (arq == null) { return ""; }
+            if (arq.Length == 0) { return ""; }
+
+            if (arq.Exists())
+            {
+                return System.IO.File.GetLastWriteTime(arq).ToString(Cfg.Init.DATE_FORMAT);
+            }
+            return "";
+        }
+        public static string getExtensao(this string arq, bool upper = true)
+        {
+            if (arq == null) { return ""; }
+            if (arq.Length == 0) { return ""; }
+            var ext = System.IO.Path.GetExtension(arq).TrimStart('.');
+
+            return upper ? ext.ToUpper() : ext;
+        }
+        public static string getNome(this string arq, bool extensao = false)
+        {
+            if (arq == null) { return ""; }
+            if (arq.Length == 0) { return ""; }
+            try
+            {
+                if (arq.E_Diretorio())
+                {
+                    var ret = arq;
+                    ret = ret.TrimEnd(@"/".ToCharArray());
+                    ret = ret.TrimEnd(@"\".ToCharArray());
+                    ret = ret.Replace(@"\", "|").Replace(@"/", "|");
+                    ret = ret.Split('|').ToList().Last();
+                    return ret;
+                }
+                else
+                {
+                    var nome_arq = System.IO.Path.GetFileNameWithoutExtension(arq);
+                    if (nome_arq == "")
+                    {
+                        return System.IO.Path.GetDirectoryName(arq);
+                    }
+                    if (extensao)
+                    {
+                        var ext = arq.getExtensao(false);
+                        return $"{nome_arq}.{ext}";
+                    }
+
+                    return nome_arq;
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+            return arq;
+        }
+        public static string getUpdir(this string dir)
+        {
+            if (dir.LenghtStr() == 0) { return ""; }
+            if (!dir.EndsW(@"\")) { dir = dir + @"\"; }
+            return System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\")).ToUpper();
+        }
 
     }
 }
