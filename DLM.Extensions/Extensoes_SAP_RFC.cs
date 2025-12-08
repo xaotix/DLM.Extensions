@@ -116,13 +116,14 @@ namespace Conexoes
             {
                 valorstr = valor.ToString();
                 var type = value.Metadata.DataType;
+                type_cel = Celula_Tipo_Valor.Texto;
                 switch (type)
                 {
-                    case RfcDataType.XSTRING:
                     case RfcDataType.BYTE:
                         type_cel = Celula_Tipo_Valor.Texto;
                         break;
 
+                    case RfcDataType.XSTRING:
                     case RfcDataType.STRING:
                         type_cel = Celula_Tipo_Valor.Texto;
                         break;
@@ -167,6 +168,7 @@ namespace Conexoes
                         break;
 
                     case RfcDataType.TIME:
+                        type_cel = Celula_Tipo_Valor.Hora;
                         break;
 
                     case RfcDataType.STRUCTURE:

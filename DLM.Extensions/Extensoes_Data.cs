@@ -8,9 +8,13 @@ namespace Conexoes
 {
     public static class Extensoes_Data
     {
-        public static string ToString(this DateTime? data, string stringformat = "yyyy.MM.dd")
+        public static bool ActualMonth(this DateTime data)
         {
-            return data != null ? data.Value.ToString(stringformat) : "";
+            return data.Month == DateTime.Now.Month && data.Year == DateTime.Now.Year;
+        }
+        public static bool ActualMonth(this DateTime? data)
+        {
+            return data != null ? data.Value.ActualMonth() : false;
         }
         public static string DayOfWeek(this DateTime data)
         {
@@ -195,7 +199,7 @@ namespace Conexoes
             var dt = inicio.FirstDayOfMonth();
             while (dt < fim)
             {
-                retorno.Add(dt.ToString("MM/yyyy"));
+                retorno.Add(dt.String("MM/yyyy"));
                 dt = dt.AddMonths(1);
             }
 

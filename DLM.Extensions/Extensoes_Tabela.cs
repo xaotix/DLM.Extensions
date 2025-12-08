@@ -296,7 +296,7 @@ namespace Conexoes
                                     }
                                     l0++;
                                     l0++;
-                                    var tit = aba.Cells[l0, c0, l0, c0 + colunas.Count];
+                                    var tit = aba.Cells[l0, c0, l0, colunas.Count];
                                     tit.Merge = true;
                                     tit.SetValor(new Celula("ABA", tabela.Nome));
                                     tit.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
@@ -461,6 +461,16 @@ namespace Conexoes
                         excel_cel.Value = cel.Boolean() ? "SIM" : "";
                         break;
                     case Celula_Tipo_Valor.NULL:
+                        break;
+                    case Celula_Tipo_Valor.Hora:
+                        excel_cel.Value = cel.TimeSpanNull();
+                        excel_cel.Style.Numberformat.Format = "hh:mm:ss";
+                        break;
+                    case Celula_Tipo_Valor.Binario:
+                        break;
+                    case Celula_Tipo_Valor.Array:
+                        break;
+                    case Celula_Tipo_Valor.Desconhecido:
                         break;
                 }
 

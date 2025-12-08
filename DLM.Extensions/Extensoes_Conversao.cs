@@ -29,13 +29,17 @@ namespace Conexoes
         {
             return Valor != null ? Valor.Value.String(format) : "";
         }
-        public static string String(this DateTimeOffset Valor, string format = "dd/MM/yyyy")
+        public static string String(this DateTimeOffset valor, string format = "dd/MM/yyyy")
         {
-            return Valor != null ? Valor.ToString(format) : "";
+            return valor != null ? valor.ToString(format) : "";
         }
-        public static string String(this DateTime? Valor, string format = "dd/MM/yyyy")
+        public static string String(this DateTime? valor, string format = "dd/MM/yyyy")
         {
-            return Valor != null ? Valor.Value.ToString(format) : "";
+            return valor != null ? valor.Value.ToString(format) : "";
+        }
+        public static string String(this DateTime valor, string format = "dd/MM/yyyy")
+        {
+            return valor != null ? valor.ToString(format) : "";
         }
         public static string String(this string Valor, int padleft = 0, char padding = '0')
         {
@@ -85,7 +89,7 @@ namespace Conexoes
         }
         public static decimal Decimal<T>(this T comp, int Decimais = 8)
         {
-            if(comp is null) { return 0; }
+            if (comp is null) { return 0; }
             if (comp is decimal?)
             {
                 var cmp = comp as decimal?;
@@ -229,6 +233,28 @@ namespace Conexoes
         public static int Int(this double vlr)
         {
             return (int)vlr.Round(0);
+        }
+
+        public static TimeSpan? TimeSpanNull(this string valor)
+        {
+            if (valor.IsNullOrEmpty())
+            {
+                return null;
+            }
+
+            var valores = valor.Split(':');
+            if (valores.Count() >= 3)
+            {
+                return new TimeSpan(valores[0].Int(), valores[1].Int(), valores[2].Int());
+            }
+            else if (valor.Long() > 0)
+            {
+                return new TimeSpan(valor.Long());
+            }
+
+
+
+            return null;
         }
 
         public static double? DoubleNull<T>(this T comp, int decimais = 8)

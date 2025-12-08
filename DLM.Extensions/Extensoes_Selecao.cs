@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Conexoes
 {
@@ -83,46 +84,19 @@ namespace Conexoes
             menu.Lista.ItemsSource = objetos;
             menu.ShowDialog();
         }
-        public static T ListaSelecionar<T>(this List<T> Objetos, T Selecao, string titulo, string msg_filtro = "Filtrar...")
-        {
-            if (Objetos.Count == 0 | Objetos == null)
-            {
-                return (T)Convert.ChangeType(null, typeof(T));
-            }
-            var selecionar = new JanelaSelecionar(false, Selecao, msg_filtro);
-            selecionar.Title = titulo;
-            selecionar._lista.ItemsSource = Objetos;
-            selecionar.ShowDialog();
 
-            if (selecionar.DialogResult.HasValue && selecionar.DialogResult.Value)
-            {
-                if (selecionar._lista.SelectedItem != null)
-                {
-                    return (T)Convert.ChangeType(selecionar._lista.SelectedItem, typeof(T));
-                }
-            }
-            try
-            {
-                return (T)Convert.ChangeType(null, typeof(T));
-            }
-            catch (Exception)
-            {
-                return Objetos[0];
-            }
-        }
-        public static T ListaSelecionar<T>(this List<T> Objetos, string titulo = "Selecione", string pesquisa = "")
+        public static T ListaSelecionar<T>(this List<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default)
         {
-            if (Objetos == null)
+            if (objs == null)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            else if (Objetos.Count == 0)
+            else if (objs.Count == 0)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            var selecionar = new JanelaSelecionar(false);
+            var selecionar = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao);
             selecionar.Title = titulo;
-            selecionar._lista.ItemsSource = Objetos;
             selecionar._filtro.Text = pesquisa;
             selecionar.ShowDialog();
 
@@ -140,7 +114,7 @@ namespace Conexoes
             }
             catch (Exception)
             {
-                return Objetos[0];
+                return objs[0];
             }
         }
         public static Cor_RAL ListaSelecionar(this List<Cor_RAL> Objetos)
@@ -214,13 +188,12 @@ namespace Conexoes
         {
             return ListaSelecionarVarios(Objetos, false, true, titulo, window, Selecionar);
         }
-        private static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
+        private static List<T> ListaSelecionarVarios<T>(this List<T> objs, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
         {
             if (!duas_colunas)
             {
-                var mm = new JanelaSelecionar(selecionar_tudo,null,msg_filtro);
+                var mm = new JanelaSelecionar(selecionar_tudo, objs.Cast<object>().ToList(), null, msg_filtro);
                 mm.Title = Titulo;
-                mm._lista.ItemsSource = Objetos;
                 mm._lista.SelectionMode = System.Windows.Controls.SelectionMode.Extended;
 
 
@@ -246,7 +219,7 @@ namespace Conexoes
                 {
                     selecao = Selecionar.Cast<object>().ToList();
                 }
-                var mm = new JanelaAdicionarDuasColunas(Objetos.Cast<object>().ToList(), selecao, msg_filtro);
+                var mm = new JanelaAdicionarDuasColunas(objs.Cast<object>().ToList(), selecao, msg_filtro);
                 mm.Title = Titulo;
                 if (window != null)
                 {
@@ -269,21 +242,32 @@ namespace Conexoes
 
         public static void Selecionar<T>(this System.Windows.Controls.ListView view, T objeto)
         {
-            if (objeto == null) { return; }
-            try
+            if (objeto == null) return;
+
+            if(view.SelectedItems.Count>0)
             {
                 view.SelectedItems.Clear();
-                view.SelectedItem = objeto;
-                view.UpdateLayout();
-                if (view.SelectedItem != null)
-                {
-                    view.ScrollIntoView(view.SelectedItem);
-                }
             }
-            catch (Exception)
+            view.SelectedItem = objeto;
+            view.UpdateLayout();
+
+            if (view.SelectedItem == null)
+                return;
+
+            // Rola até o item
+            view.ScrollIntoView(view.SelectedItem);
+            view.UpdateLayout();
+
+            // Obtém o container visual do item
+            var item = view.ItemContainerGenerator.ContainerFromItem(view.SelectedItem) as ListViewItem;
+
+            if (item != null)
             {
+                item.Focus();           // Dá foco no item
+                item.IsSelected = true; // Garante seleção
             }
         }
+
         public static void Selecionar<T>(this System.Windows.Controls.DataGrid view, T objeto)
         {
             if (objeto == null) { return; }

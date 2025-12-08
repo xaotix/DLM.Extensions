@@ -616,7 +616,7 @@ namespace Conexoes
             {
                 dt = File.GetLastWriteTime(arq);
             }
-            return dt.ToString("dd/MM/yyyy HH:mm:ss");
+            return dt.String("dd/MM/yyyy HH:mm:ss");
         }
         public static string getEdicao(this string arq)
         {
@@ -625,7 +625,7 @@ namespace Conexoes
 
             if (arq.Exists())
             {
-                return System.IO.File.GetLastWriteTime(arq).ToString(Cfg.Init.DATE_FORMAT);
+                return System.IO.File.GetLastWriteTime(arq).String(Cfg.Init.DATE_FORMAT);
             }
             return "";
         }
