@@ -29,8 +29,8 @@ namespace Conexoes
             return $"{Propriedade} -> [Valor1={Valor1}] [Valor2={Valor2}]";
         }
         public string Propriedade { get; set; }
-        public string Valor1Str => Valor1 != null ? Valor1.ToString() : "null";
-        public string Valor2Str => Valor2 != null ? Valor2.ToString() : "null";
+        public string Valor1Str => Valor1 != null ? Valor1.ToString().Esquerda(40, true) : "null";
+        public string Valor2Str => Valor2 != null ? Valor2.ToString().Esquerda(40,true) : "null";
 
         public object Valor1 { get; set; }
         public object Valor2 { get; set; }
@@ -100,6 +100,16 @@ namespace Conexoes
                     else if (
                         !propType.IsPrimitive &&
                         propType != typeof(string) &&
+                        propType != typeof(decimal) &&
+                        propType != typeof(decimal?) &&
+                        propType != typeof(double) &&
+                        propType != typeof(double?) &&
+                        propType != typeof(int) &&
+                        propType != typeof(int?) &&
+                        propType != typeof(long) &&
+                        propType != typeof(long?) &&
+                        propType != typeof(bool) &&
+                        propType != typeof(bool?) &&
                         propType != typeof(DateTimeOffset) &&
                         propType != typeof(DateTimeOffset?) &&
                         propType != typeof(DateTime?) &&

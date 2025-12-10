@@ -10,6 +10,10 @@ namespace Conexoes
 {
     public static class Extensoes_Conversao
     {
+        public static string String(this double? value, int decimais, int padleft = 0, char padding = '0')
+        {
+            return value != null ? value.Value.String(decimais, padleft, padding) : null;
+        }
         public static string String(this double Valor, int decimais, int padleft = 0, char padding = '0')
         {
             if (decimais >= 0)
@@ -41,8 +45,13 @@ namespace Conexoes
         {
             return valor != null ? valor.ToString(format) : "";
         }
+
         public static string String(this string Valor, int padleft = 0, char padding = '0')
         {
+            if (Valor == null)
+            {
+                Valor = "";
+            }
             return Valor.ToString().PadLeft(padleft, padding);
         }
         public static string String<TEnum>(this TEnum value, int padLeft = 0, char padding = '0') where TEnum : Enum
@@ -351,6 +360,11 @@ namespace Conexoes
             {
                 return valor_final_retorno;
             }
+        }
+
+        public static double MultiploProximo(this double valor, double multiplo)
+        {
+            return Math.Round(valor / multiplo) * multiplo;
         }
         public static double Double(this double vlr, int decimais = 0)
         {

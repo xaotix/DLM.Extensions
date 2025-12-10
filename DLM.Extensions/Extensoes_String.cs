@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Markup;
 
 namespace Conexoes
 {
@@ -295,6 +296,21 @@ namespace Conexoes
             }
             return false;
         }
+        public static bool NotEquals(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (value == text)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public static bool Contem(this string text, params string[] values)
         {
             if (text.IsNullOrEmpty(false))
@@ -312,6 +328,40 @@ namespace Conexoes
                 }
             }
             return false;
+        }
+        public static string Remover(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return text;
+            }
+            foreach(var value in values)
+            {
+                if(!value.IsNullOrEmpty(false))
+                {
+                    text = text.Replace(value, "");
+                }
+            }
+
+            return text;
+        }
+        public static bool ContemTudo(this string text, params string[] values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (!value.IsNullOrEmpty(false))
+                {
+                    if (!text.TrimStart().Contains(value))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
         public static string getLetra(this int indice)
         {
