@@ -88,7 +88,7 @@ namespace Conexoes
         }
         public static void Alerta(this Exception ex, string descricao = "", [CallerMemberName] String propertyName = "", string logfile = null)
         {
-            if(propertyName == null)
+            if (propertyName == null)
             {
                 propertyName = "Erro";
             }
@@ -114,7 +114,7 @@ namespace Conexoes
         }
         public static void JanelaTexto(this string mensagem, string titulo = "", bool top = true, bool pendurar = false)
         {
-            VerTextoReport mm = new VerTextoReport();
+            var mm = new VerTextoReport();
             mm.texto.Text = mensagem;
             mm.Title = titulo;
             mm.Topmost = top;
@@ -147,15 +147,10 @@ namespace Conexoes
         public static string GetTexto(this Exception ex, string adicional = "")
         {
             return adicional +
-                $"Erro:\n" +
-                ex.Message +
-
-                "\n\n\n\nCódigo:\n" +
-                ex.Source +
-                "\nFrame:\n" +
-                ex.StackTrace +
-                "\nMensagem Interna:\n" +
-                ex.InnerException;
+                (ex.Message.NotNullOrEmpty() ? $"Erro:\n{ex.Message}" : "") +
+                (ex.Source.NotNullOrEmpty() ? $"\n\nCódigo:\n{ex.Source}" : "") +
+                (ex.StackTrace.NotNullOrEmpty() ? $"\nFrame:\n{ex.StackTrace}" : "") +
+                (ex.InnerException.NotNullOrEmpty() ? $"\nMensagem Interna:\n{ex.InnerException}" : "");
         }
     }
 }

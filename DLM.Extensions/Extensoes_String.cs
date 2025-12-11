@@ -281,7 +281,7 @@ namespace Conexoes
             }
             return false;
         }
-        public static bool EqualsOneItem(this string text, params string[] values)
+        public static bool EqualsOne(this string text, params string[] values)
         {
             if (text.IsNullOrEmpty(false))
             {

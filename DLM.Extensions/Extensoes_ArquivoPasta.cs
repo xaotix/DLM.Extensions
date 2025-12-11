@@ -351,7 +351,7 @@ namespace Conexoes
                     }
                     catch (Exception ex)
                     {
-                        ex.Alerta();
+                        ex.Alerta(novo_dir);
                         return "";
                     }
                 }

@@ -50,7 +50,7 @@ namespace Conexoes
         {
             if (Valor == null)
             {
-                Valor = "";
+                return null;
             }
             return Valor.ToString().PadLeft(padleft, padding);
         }
