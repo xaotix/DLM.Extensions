@@ -700,7 +700,7 @@ namespace Conexoes
             }
             if (p1.Descricao != p2.Descricao)
             {
-                reports.Add(new Report("Descricao Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Descricao));
+                reports.Add(new Report("Obra Divergente", p1.Nome + " - " + p1.Comprimento + " / " + p2.Nome + " - " + p2.Descricao));
             }
 
             foreach (var s in p1.Formato.LIV1.Furacoes.FindAll(x => p2.Formato.LIV1.Furacoes.Find(y =>

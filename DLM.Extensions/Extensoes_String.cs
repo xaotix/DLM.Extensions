@@ -1,12 +1,26 @@
 ﻿using DLM.db;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Markup;
 
 namespace Conexoes
 {
+    public static class Extensoes_Enum
+    {
+        public static string GetDisplayName(this Enum value)
+        {
+            var member = value.GetType().GetMember(value.ToString()).FirstOrDefault();
+            if (member == null)
+                return value.ToString();
+            var attribute = member.GetCustomAttribute<DisplayAttribute>();
+            return attribute?.Name ?? value.ToString();
+        }
+    }
     public static class Extensoes_HTML
     {
         public static string ToStringNull(this object item)
@@ -335,9 +349,9 @@ namespace Conexoes
             {
                 return text;
             }
-            foreach(var value in values)
+            foreach (var value in values)
             {
-                if(!value.IsNullOrEmpty(false))
+                if (!value.IsNullOrEmpty(false))
                 {
                     text = text.Replace(value, "");
                 }
@@ -488,7 +502,7 @@ namespace Conexoes
         /// <returns></returns>
         public static string TrimTxt(this string texto)
         {
-            if(texto.NotNullOrEmpty())
+            if (texto.NotNullOrEmpty())
             {
                 return texto.TrimStart().TrimEnd();
             }
