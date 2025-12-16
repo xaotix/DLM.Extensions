@@ -8,6 +8,14 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static double Negativo(this double valor)
+        {
+            return valor > 0 ? -valor : valor;
+        }
+        public static double? Negativo(this double? valor)
+        {
+            return valor != null ? valor.Value.Negativo() : null;
+        }
         public static DLM.RSStr ToRS(this double value)
         {
             return new DLM.RSStr(value);
