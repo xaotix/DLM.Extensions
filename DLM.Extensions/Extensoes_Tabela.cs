@@ -378,7 +378,7 @@ namespace Conexoes
 
                                         SetBackground(range_header);
 
-                                        if (auto_fit)
+                                        if (auto_fit && l0 < 100000)
                                         {
                                             aba.Cells[aba.Dimension.Address].AutoFitColumns();
                                             //range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
@@ -432,7 +432,7 @@ namespace Conexoes
 
         public static void SetValor(this ExcelRange excel_cel, Celula cel)
         {
-            if (cel.Valor!=null)
+            if (cel.Valor != null)
             {
                 switch (cel.Tipo)
                 {
