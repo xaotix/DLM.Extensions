@@ -88,11 +88,11 @@ namespace Conexoes
                 TecnoMetalVars.MatarExecutavelChato();
                 if (arq.Endereco.StartsW(Cfg.Init.DIR_RAIZ_OBRAS))
                 {
-                    Open(Cfg_User.Init.AcadApp, $"{script} {Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                    Open(Cfg_User.Init.GetCad(), $"{script} {Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
                 }
                 else
                 {
-                    Open(Cfg_User.Init.AcadApp, $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                    Open(Cfg_User.Init.GetCad(), $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
                 }
                 TecnoMetalVars.MatarExecutavelChato();
             }
@@ -100,7 +100,7 @@ namespace Conexoes
             {
                 var script = TecnoMetalVars.GetScriptTecnoMetal();
                 TecnoMetalVars.MatarExecutavelChato();
-                Open(Cfg_User.Init.AcadApp, $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                Open(Cfg_User.Init.GetCad(), $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
                 TecnoMetalVars.MatarExecutavelChato();
             }
 
