@@ -359,6 +359,22 @@ namespace Conexoes
 
             return text;
         }
+        public static string Substituir(this string text, string new_value, params string[] old_values)
+        {
+            if (text.IsNullOrEmpty(false))
+            {
+                return text;
+            }
+            foreach (var value in old_values)
+            {
+                if (!value.IsNullOrEmpty(false))
+                {
+                    text = text.Replace(value, new_value);
+                }
+            }
+
+            return text;
+        }
         public static bool ContemTudo(this string text, params string[] values)
         {
             if (text.IsNullOrEmpty(false))
