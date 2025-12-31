@@ -589,6 +589,9 @@ namespace Conexoes
             {
                 return "";
             }
+
+
+
             var atts = property.DeclaringType.GetCustomAttributes(typeof(MetadataTypeAttribute), true);
             if (atts.Length > 0)
             {
@@ -611,6 +614,19 @@ namespace Conexoes
         }
         private static string GetDataFormatString(this PropertyInfo property)
         {
+            if (property == null) {
+                return "";
+            }
+
+            if (property.PropertyType.Name == nameof(PesoStr))
+            {
+                return "Kg";
+            }
+            else if (property.PropertyType.Name == nameof(RSStr))
+            {
+                return "R$";
+            }
+
             try
             {
                 var displayFormatAttr = property.GetCustomAttribute<DisplayFormatAttribute>();

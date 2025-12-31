@@ -437,7 +437,7 @@ namespace Conexoes
             {
                 return false;
             }
-            foreach (char c in str.ToUpper().Replace(",", "").Replace(".", "").Replace(" ", "").Replace("-", "").Replace("+", "").Replace("E", ""))
+            foreach (char c in str.ToUpper().Remover(",", ".", " ", "-", "+", "E"))
             {
                 if (c < '0' || c > '9')
                     return false;

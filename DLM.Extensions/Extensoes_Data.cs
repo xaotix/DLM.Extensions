@@ -304,6 +304,24 @@ namespace Conexoes
             }
             return null;
         }
+
+        public static DateTime? GetMax(this IEnumerable<DateTime> dateTimes)
+        {
+            return dateTimes.ToList().GetMax();
+        }
+        public static DateTime? GetMax(this IEnumerable<DateTime?> dateTimes)
+        {
+            return dateTimes.ToList().GetMax();
+        }
+
+        public static DateTime? GetMin(this IEnumerable<DateTime> dateTimes)
+        {
+            return dateTimes.ToList().GetMin();
+        }
+        public static DateTime? GetMin(this IEnumerable<DateTime?> dateTimes)
+        {
+            return dateTimes.ToList().GetMin();
+        }
         public static DateTime? GetMax(this List<DateTime?> dateTimes)
         {
             var datas = dateTimes.FindAll(x => x > DLM.vars.Cfg.Init.DataDummy);

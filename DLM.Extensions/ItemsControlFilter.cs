@@ -20,7 +20,7 @@ namespace Conexoes
             {
                 return true;
             }
-            if (String.IsNullOrEmpty(_filter.Text))
+            if (_filter.Text.IsNullOrEmpty())
                 return true;
 
             return item.Contem(_filter.Text);
@@ -38,6 +38,7 @@ namespace Conexoes
                 {
                     return;
                 }
+                
                 else if (_list.ItemsSource != null)
                 {
 

@@ -415,26 +415,26 @@ namespace Conexoes
         public static string RemoverSufixDesmembrado(this string nome)
         {
             var nNome = nome
-                    .Replace("_1", "")
-                    .Replace("_2", "")
-                    .Replace("_3", "")
-                    .Replace("_4", "")
-                    .Replace("_5", "")
-                    .Replace("_6", "")
-                    .Replace("_7", "")
-                    .Replace("_8", "")
-                    .Replace("_9", "")
-                    .Replace("_10", "")
-                    .Replace("_11", "")
-                    .Replace("_12", "")
-                    .Replace("_13", "")
-                    .Replace("_14", "")
-                    .Replace("_15", "")
-                    .Replace("_16", "")
-                    .Replace("_17", "")
-                    .Replace("_18", "")
-                    .Replace("_19", "")
-                    .Replace("_U", "");
+                    .Remover("_1"
+                    , "_2"
+                    , "_3"
+                    ,"_4"
+                    , "_5"
+                    , "_6"
+                    , "_7"
+                    , "_8"
+                    , "_9"
+                    , "_10"
+                    , "_11"
+                    ,"_12"
+                    ,"_13"
+                    ,"_14"
+                    ,"_15"
+                    ,"_16"
+                    ,"_17"
+                    ,"_18"
+                    ,"_19"
+                    ,"_U");
             return nNome;
         }
         public static bool Backup(this string arquivo)
