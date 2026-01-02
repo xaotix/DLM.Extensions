@@ -340,6 +340,10 @@ namespace Conexoes
                         return true;
                     }
                 }
+                else
+                {
+                    return true;
+                }
             }
             return false;
         }
