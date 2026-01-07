@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Utilities.Encoders;
+using System;
 using System.Windows.Media;
 
 namespace Conexoes
@@ -13,6 +14,10 @@ namespace Conexoes
         public static SolidColorBrush Inverter(this SolidColorBrush color)
         {
             return System.Drawing.Color.FromArgb(255 - color.Color.R, 255 - color.Color.G, 255 - color.Color.B).ToBrush();
+        }
+        public static string ToHex(this SolidColorBrush color)
+        {
+            return $"#{color.Color.A:X2}{color.Color.R:X2}{color.Color.G:X2}{color.Color.B:X2}";
         }
         public static SolidColorBrush ToBrush(this System.Drawing.Color Color)
         {

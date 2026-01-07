@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLM;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,6 +9,16 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static RSStr Negativo(this RSStr valor)
+        {
+            if (valor == null) { return default(RSStr); }
+            return new RSStr(valor.Valor.Negativo());
+        }
+        public static RSStr Abs(this RSStr valor)
+        {
+            if (valor == null) { return default(RSStr); }
+            return new RSStr(valor.Valor.Abs());
+        }
         public static double Negativo(this double valor)
         {
             return valor > 0 ? -valor : valor;
