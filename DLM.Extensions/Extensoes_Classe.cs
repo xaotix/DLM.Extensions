@@ -458,7 +458,7 @@ namespace Conexoes
                                 var vlr = igual.GetValue(item);
                                 cel.Set(vlr);
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
 
                             }
