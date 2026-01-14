@@ -379,7 +379,11 @@ namespace Conexoes
         public static TAB_NORMT NORMT(this DLM.cam.NC1 cam, string maktx = "")
         {
             var perfil = cam.GetPerfil();
-            return NORMT(perfil.Tipo, maktx, cam.Nome, cam.Comprimento, perfil.Dobras, perfil.Descricao);
+            if (perfil != null)
+            {
+                return NORMT(perfil.Tipo, maktx, cam.Nome, cam.Comprimento, perfil.Dobras, perfil.Descricao);
+            }
+            return TAB_NORMT._INVALIDO;
         }
         public static TAB_NORMT NORMT(this CAM_PERFIL_TIPO Tipo, string MAKTX, string Nome, double Comprimento, int Dobras, string Perfil = null)
         {
