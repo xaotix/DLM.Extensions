@@ -111,12 +111,11 @@ namespace DLM
 
         public static void VincularRotas(this List<PGO_Obra> lista_agrupado)
         {
-            var w = Conexoes.Utilz.Wait(5, "Vinculando rotas das obras...");
             var obras_end = lista_agrupado.GroupBy(x => x.Cidade + ";" + x.Estado + ";" + x.Pais).ToList();
             obras_end = obras_end.OrderBy(x => x.Key).ToList();
-            w.SetProgresso(1, obras_end.Count, "Procurando rotas das obras...");
+
+            //var w = Conexoes.Utilz.Wait(obras_end.Count, $"Procurando rotas das ({obras_end.Count}) obras...");
             /*carrega todas as rotas*/
-            DBases.GetPGO().GetRotas();
             foreach (var obra_end in obras_end)
             {
                 var chave = obra_end.Key.Split(';');
@@ -139,9 +138,9 @@ namespace DLM
                     }
 
                 }
-                w.somaProgresso();
+                //w.somaProgresso();
             }
-            w.Close();
+            //w.Close();
         }
 
         public static List<LT_PMP> GetPMP(this List<PGO_Peca> pcs)
