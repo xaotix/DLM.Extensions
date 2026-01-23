@@ -245,35 +245,24 @@ namespace Conexoes
             {
                 if (File.Exists(arquivo))
                 {
-
                     try
                     {
-
-
-
                         using (Stream writer = File.Open(arquivo, FileMode.Open))
                         {
                             var retorno = (T)serializer.Deserialize(writer);
                             return retorno;
                         }
-
-
-
                     }
                     catch (Exception)
                     {
                         xml = string.Join("\n", Utilz.Arquivo.Ler(arquivo));
                         //Conexoes.Utilz.Alerta(ex);
                     }
-
                 }
                 else if (arquivo.Contem("?xml", "xmlns="))
                 {
                     xml = arquivo;
                 }
-
-
-
                 if (xml.LenghtStr() > 0)
                 {
                     try
@@ -291,9 +280,7 @@ namespace Conexoes
                             $"\n[XML]" +
                             $"\n{xml}", "DeSerializar");
                     }
-
                 }
-
             }
             try
             {
@@ -302,8 +289,37 @@ namespace Conexoes
             catch (Exception)
             {
             }
-
             return RetornaNull<T>();
+        }
+
+
+
+
+        public static string Serializar<T>(this T toSerialize, string arquivo = null)
+        {
+            string texto = "";
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    xmlSerializer.Serialize(textWriter, toSerialize);
+                    texto = textWriter.ToString();
+                }
+                if (arquivo != null)
+                {
+                    if (arquivo.Delete())
+                    {
+                        Utilz.Arquivo.Gravar(arquivo, new List<string> { texto });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Alerta();
+                texto = "";
+            }
+            return texto;
         }
 
 
@@ -327,36 +343,6 @@ namespace Conexoes
             return RetornaNull<T>();
         }
 
-        public static string Serializar<T>(this T toSerialize, string arquivo = null)
-        {
-            string texto = "";
-
-            try
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    xmlSerializer.Serialize(textWriter, toSerialize);
-                    texto = textWriter.ToString();
-                }
-                if (arquivo != null)
-                {
-                    if (arquivo.Delete())
-                    {
-                        Utilz.Arquivo.Gravar(arquivo, new List<string> { texto });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ex.Alerta();
-                texto = "";
-            }
-
-
-            return texto;
-
-        }
 
         public static T Clonar<T>(this T toSerialize)
         {
@@ -366,7 +352,7 @@ namespace Conexoes
                 using (StringWriter textWriter = new StringWriter())
                 {
                     xmlSerializer.Serialize(textWriter, toSerialize);
-                    return DeSerializar<T>(textWriter.ToString());
+                    return textWriter.ToString().DeSerializar<T>();
                 }
             }
             catch (Exception ex)

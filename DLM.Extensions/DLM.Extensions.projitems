@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Salvar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_SAP_RFC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Selecao.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Serializar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Shape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_String.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensoes_Tabcontrol.cs" />
