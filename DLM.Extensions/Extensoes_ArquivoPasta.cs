@@ -3,12 +3,14 @@ using DLM.ini;
 using DLM.sap.Avanco;
 using DLM.vars;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace Conexoes
 {
@@ -50,16 +52,16 @@ namespace Conexoes
             lista.Add(new ArquivoCopiar(destino, origem, marca, posicao));
         }
 
-        public static List<Arquivo> GetArquivos(this List<Pasta> Pastas, string Filtro = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
+        public static List<Arquivo> GetArquivos(this List<Pasta> pastas, string Filtro = "*", SearchOption subpastas = SearchOption.TopDirectoryOnly)
         {
-            var Retorno = new List<Arquivo>();
-            Pastas = Pastas.GroupBy(x => x.Endereco).Select(x => x.First()).ToList();
-            foreach (var pasta in Pastas)
+            var retorno = new List<Arquivo>();
+            pastas = pastas.GroupBy(x => x.Endereco).Select(x => x.First()).ToList();
+            foreach (var pasta in pastas)
             {
-                Retorno.AddRange(GetArquivos(pasta, Filtro, SubPastas));
+                retorno.AddRange(GetArquivos(pasta, Filtro, subpastas));
             }
-            Retorno = Retorno.GroupBy(x => x).Select(x => x.First()).ToList();
-            return Retorno;
+            retorno = retorno.GroupBy(x => x).Select(x => x.First()).ToList();
+            return retorno;
         }
 
         public static bool LimparArquivosPasta(this Pasta Pasta, string filtro = "*", bool backup = false, string arquivo_backup = null)
@@ -84,9 +86,6 @@ namespace Conexoes
             }
             return true;
         }
-
-
-
 
 
         public static bool Delete(this string arq_ou_pasta, bool msg = true, bool log = false)
@@ -149,26 +148,38 @@ namespace Conexoes
             return !arq_ou_pasta.Exists();
         }
 
-        public static List<Arquivo> GetArquivos(this Pasta Raiz, string chave = "*", SearchOption SubPastas = SearchOption.TopDirectoryOnly)
+        public static List<Arquivo> GetArquivos(this Pasta raiz, string chave = "*", SearchOption sub_folders = SearchOption.TopDirectoryOnly)
         {
-            if (!Raiz.Exists())
+            if (!raiz.Exists())
             {
                 return new List<Arquivo>();
             }
             var retorno = new List<Arquivo>();
-            foreach (var arquivo in Directory.GetFiles(Raiz.Endereco, chave, SubPastas))
+            var arquivos = Directory.GetFiles(raiz.Endereco, chave, sub_folders);
+
+            var Tarefas = new List<Task>();
+            var arquivos_map = new ConcurrentBag<Arquivo>();
+            foreach (var arq in arquivos)
             {
-                retorno.Add(new Arquivo(arquivo, Raiz));
+                Tarefas.Add(Task.Factory.StartNew(() =>
+                {
+                    if (arq.Exists())
+                    {
+                        var nArq = new Arquivo(arq,sub_folders == SearchOption.TopDirectoryOnly? raiz:null);
+                        arquivos_map.Add(nArq);
+                    }
+                }));
             }
+
+            Task.WaitAll(Tarefas.ToArray());
+            retorno.AddRange(arquivos_map);
+            retorno = retorno.OrderBy(x => x.Nome).ToList();
             return retorno;
         }
-        public static List<Arquivo> GetArquivos(this Pasta Raiz, bool sub_pastas = false, params string[] filtros)
+        public static List<Arquivo> GetArquivos(this Pasta raiz, bool sub_pastas = false, params string[] filtros)
         {
-            return Raiz.Endereco.GetArquivos(sub_pastas, filtros);
-        }
-        public static List<Arquivo> GetArquivos(this string Raiz, bool sub_pastas = false, params string[] filtros)
-        {
-            if (!Raiz.Exists())
+
+            if (!raiz.Exists())
             {
                 return new List<Arquivo>();
             }
@@ -177,35 +188,34 @@ namespace Conexoes
                 filtros = new[] { "*" };
             }
             var arquivos = new List<Arquivo>();
-            var pasta = Raiz.AsPasta();
             foreach (var filtro in filtros)
             {
-                arquivos.AddRange(GetArquivos(pasta, filtro, sub_pastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
+                arquivos.AddRange(GetArquivos(raiz, filtro, sub_pastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
             }
             arquivos = arquivos.Distinct().ToList();
 
             return arquivos;
         }
 
-        public static List<Arquivo> GetArquivos(this string Raiz, string filtro = "*", bool sub_pastas = false)
+
+        public static List<Arquivo> GetArquivos(this string raiz, bool sub_pastas = false, params string[] filtros)
         {
-            if (!Raiz.Exists())
-            {
-                return new List<Arquivo>();
-            }
-            var pasta = Raiz.AsPasta();
-            return GetArquivos(pasta, filtro, sub_pastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            return raiz.AsPasta().GetArquivos(sub_pastas, filtros);
+        }
+        public static List<Arquivo> GetArquivos(this string raiz, string filtro = "*", bool sub_pastas = false)
+        {
+            return raiz.AsPasta().GetArquivos(filtro, sub_pastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         }
 
-        public static Arquivo AsArquivo(this string Arquivo, Pasta pai = null)
+        public static Arquivo AsArquivo(this string arquivo, Pasta pai = null)
         {
-            var nPasta = new Arquivo(Arquivo, pai);
+            var nPasta = new Arquivo(arquivo, pai);
             return nPasta;
         }
         public static Pasta AsPasta(this string dir, Pasta pai = null)
         {
             dir = dir.ToUpper();
-            if (dir.Replace(@"\","").Replace(@"/","").EndsW($@".{Cfg.Init.EXT_Obra}"))
+            if (dir.Replace(@"\", "").Replace(@"/", "").EndsW($@".{Cfg.Init.EXT_Obra}"))
             {
                 return new ObraTecnoMetal(dir, pai);
             }
@@ -215,12 +225,12 @@ namespace Conexoes
             }
             else if (dir.Replace(@"\", "").Replace(@"/", "").EndsW($@".{Cfg.Init.EXT_Etapa}"))
             {
-                if(pai is not PedidoTecnoMetal && pai !=null)
+                if (pai is not PedidoTecnoMetal && pai != null)
                 {
                     $"Pasta inválida: Pasta de etapa dentro de outra pasta de etapa:\n{dir}".Alerta();
                     return new Pasta(dir, pai);
                 }
-                else if(pai !=null)
+                else if (pai != null)
                 {
                     return new SubEtapaTecnoMetal(dir, (PedidoTecnoMetal)pai);
                 }
