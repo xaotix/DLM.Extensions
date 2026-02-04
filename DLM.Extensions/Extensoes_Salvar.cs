@@ -37,9 +37,9 @@ namespace Conexoes
             }
             return null;
         }
-        public static string AbrirString(this string extensao)
+        public static string AbrirString(this string extensao, string root = null, string title = "Selecione", bool ponto = true)
         {
-            return Conexoes.Utilz.Abrir_String(extensao);
+            return Conexoes.Utilz.Abrir_String(extensao, root, ponto, title);
         }
         public static void Gravar(this List<List<string>> linhas, string extensao = "csv")
         {
