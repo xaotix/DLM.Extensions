@@ -583,7 +583,7 @@ namespace Conexoes
         public static string getPasta(this string arq)
         {
             if (arq == null) { return ""; }
-            if (arq.Length == 0) { return ""; }
+            if (arq.LenghtStr() == 0) { return ""; }
             try
             {
                 var retorno = System.IO.Path.GetDirectoryName(arq);
@@ -606,7 +606,7 @@ namespace Conexoes
         public static string getNomePasta(this string arq)
         {
             var pasta = arq.getPasta();
-            if (pasta.Length > 0)
+            if (pasta.LenghtStr() > 0)
             {
                 var items = pasta.Replace(@"\", "|").Replace(@"/", "|").Replace("||", "|").Split('|').ToList().FindAll(x => x != "");
                 if (items.Count > 0)
@@ -621,7 +621,7 @@ namespace Conexoes
         {
             var dt = Cfg.Init.DataDummy;
             if (arq == null) { return ""; }
-            if (arq.Length == 0) { return ""; }
+            if (arq.LenghtStr() == 0) { return ""; }
             if (File.Exists(arq))
             {
                 dt = File.GetLastWriteTime(arq);
@@ -631,7 +631,7 @@ namespace Conexoes
         public static string getEdicao(this string arq)
         {
             if (arq == null) { return ""; }
-            if (arq.Length == 0) { return ""; }
+            if (arq.LenghtStr() == 0) { return ""; }
 
             if (arq.Exists())
             {
@@ -642,7 +642,7 @@ namespace Conexoes
         public static string getExtensao(this string arq, bool upper = true)
         {
             if (arq == null) { return ""; }
-            if (arq.Length == 0) { return ""; }
+            if (arq.LenghtStr() == 0) { return ""; }
             var ext = System.IO.Path.GetExtension(arq).TrimStart('.');
 
             return upper ? ext.ToUpper() : ext;
@@ -650,7 +650,7 @@ namespace Conexoes
         public static string getNome(this string arq, bool extensao = false)
         {
             if (arq == null) { return ""; }
-            if (arq.Length == 0) { return ""; }
+            if (arq.LenghtStr() == 0) { return ""; }
             try
             {
                 if (arq.E_Diretorio())

@@ -95,16 +95,16 @@ namespace Conexoes
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            var selecionar = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao);
-            selecionar.Title = titulo;
-            selecionar._filtro.Text = pesquisa;
-            selecionar.ShowDialog();
+            var mm = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao);
+            mm.Title = titulo;
+            mm._filtro.Text = pesquisa;
+            mm.ShowDialog();
 
-            if (selecionar.DialogResult.HasValue && selecionar.DialogResult.Value)
+            if (mm.DialogResult.HasValue && mm.DialogResult.Value)
             {
-                if (selecionar._lista.SelectedItem != null)
+                if (mm._lista.SelectedItem != null)
                 {
-                    return (T)Convert.ChangeType(selecionar._lista.SelectedItem, typeof(T));
+                    return (T)Convert.ChangeType(mm._lista.SelectedItem, typeof(T));
                 }
             }
 

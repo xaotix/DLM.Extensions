@@ -48,7 +48,7 @@ namespace Conexoes
                         var chave = $"";
                         foreach (DataColumn c in dt.Table.Columns)
                         {
-                            if (chave.Length > 0)
+                            if (chave.LenghtStr() > 0)
                             {
                                 chave += " or ";
                             }
