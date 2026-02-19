@@ -282,6 +282,10 @@ namespace Conexoes
             return retorno;
         }
 
+        public static List<ReadCAM> GetCAMs(this List<Arquivo> programas)
+        {
+            return programas.Select(x => x.Endereco).ToList().GetCAMs();
+        }
         public static List<ReadCAM> GetCAMs(this List<string> programas)
         {
             var items = new List<ReadCAM>();
