@@ -7,6 +7,7 @@ using netDxf.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace DLM.desenho
 {
@@ -93,25 +94,25 @@ namespace DLM.desenho
             return st;
         }
 
-        public static MText GetTexto(List<string> Linhas, Vector2 posicao, double tam, TextStyle style)
+        public static MText GetTexto(List<string> linhas, Vector2 posicao, double tam, TextStyle style)
         {
             MText retorno = new MText();
             retorno.Height = tam;
             retorno.Style = style;
-            retorno.Value = string.Join(@"\P", Linhas);
+            retorno.Value = string.Join(@"\P", linhas);
             retorno.Position = new Vector3(posicao.X, posicao.Y, 0);
 
             return retorno;
         }
-        public static Insert InserirBloco(string Nome, DxfDocument Arquivo_Origem, DxfDocument Arquivo_Destino, P3d Ponto, double Escala = 1, double Angulo = 0)
+        public static Insert InserirBloco(string nome, DxfDocument dxf, DxfDocument dxf_destino, P3d ponto, double esc = 1, double ang = 0)
         {
             try
             {
-                var block = Arquivo_Destino.Blocks.ToList().Find(x => x.Name.ToUpper() == Nome.ToUpper());
+                var block = dxf_destino.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper());
 
                 if (block == null)
                 {
-                    block = Arquivo_Origem.Blocks.ToList().Find(x => x.Name.ToUpper() == Nome.ToUpper());
+                    block = dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper());
                     block = block.Clone() as netDxf.Blocks.Block;
                 }
 
@@ -121,11 +122,11 @@ namespace DLM.desenho
                     var p = new Insert(block);
                     p.Position = new Vector3(0, 0, 0);
 
-                    p.Scale = new Vector3(Escala);
+                    p.Scale = new Vector3(esc);
 
-                    p.Position = new Vector3(Ponto.X, Ponto.Y, 0);
+                    p.Position = new Vector3(ponto.X, ponto.Y, 0);
                     p.TransformAttributes();
-                    p.Rotation = Angulo;
+                    p.Rotation = ang;
                     return p;
                 }
                 else
@@ -1646,6 +1647,42 @@ namespace DLM.desenho
 
             return single_list;
         }
+
+
+        public static void ApplyZoomExtends(this netDxf.DxfDocument dxf)
+        {
+            var coords = dxf.GetObjetos().SelectMany(x => x.GetBounds()).ToList();
+            if (coords.Count == 0) { return; }
+
+            var minX = coords.Min(x => x.X);
+            var minY = coords.Min(x => x.Y);
+
+            var maxX = coords.Max(x => x.X);
+            var maxY = coords.Max(x => x.Y);
+
+
+            double width = maxX - minX;
+            double height = maxY - minY;
+
+            // centro do desenho
+            double cx = minX + width / 2.0;
+            double cy = minY + height / 2.0;
+
+            // 2) pegar ou criar VPORT "*ACTIVE"
+            var vport = dxf.VPorts.Contains("*ACTIVE") ? dxf.VPorts["*ACTIVE"] : new VPort("*ACTIVE");
+
+            // 3) aplicar zoom extents
+            vport.ViewCenter = new Vector2((float)cx, (float)cy);
+            vport.ViewHeight = (float)height; // controla o zoom
+            vport.ViewAspectRatio = 1.0; // opcional
+
+            // 4) garantir que a VPORT está na tabela
+            if (!dxf.VPorts.Contains("*ACTIVE"))
+            {
+                dxf.VPorts.Add(vport);
+            }
+        }
+
 
         public static string GetAtributo(this Insert insert, string atributo)
         {
