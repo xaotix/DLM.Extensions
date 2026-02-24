@@ -14,7 +14,6 @@ namespace DLM.desenho
     public static class ExtensoesNetDxf
     {
         private static Dictionary<System.Windows.Media.Color, AciColor> _cores_aci { get; set; } = new Dictionary<System.Windows.Media.Color, AciColor>();
-
         public static List<P3d> GetOrigens(this List<EntityObject> objs, bool cotas = false)
         {
             var Retorno = new List<P3d>();
@@ -746,12 +745,14 @@ namespace DLM.desenho
 
             return pol;
         }
+
         public static Line AddLine(this DxfDocument document, Layer l, double x1, double y1, double x2, double y2, Linetype type = null)
         {
             var nl = NewLine(l, x1, y1, x2, y2, ref type);
             document.Entities.Add(nl);
             return nl;
         }
+
         public static List<Line> AddXis(this DxfDocument dxf, Layer Layer, double X, double Y, double diam)
         {
             var linhas = new List<Line>();
@@ -807,9 +808,9 @@ namespace DLM.desenho
 
             return new List<EntityObject> { dxf.CreateBlock(itens_bloco, nome_furo, new desenho.P3d(X, Y)) };
         }
-        public static Line AddLine(this netDxf.Blocks.Block block, Layer Layer, double x1, double y1, double x2, double y2, Linetype type = null)
+        public static Line AddLine(this netDxf.Blocks.Block block, Layer lay, double x1, double y1, double x2, double y2, Linetype type = null)
         {
-            Line l = NewLine(Layer, x1, y1, x2, y2, ref type);
+            Line l = NewLine(lay, x1, y1, x2, y2, ref type);
             block.Entities.Add(l);
             return l;
         }
