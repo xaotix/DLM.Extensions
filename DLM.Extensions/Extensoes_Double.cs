@@ -273,34 +273,151 @@ namespace Conexoes
 
             return retorno;
         }
-        public static List<double> Quebrar(this double Comp, double Comp_Max, double Comp_Min, double Transpasse)
+
+        public static List<double> DividirPartesIguais(this double comprimento, double max, double min, bool forcarImpar = false)
+        {
+            var partes = new List<double>();
+
+            if (max < min)
+                max = min;
+
+            // Quantas partes máximas cabem?
+            int qtdMax = (int)(comprimento / max);
+            double resto = comprimento - qtdMax * max;
+
+            // Caso simples: resto dentro do intervalo permitido
+            if (resto >= min && resto <= max)
+            {
+                for (int i = 0; i < qtdMax; i++)
+                    partes.Add(max);
+
+                // Inserir o resto no meio
+                int meio = partes.Count / 2;
+                partes.Insert(meio, resto);
+
+                // Ajustar para quantidade ímpar
+                if (forcarImpar && partes.Count % 2 == 0)
+                {
+                    return RedistribuirParaImpar(comprimento, max, min);
+                }
+
+                return partes;
+            }
+
+            // Caso difícil: resto menor que o mínimo → redistribuir
+            int totalPartes = qtdMax + 1;
+            double tamanhoIdeal = comprimento / totalPartes;
+
+            if (tamanhoIdeal > max) tamanhoIdeal = max;
+            if (tamanhoIdeal < min) tamanhoIdeal = min;
+
+            partes.Clear();
+            double soma = 0;
+
+            for (int i = 0; i < totalPartes - 1; i++)
+            {
+                partes.Add(tamanhoIdeal);
+                soma += tamanhoIdeal;
+            }
+
+            double ultima = comprimento - soma;
+
+            if (ultima < min || ultima > max)
+            {
+                double diff = ultima - tamanhoIdeal;
+                double ajuste = diff / totalPartes;
+
+                partes.Clear();
+                soma = 0;
+
+                for (int i = 0; i < totalPartes; i++)
+                {
+                    double valor = tamanhoIdeal + ajuste;
+                    partes.Add(valor);
+                    soma += valor;
+                }
+            }
+            else
+            {
+                partes.Add(ultima);
+            }
+
+            // Garantir que o resto fique no meio
+            double media = partes.Average();
+            double restoCentral = partes.OrderBy(p => Math.Abs(p - media)).Last();
+
+            partes.Remove(restoCentral);
+            int pos = partes.Count / 2;
+            partes.Insert(pos, restoCentral);
+
+            // Ajustar para quantidade ímpar
+            if (forcarImpar && partes.Count % 2 == 0)
+            {
+                return RedistribuirParaImpar(comprimento, max, min);
+            }
+
+            return partes;
+        }
+
+
+        /// <summary>
+        /// Redistribui o comprimento para garantir quantidade ímpar de partes.
+        /// Mantém min/max e coloca o resto no meio.
+        /// </summary>
+        private static List<double> RedistribuirParaImpar(double comprimento, double max, double min)
+        {
+            var partes = new List<double>();
+
+            // Tenta aumentar o número de partes em +1 para torná-lo ímpar
+            int n = 3; // começa com 3 partes (ímpar mínimo)
+
+            while (true)
+            {
+                double tamanho = comprimento / n;
+
+                if (tamanho >= min && tamanho <= max)
+                {
+                    for (int i = 0; i < n; i++)
+                        partes.Add(tamanho);
+
+                    return partes;
+                }
+
+                n += 2; // sempre tenta próximo ímpar
+            }
+        }
+
+
+
+        public static List<double> Quebrar(this double comp, double comp_max, double comp_min, double transpasse = 0)
         {
             var Retorno = new List<double>();
-            if (Comp < Comp_Max)
+            var comp_trans = (comp_max - transpasse);
+            if (comp <= comp_max)
             {
-                Retorno.Add(Comp);
+                Retorno.Add(comp);
                 return Retorno;
             }
-            if (Comp < Comp_Min)
+            if (comp < comp_min)
             {
-                Retorno.Add(Comp_Min);
+                Retorno.Add(comp_min);
                 return Retorno;
             }
             double inicio = 0;
-            int qtd = (int)Math.Floor(Comp / (Comp_Max - Transpasse));
-            double resto = Comp - ((Comp_Max - Transpasse) * qtd);
-            if (resto < Comp_Min && resto > 0)
+            int qtd = (int)Math.Floor(comp / comp_trans);
+            double resto = comp - (comp_trans * qtd);
+            if (resto < comp_min && resto > 0)
             {
                 qtd = qtd - 1;
-                resto = Comp - ((Comp_Max - Transpasse) * qtd);
+                resto = comp - (comp_trans * qtd);
             }
 
-            if (resto > Comp_Max && (resto - Comp_Min) > Comp_Min)
+            if (resto > comp_max && (resto - comp_min) >= comp_min)
             {
-                inicio = Comp_Min;
-                resto = resto - Comp_Min;
+                inicio = comp_min;
+                resto = resto - comp_min;
             }
-            else if (resto > Comp_Max && (resto / 2) > Comp_Min)
+            else if (resto > comp_max && (resto / 2) >= comp_min)
             {
                 inicio = resto / 2;
                 resto = resto / 2;
@@ -314,7 +431,7 @@ namespace Conexoes
 
             for (int i = 0; i < qtd; i++)
             {
-                Retorno.Add(Comp_Max);
+                Retorno.Add(comp_max);
             }
             if (resto > 0)
             {
