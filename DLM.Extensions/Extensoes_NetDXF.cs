@@ -146,6 +146,10 @@ namespace DLM.desenho
         }
 
 
+        public static void Add(this netDxf.DxfDocument dxf, netDxf.Entities.EntityObject obj)
+        {
+            dxf.Entities.Add(obj);
+        }
 
         public static AciColor ToAciColor(this System.Windows.Media.SolidColorBrush mediacolor)
         {
@@ -359,7 +363,7 @@ namespace DLM.desenho
             {
                 var insert1 = new netDxf.Entities.Insert(igual);
                 insert1.Position = new Vector3(X, Y, 0);
-                dxf.Entities.Add(insert1);
+                dxf.Add(insert1);
                 return new List<EntityObject>() { insert1 };
             }
 
@@ -459,7 +463,7 @@ namespace DLM.desenho
             dxf.Blocks.Add(block);
             var block_ent = new netDxf.Entities.Insert(block);
             block_ent.Position = new Vector3(X, Y, 0);
-            dxf.Entities.Add(block_ent);
+            dxf.Add(block_ent);
             retorno.Add(block_ent);
             return retorno;
         }
@@ -491,7 +495,7 @@ namespace DLM.desenho
             {
                 var insert1 = new Insert(igual);
                 insert1.Position = new Vector3(X, Y, 0);
-                dxf.Entities.Add(insert1);
+                dxf.Add(insert1);
                 return new List<EntityObject>() { insert1 };
             }
 
@@ -622,7 +626,7 @@ namespace DLM.desenho
             dxf.Blocks.Add(block);
             var insert = new Insert(block);
             insert.Position = new Vector3(X, Y, 0);
-            dxf.Entities.Add(insert);
+            dxf.Add(insert);
 
             retorno.Add(insert);
 
@@ -645,7 +649,7 @@ namespace DLM.desenho
                 {
                     var ent = new Insert(blk);
                     ent.Position = origem.ToVector3();
-                    dxf.Entities.Add(ent);
+                    dxf.Add(ent);
                     dxf.Remove(entities);
                     return ent;
                 }
@@ -694,7 +698,7 @@ namespace DLM.desenho
 
             insert.Sync();
 
-            dxf.Entities.Add(insert);
+            dxf.Add(insert);
 
             dxf.Remove(entities);
 
@@ -720,7 +724,7 @@ namespace DLM.desenho
                         };
             var pol = new netDxf.Entities.Polyline2D(Vetores) { Layer = l, Color = AciColor.ByLayer };
 
-            dxf.Entities.Add(pol);
+            dxf.Add(pol);
 
             return pol;
         }
@@ -741,15 +745,15 @@ namespace DLM.desenho
                 pol.SetConstantWidth(thick);
             }
 
-            dxf.Entities.Add(pol);
+            dxf.Add(pol);
 
             return pol;
         }
 
-        public static Line AddLine(this DxfDocument document, Layer l, double x1, double y1, double x2, double y2, Linetype type = null)
+        public static Line AddLine(this DxfDocument dxf, Layer l, double x1, double y1, double x2, double y2, Linetype type = null)
         {
             var nl = NewLine(l, x1, y1, x2, y2, ref type);
-            document.Entities.Add(nl);
+            dxf.Add(nl);
             return nl;
         }
 
@@ -771,14 +775,14 @@ namespace DLM.desenho
             {
                 var insert = new netDxf.Entities.Insert(igual);
                 insert.Position = new Vector3(X, Y, 0);
-                dxf.Entities.Add(insert);
+                dxf.Add(insert);
                 return new List<EntityObject> { insert };
             }
             var itens_bloco = new List<netDxf.Entities.EntityObject>();
             if (tipo == Desenho_Furo.Vista)
             {
                 var circulo = new netDxf.Entities.Circle(new Vector2(0, 0), diam / 2) { Layer = l, Color = AciColor.ByLayer };
-                dxf.Entities.Add(circulo);
+                dxf.Add(circulo);
                 itens_bloco.Add(circulo);
                 if (linhaDeCentro)
                 {
@@ -808,10 +812,10 @@ namespace DLM.desenho
 
             return new List<EntityObject> { dxf.CreateBlock(itens_bloco, nome_furo, new desenho.P3d(X, Y)) };
         }
-        public static Line AddLine(this netDxf.Blocks.Block block, Layer lay, double x1, double y1, double x2, double y2, Linetype type = null)
+        public static Line AddLine(this netDxf.Blocks.Block blk, Layer lay, double x1, double y1, double x2, double y2, Linetype type = null)
         {
-            Line l = NewLine(lay, x1, y1, x2, y2, ref type);
-            block.Entities.Add(l);
+            var l = NewLine(lay, x1, y1, x2, y2, ref type);
+            blk.Entities.Add(l);
             return l;
         }
 
@@ -834,7 +838,7 @@ namespace DLM.desenho
         {
             var leader = new netDxf.Entities.Leader(Texto, Vetores, style);
             leader.Color = AciColor.Cyan;
-            dxf.Entities.Add(leader);
+            dxf.Add(leader);
             return leader;
         }
 
@@ -847,7 +851,7 @@ namespace DLM.desenho
                 var cota = new netDxf.Entities.LinearDimension(linha, offset, ang, style);
                 cota.Layer = l;
                 cota.Style = style;
-                dxf.Entities.Add(cota);
+                dxf.Add(cota);
 
                 return cota;
             }
@@ -862,7 +866,7 @@ namespace DLM.desenho
                 var cota = new netDxf.Entities.AlignedDimension(new Vector2(x0, y0), new Vector2(x1, y1), offset);
                 cota.Layer = l;
                 cota.Style = style;
-                dxf.Entities.Add(cota);
+                dxf.Add(cota);
 
                 return cota;
             }
@@ -870,35 +874,35 @@ namespace DLM.desenho
         }
         public static void SetDimensionStyle(this DxfDocument dxf, DimensionStyle style)
         {
-            foreach (var t in dxf.Entities.Dimensions)
+            foreach (var obj in dxf.Entities.Dimensions)
             {
-                t.Style = style;
+                obj.Style = style;
             }
-            foreach (var t in dxf.Entities.Texts)
+            foreach (var obj in dxf.Entities.Texts)
             {
-                t.Style = style.TextStyle;
-                t.Height = style.TextHeight * style.DimScaleOverall;
-                t.Color = style.TextColor;
+                obj.Style = style.TextStyle;
+                obj.Height = style.TextHeight * style.DimScaleOverall;
+                obj.Color = style.TextColor;
             }
-            foreach (var t in dxf.Entities.MTexts)
+            foreach (var obj in dxf.Entities.MTexts)
             {
-                t.Style = style.TextStyle;
-                t.Height = style.TextHeight * style.DimScaleOverall;
-                t.Color = style.TextColor;
+                obj.Style = style.TextStyle;
+                obj.Height = style.TextHeight * style.DimScaleOverall;
+                obj.Color = style.TextColor;
             }
-            foreach (var t in dxf.Entities.Leaders)
+            foreach (var obj in dxf.Entities.Leaders)
             {
-                t.Style = style;
+                obj.Style = style;
 
-                if (t.Annotation is MText)
+                if (obj.Annotation is MText)
                 {
-                    var s = t.Annotation as MText;
+                    var s = obj.Annotation as MText;
 
                     s.Style = style.TextStyle;
                     s.Height = style.TextHeight * style.DimScaleOverall;
                     s.Color = style.TextColor;
                 }
-                t.Update(true);
+                obj.Update(true);
 
             }
 
@@ -911,7 +915,7 @@ namespace DLM.desenho
             {
                 text.Style = style;
             }
-            dxf.Entities.Add(text);
+            dxf.Add(text);
             return text;
         }
         public static MText AddMText(this DxfDocument dxf, string msg, P3d posicao = null)
@@ -954,7 +958,7 @@ namespace DLM.desenho
             }
             if (adicionar)
             {
-                dxf.Entities.Add(retorno);
+                dxf.Add(retorno);
             }
             return retorno;
         }
@@ -1070,7 +1074,7 @@ namespace DLM.desenho
                             var entt = tmbs.Converter();
                             foreach (var objeto in entt)
                             {
-                                ndxf.Entities.Add(objeto);
+                                ndxf.Add(objeto);
                             }
                             return ndxf;
                         }
@@ -1169,9 +1173,9 @@ namespace DLM.desenho
             foreach (var obj in dxf.Entities.All)
             {
                 var entity = obj as EntityObject;
-                var t1 = entity.Clone() as EntityObject;
+                var obj_clone = entity.Clone() as EntityObject;
 
-                destiny.Entities.Add(t1);
+                destiny.Add(obj_clone);
             }
             return destiny;
         }

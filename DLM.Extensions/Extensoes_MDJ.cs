@@ -27,11 +27,11 @@ namespace Conexoes
             }
             return ret;
         }
-        public static netDxf.DxfDocument GetVista(this MDJ_Programa programa, Point origem, double escala, netDxf.DxfDocument retorno = null, netDxf.AciColor cor = null, bool inverter_acumuladas = false, string texto = "", bool criar_bloco = true)
+        public static netDxf.DxfDocument GetVista(this MDJ_Programa programa, Point origem, double escala, netDxf.DxfDocument dxf = null, netDxf.AciColor cor = null, bool inverter_acumuladas = false, string texto = "", bool criar_bloco = true)
         {
-            if (retorno == null)
+            if (dxf == null)
             {
-                retorno = new netDxf.DxfDocument();
+                dxf = new netDxf.DxfDocument();
             }
             double x0 = 0;
             double y0 = 0;
@@ -41,9 +41,9 @@ namespace Conexoes
             {
                 Nomelayer = "BANZOS";
             }
-            var layer = retorno.GetLayer(Nomelayer, netDxf.AciColor.Yellow, netDxf.Tables.Linetype.ByLayer);
-            var cotas = retorno.GetLayer("COTAS", netDxf.AciColor.Cyan, netDxf.Tables.Linetype.ByLayer);
-            var Nome_banzos = retorno.GetLayer("BANZOS", netDxf.AciColor.Red, netDxf.Tables.Linetype.ByLayer);
+            var layer = dxf.GetLayer(Nomelayer, netDxf.AciColor.Yellow, netDxf.Tables.Linetype.ByLayer);
+            var cotas = dxf.GetLayer("COTAS", netDxf.AciColor.Cyan, netDxf.Tables.Linetype.ByLayer);
+            var Nome_banzos = dxf.GetLayer("BANZOS", netDxf.AciColor.Red, netDxf.Tables.Linetype.ByLayer);
 
             if (cor == null)
             {
@@ -130,17 +130,17 @@ namespace Conexoes
                     var frDXF = DLM.desenho.Dxf.Furo(new P3d(origem.X + s.X + x0, origem.Y + s.Y), 14, 0, 0, layer, corfr);
                     furosDXF.AddRange(frDXF);
                 }
-                retorno.Entities.Add(DLM.desenho.Dxf.Texto(new P3d(grp.X0, origem.Y + 120), grp.Tipo.ToString(), escala * 5, cotas, null, 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft));
+                var txt1 = DLM.desenho.Dxf.Texto(new P3d(grp.X0, origem.Y + 120), grp.Tipo.ToString(), escala * 5, cotas, null, 90, corfr, netDxf.Entities.TextAlignment.MiddleLeft);
+                dxf.Add(txt1);
             }
-
-
-
 
 
             foreach (var furo in programa.GetFurosAbaBanzoInferior(true).FindAll(x => x.X > 0))
             {
                 var frDXF = DLM.desenho.Dxf.Furo(new P3d(origem.X + furo.X, origem.Y - furo.Y)/*(larg_alma / 2)*/, 14, 0, 0, layer, cor);
-                retorno.Entities.Add(DLM.desenho.Dxf.Texto(new P3d(origem.X, origem.Y - (escala * 5)), origem.X.ToString(), escala * 5, cotas, null, 90, netDxf.AciColor.FromTrueColor(0)));
+                var txt1 = DLM.desenho.Dxf.Texto(new P3d(origem.X, origem.Y - (escala * 5)), origem.X.ToString(), escala * 5, cotas, null, 90, netDxf.AciColor.FromTrueColor(0));
+
+                dxf.Add(txt1);
                 furosDXF.AddRange(frDXF);
             }
 
@@ -163,7 +163,7 @@ namespace Conexoes
                 bool continuar = true;
                 while (continuar)
                 {
-                    var s = retorno.Blocks.ToList().Find(x => x.Name.ToUpper().Replace(" ", "") == Nome + (c > 0 ? "_" + c.String(2) : ""));
+                    var s = dxf.Blocks.ToList().Find(x => x.Name.ToUpper().Replace(" ", "") == Nome + (c > 0 ? "_" + c.String(2) : ""));
                     if (s != null)
                     {
                         c++;
@@ -183,51 +183,51 @@ namespace Conexoes
                     bloco.Entities.Add(rect);
                     bloco.Entities.Add(rect_alma);
 
-                    foreach (var s in acumuladas_furos)
+                    foreach (var obj in acumuladas_furos)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var s in cotas2)
+                    foreach (var obj in cotas2)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var s in acumuladas_grupos)
+                    foreach (var obj in acumuladas_grupos)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var f in furosDXF)
+                    foreach (var obj in furosDXF)
                     {
-                        bloco.Entities.Add(f);
+                        bloco.Entities.Add(obj);
                     }
-                    retorno.Blocks.Add(bloco);
+                    dxf.Blocks.Add(bloco);
 
-                    netDxf.Entities.Insert bb = new netDxf.Entities.Insert(bloco);
-                    bb.Position = new netDxf.Vector3();
-                    bb.Color = cor;
+                    var ins = new netDxf.Entities.Insert(bloco);
+                    ins.Position = new netDxf.Vector3();
+                    ins.Color = cor;
 
-                    retorno.Entities.Add(bb);
+                    dxf.Entities.Add(ins);
                 }
                 else
                 {
-                    retorno.Entities.Add(txt);
-                    retorno.Entities.Add(rect);
-                    retorno.Entities.Add(rect_alma);
+                    dxf.Add(txt);
+                    dxf.Add(rect);
+                    dxf.Add(rect_alma);
 
-                    foreach (var s in acumuladas_furos)
+                    foreach (var obj in acumuladas_furos)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var s in cotas2)
+                    foreach (var obj in cotas2)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var s in acumuladas_grupos)
+                    foreach (var obj in acumuladas_grupos)
                     {
-                        retorno.Entities.Add(s);
+                        dxf.Add(obj);
                     }
-                    foreach (var f in furosDXF)
+                    foreach (var obj in furosDXF)
                     {
-                        retorno.Entities.Add(f);
+                        dxf.Add(obj);
                     }
                 }
 
@@ -241,7 +241,7 @@ namespace Conexoes
 
 
 
-            return retorno;
+            return dxf;
         }
 
         public static List<MDJ_Furo> EspelharFuros(this MDJ_Programa programa)

@@ -836,14 +836,14 @@ namespace DLM.cam
 
             foreach (var linha in face.Linhas)
             {
-                doc.Entities.Add(GetLine(linha, netDxf.AciColor.Green, origem));
+                doc.Add(GetLine(linha, netDxf.AciColor.Green, origem));
             }
 
             foreach (var rec in face.RecortesInternos)
             {
                 foreach (var l in rec.GetLinhas())
                 {
-                    doc.Entities.Add(GetLine(l, netDxf.AciColor.Green, origem));
+                    doc.Add(GetLine(l, netDxf.AciColor.Green, origem));
                 }
             }
 
@@ -854,9 +854,9 @@ namespace DLM.cam
                 {
                     contorno.Add(GetLine(l, netDxf.AciColor.Magenta, origem));
                 }
-                foreach (var c in contorno)
+                foreach (var obj in contorno)
                 {
-                    doc.Entities.Add(c);
+                    doc.Add(obj);
                 }
                 furo.Bag.Clear();
                 furo.Bag.AddRange(contorno);
@@ -887,8 +887,8 @@ namespace DLM.cam
                 var pt0 = origem.MoverX(x).MoverY(1);
                 var pt1 = pt0.MoverY(50);
                 var txt = GetText($"{x.String(0)}", pt0.MoverY(50).MoverX(20), tamanho, 90);
-                doc.Entities.Add(txt);
-                doc.Entities.Add(GetLine(pt0, pt1));
+                doc.Add(txt);
+                doc.Add(GetLine(pt0, pt1));
             }
             return doc;
         }
