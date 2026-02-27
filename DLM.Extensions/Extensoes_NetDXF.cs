@@ -150,6 +150,13 @@ namespace DLM.desenho
         {
             dxf.Entities.Add(obj);
         }
+        public static void AddRange(this netDxf.DxfDocument dxf, List<netDxf.Entities.EntityObject> objs)
+        {
+            foreach(var obj in objs)
+            {
+                dxf.Entities.Add(obj);
+            }
+        }
 
         public static AciColor ToAciColor(this System.Windows.Media.SolidColorBrush mediacolor)
         {
