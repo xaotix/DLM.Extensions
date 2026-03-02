@@ -11,7 +11,31 @@ namespace Conexoes
 {
     public static class Extensoes_Selecao
     {
+        public static string SelecionarPasta(this string pastaraiz, string titulo = "Selecione uma pasta")
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = titulo,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                FileName = titulo
+            };
 
+            pastaraiz = pastaraiz.getPasta();
+
+            if (pastaraiz.Exists())
+            {
+                dialog.InitialDirectory = pastaraiz;
+            }
+
+            if (dialog.ShowDialog() == true)
+            {
+                var path = System.IO.Path.GetDirectoryName(dialog.FileName);
+                return path + "\\";
+            }
+
+            return null;
+        }
         public static void Show(this List<Report> reports)
         {
             if (reports.Count > 0)
@@ -84,7 +108,47 @@ namespace Conexoes
             menu.Lista.ItemsSource = objetos;
             menu.ShowDialog();
         }
+        public static T ListaSelecionarCombo<T>(this List<T> objs, T selecionar, string Titulo = "Selecione")
+        {
+            if (objs.Count > 0)
+            {
+                var mm = new Seleciona_Combo();
+                mm.lista.ItemsSource = objs;
+                bool ok = false;
+                if (selecionar != null)
+                {
+                    for (int i = 0; i < mm.lista.Items.Count; i++)
+                    {
+                        if (mm.lista.Items[i] == selecionar as object)
+                        {
+                            mm.lista.SelectedIndex = i;
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
 
+                if (!ok)
+                {
+                    mm.lista.SelectedIndex = 0;
+                }
+
+                mm.Title = Titulo;
+                mm.lista.IsEditable = false;
+
+                mm.ShowDialog();
+                if (mm.DialogResult.HasValue && mm.DialogResult.Value)
+                {
+                    if (mm.lista.SelectedItem != null)
+                    {
+                        return (T)Convert.ChangeType(mm.lista.SelectedItem, typeof(T));
+
+                    }
+                }
+            }
+
+            return (T)Convert.ChangeType(null, typeof(T));
+        }
         public static T ListaSelecionar<T>(this List<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default)
         {
             if (objs == null)

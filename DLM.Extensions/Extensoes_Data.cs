@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLM.vars;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,6 +9,43 @@ namespace Conexoes
 {
     public static class Extensoes_Data
     {
+        public static DateTime? Ask(this DateTime selecao, DateTime? min = null, DateTime? max = null, string Titulo = "Selecione")
+        {
+            return ((DateTime?)selecao).Ask(min, max, Titulo);
+        }
+        public static DateTime? Ask(this DateTime? selecao, DateTime? min = null, DateTime? max = null, string Titulo = "Selecione")
+        {
+            if (selecao == null)
+            {
+                selecao = DateTime.Now;
+            }
+            if (selecao <= Cfg.Init.DataDummy)
+            {
+                selecao = DateTime.Now;
+                min = selecao.Value.AddYears(-1);
+                max = selecao.Value.AddYears(1);
+            }
+
+            if (min == null)
+            {
+                min = selecao.Value.AddYears(-1);
+            }
+            if (max == null)
+            {
+                max = selecao.Value.AddYears(1);
+            }
+
+            var mm = new EscolherDataMenu(selecao.Value, min.Value, max.Value, Titulo);
+            mm.ShowDialog();
+
+            if (mm.DialogResult.HasValue && mm.DialogResult.Value)
+            {
+
+                return (DateTime)mm.data_tel.SelectedDate;
+
+            }
+            return null;
+        }
         public static bool ActualMonth(this DateTime data)
         {
             return data.Month == DateTime.Now.Month && data.Year == DateTime.Now.Year;

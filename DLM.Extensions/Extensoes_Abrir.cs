@@ -131,7 +131,7 @@ namespace Conexoes
         }
         public static bool Abrir(this string arquivo_ou_pasta, string argumentos = "", bool wait = false)
         {
-            if (arquivo_ou_pasta.E_Diretorio())
+            if (arquivo_ou_pasta.IsDirectory())
             {
                 return Open(arquivo_ou_pasta, argumentos, wait);
             }

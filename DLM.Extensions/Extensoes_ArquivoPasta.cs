@@ -100,7 +100,7 @@ namespace Conexoes
             }
 
         retentar:
-            if (arq_ou_pasta.E_Diretorio())
+            if (arq_ou_pasta.IsDirectory())
             {
                 try
                 {
@@ -385,7 +385,7 @@ namespace Conexoes
             if (file == null) { return false; }
             if (file.LenghtStr() == 0) { return false; }
 
-            if (file.E_Diretorio())
+            if (file.IsDirectory())
             {
                 try
                 {
@@ -408,29 +408,65 @@ namespace Conexoes
             }
             return false;
         }
-        public static bool E_Diretorio(this string dir)
+
+        public static bool IsDirectory(this string path)
         {
-            if (dir.EndsW(@"\") | dir.EndsW(@"/"))
-            {
-                return true;
-            }
-            else if (Directory.Exists(dir))
-            {
-                return true;
-            }
-            else if ((File.GetAttributes(dir) & FileAttributes.Directory) == FileAttributes.Directory)
-            {
-                return true;
-            }
-            else if (File.Exists(dir))
-            {
+            if (string.IsNullOrWhiteSpace(path))
                 return false;
-            }
-            else
+
+            if (path.EndsW(@"\", @"/"))
             {
-                return false;
+                return true;
+            }
+
+            try
+            {
+                var attr = File.GetAttributes(path);
+                return attr.HasFlag(FileAttributes.Directory);
+            }
+            catch (FileNotFoundException)
+            {
+                return false; // existe mas é arquivo? não, então não é diretório
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return false; // não existe
+            }
+            catch (IOException)
+            {
+                return false; // caminho inválido
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // caminho existe mas sem permissão → ainda podemos saber se é diretório
+                return new DirectoryInfo(path).Exists;
             }
         }
+
+        //public static bool E_Diretorio(this string dir)
+        //{
+        //    if (dir.EndsW(@"\", @"/"))
+        //    {
+        //        return true;
+        //    }
+        //    else if (File.Exists(dir))
+        //    {
+        //        return false;
+        //    }
+        //    else if (Directory.Exists(dir))
+        //    {
+        //        return true;
+        //    }
+        //    else if ((File.GetAttributes(dir) & FileAttributes.Directory) == FileAttributes.Directory)
+        //    {
+        //        return true;
+        //    }
+
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public static bool Copiar(this string arquivo_origem, string Destino_Pasta_Ou_Arquivo, bool mensagem = true, bool log = false)
         {
@@ -453,7 +489,7 @@ namespace Conexoes
             }
 
             string arquivo_destino = Destino_Pasta_Ou_Arquivo;
-            if (arquivo_destino.E_Diretorio())
+            if (arquivo_destino.IsDirectory())
             {
                 if (arquivo_destino.Contem(@"\") && !arquivo_destino.EndsW(@"\"))
                 {
@@ -584,6 +620,10 @@ namespace Conexoes
         {
             if (arq == null) { return ""; }
             if (arq.LenghtStr() == 0) { return ""; }
+            if (arq.EndsW(@"\", @"/"))
+            {
+                return arq;
+            }
             try
             {
                 var retorno = System.IO.Path.GetDirectoryName(arq);
@@ -653,7 +693,7 @@ namespace Conexoes
             if (arq.LenghtStr() == 0) { return ""; }
             try
             {
-                if (arq.E_Diretorio())
+                if (arq.IsDirectory())
                 {
                     var ret = arq;
                     ret = ret.TrimEnd(@"/".ToCharArray());
