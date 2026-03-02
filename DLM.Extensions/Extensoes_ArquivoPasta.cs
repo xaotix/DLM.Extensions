@@ -35,7 +35,7 @@ namespace Conexoes
 
         public static List<string> GetPastas(this string raiz, string busca = "*", SearchOption opcao = SearchOption.TopDirectoryOnly)
         {
-            if (!Directory.Exists(raiz))
+            if (!raiz.Exists())
             {
                 return new List<string>();
             }
@@ -165,7 +165,7 @@ namespace Conexoes
                 {
                     if (arq.Exists())
                     {
-                        var nArq = new Arquivo(arq,sub_folders == SearchOption.TopDirectoryOnly? raiz:null);
+                        var nArq = new Arquivo(arq, sub_folders == SearchOption.TopDirectoryOnly ? raiz : null);
                         arquivos_map.Add(nArq);
                     }
                 }));
@@ -301,7 +301,7 @@ namespace Conexoes
                 }
             }
 
-            if (Directory.Exists(pasta))
+            if (pasta.Exists())
             {
                 return pasta;
             }
@@ -414,17 +414,17 @@ namespace Conexoes
             {
                 return true;
             }
-            else if (File.Exists(dir))
+            else if (Directory.Exists(dir))
             {
-                return false;
-            }
-            else if (!Directory.Exists(dir))
-            {
-                return false;
+                return true;
             }
             else if ((File.GetAttributes(dir) & FileAttributes.Directory) == FileAttributes.Directory)
             {
                 return true;
+            }
+            else if (File.Exists(dir))
+            {
+                return false;
             }
             else
             {
