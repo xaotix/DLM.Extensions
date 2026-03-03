@@ -497,7 +497,7 @@ namespace Conexoes
                     var p1 = new P3d(pol.Vertexes[i].X + X0, pol.Vertexes[i].Y + Y0);
                     var p2 = new P3d(pol.Vertexes[i + 1].X + X0, pol.Vertexes[i + 1].Y + Y0);
                     var linha = p1.Linha(p2, cor, thick);
-                    pol.Canvas = linha;
+                    pol.Objeto = linha;
                     linha.Tag = pol;
                     lines.Add(linha);
                 }
@@ -516,7 +516,7 @@ namespace Conexoes
                     var p1 = new P3d(obj.Vertexes[i].Position.X + X0, obj.Vertexes[i].Position.Y + Y0);
                     var p2 = new P3d(obj.Vertexes[i + 1].Position.X + X0, obj.Vertexes[i + 1].Position.Y + Y0);
                     var nObj = p1.Linha(p2, cor, thick);
-                    obj.Canvas = nObj;
+                    obj.Objeto = nObj;
                     nObj.Tag = obj;
                     nObjs.Add(nObj);
                 }
@@ -582,7 +582,7 @@ namespace Conexoes
             //nObj.VerticalAlignment = VerticalAlignment.Center;
             //nObj.StrokeThickness = thick;
 
-            line.Canvas = nObj;
+            line.Objeto = nObj;
             nObj.Tag = line;
             nObj.UseLayoutRounding = true;
             return nObj;
@@ -618,7 +618,7 @@ namespace Conexoes
             nObj.Stroke = arc.GetCor();
 
             nObj.ToolTip = arc;
-            arc.Canvas = nObj;
+            arc.Objeto = nObj;
             nObj.Tag = arc;
             nObj.UseLayoutRounding = true;
             return nObj;
@@ -634,7 +634,7 @@ namespace Conexoes
             nObj.Stroke = ell.GetCor();
             //tt.ToolTip = s;
             nObj.Tag = ell;
-            ell.Canvas = nObj;
+            ell.Objeto = nObj;
             nObj.UseLayoutRounding = true;
             return nObj;
         }
@@ -648,7 +648,7 @@ namespace Conexoes
             Canvas.SetTop(nObj, circle.Center.Y + Y0 - circle.Radius);
             nObj.Stroke = circle.GetCor();
             //tt.ToolTip = s;
-            circle.Canvas = nObj;
+            circle.Objeto = nObj;
             nObj.Tag = circle;
             nObj.UseLayoutRounding = true;
             return nObj;
@@ -759,7 +759,7 @@ namespace Conexoes
 
 
 
-                entity.Canvas = nObj;
+                entity.Objeto = nObj;
                 nObj.Tag = entity;
                 label.Tag = entity;
 
