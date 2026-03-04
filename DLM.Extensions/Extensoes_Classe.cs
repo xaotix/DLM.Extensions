@@ -292,9 +292,6 @@ namespace Conexoes
             return RetornaNull<T>();
         }
 
-
-
-
         public static string Serializar<T>(this T toSerialize, string arquivo = null)
         {
             string texto = "";
@@ -344,15 +341,15 @@ namespace Conexoes
         }
 
 
-        public static T Clonar<T>(this T toSerialize)
+        public static T Clonar<T>(this T obj)
         {
             try
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
-                using (StringWriter textWriter = new StringWriter())
+                var xml = new XmlSerializer(obj.GetType());
+                using (var txt = new StringWriter())
                 {
-                    xmlSerializer.Serialize(textWriter, toSerialize);
-                    return textWriter.ToString().DeSerializar<T>();
+                    xml.Serialize(txt, obj);
+                    return txt.ToString().DeSerializar<T>();
                 }
             }
             catch (Exception ex)
