@@ -1,4 +1,5 @@
 ﻿using DLM.encoder;
+using DLM.encoder.RTF.Tokens;
 using DLM.vars;
 using DLM.WPF;
 using System;
@@ -11,14 +12,34 @@ namespace Conexoes
 {
     public static class Extensoes_Alerta
     {
-        public static bool Pergunta(this string Pergunta, string Titulo = "Confirme")
+        public static bool Pergunta(this string message, string title = "Confirme")
         {
-            return System.Windows.MessageBox.Show(
-                             Pergunta,
-                             Titulo,
-                             MessageBoxButton.YesNo,
-                             MessageBoxImage.Question,
-                             MessageBoxResult.Yes, System.Windows.MessageBoxOptions.ServiceNotification) == MessageBoxResult.Yes;
+            //return System.Windows.MessageBox.Show(
+            //                 Pergunta,
+            //                 Titulo,
+            //                 MessageBoxButton.YesNo,
+            //                 MessageBoxImage.Question,
+            //                 MessageBoxResult.Yes, System.Windows.MessageBoxOptions.ServiceNotification) == MessageBoxResult.Yes;
+
+            bool result = false;
+
+            System.Threading.Thread thread = new System.Threading.Thread(() =>
+            {
+                var response = System.Windows.Forms.MessageBox.Show(
+                    message,
+                    title,
+                    System.Windows.Forms.MessageBoxButtons.YesNo,
+                    System.Windows.Forms.MessageBoxIcon.Question
+                );
+                result = response == System.Windows.Forms.DialogResult.Yes;
+            });
+
+            thread.SetApartmentState(System.Threading.ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Start();
+            thread.Join();
+
+            return result;
         }
         public static void Alerta(this string mensagem, int tempo, string titulo = "")
         {
@@ -28,7 +49,7 @@ namespace Conexoes
                 menu.ShowDialog();
             }
         }
-        public static void Alerta(this string mensagem, string titulo = "", MessageBoxImage icone = MessageBoxImage.Information)
+        public static void Alerta(this string mensagem, string titulo = "Alerta.", MessageBoxImage icone = MessageBoxImage.Information)
         {
             var tipo = TipoReport.Critico;
             switch (icone)
