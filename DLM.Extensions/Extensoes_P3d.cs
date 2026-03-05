@@ -299,26 +299,26 @@ namespace Conexoes
             ret.X = (p3d.X + (Math.Cos(angleRadians) * Distancia));
             return new P3d(ret.X.Round(decimais), ret.Y.Round(decimais), p3d.Z);
         }
-        public static P3d Mover(this P3d p3d, P3d Distancia)
+        public static P3d Mover(this P3d p3d, P3d dist)
         {
             var pt = new P3d(p3d);
-            return pt.MoverX(Distancia.X).MoverY(Distancia.Y);
+            return pt.MoverX(dist.X).MoverY(dist.Y).MoverZ(dist.Z);
         }
-        public static P3d Mover(this P3d p3d, Vetor3D vetor, double distancia, bool arredondar = false)
+        public static P3d Mover(this P3d p3d, Vetor3D vetor, double dist, bool arredondar = false)
         {
             P3d pt = p3d.Clonar();
-            pt.X += vetor.X * distancia;
-            pt.Y += vetor.Y * distancia;
-            pt.Z += vetor.Z * distancia;
+            pt.X += vetor.X * dist;
+            pt.Y += vetor.Y * dist;
+            pt.Z += vetor.Z * dist;
             if (arredondar) pt = new P3d(pt.X, pt.Y, pt.Z, true);
             return pt;
         }
-        public static P3d Mover(this P3d p3d, P3d p1, P3d p2, double Distancia)
+        public static P3d Mover(this P3d p3d, P3d p1, P3d p2, double dist)
         {
             Vetor3D VetorL1a = p1.GetVetor(p2);
             VetorL1a.Normalize();
             Vetor3D VetorOrigem = new Vetor3D(-VetorL1a.Y, VetorL1a.X, 0);
-            return p3d.Mover(VetorL1a, Distancia);
+            return p3d.Mover(VetorL1a, dist);
         }
         public static List<P3d> Mover(this List<P3d> pts, P3d X0)
         {
@@ -331,7 +331,7 @@ namespace Conexoes
             }
             return retorno.Aninhar();
         }
-        public static P3d Mover(this P3d p1, P3d p2, double Distancia, bool fim = false)
+        public static P3d Mover(this P3d p1, P3d p2, double dist, bool fim = false)
         {
             var Origem = new P3d(p1.X, p1.Y, 0);
             if (fim)
@@ -341,7 +341,7 @@ namespace Conexoes
             var VetorL1a = new Vetor3D(new P3d(p1.X, p1.Y, 0), new P3d(p2.X, p2.Y, 0));
             VetorL1a.Normalize();
             var VetorOrigem = new Vetor3D(-VetorL1a.Y, VetorL1a.X, 0);
-            return Origem.Mover(VetorL1a, Distancia);
+            return Origem.Mover(VetorL1a, dist);
         }
 
 
