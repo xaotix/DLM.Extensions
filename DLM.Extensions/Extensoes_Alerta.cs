@@ -14,30 +14,21 @@ namespace Conexoes
     {
         public static bool Pergunta(this string message, string title = "Confirme")
         {
-            //return System.Windows.MessageBox.Show(
-            //                 Pergunta,
-            //                 Titulo,
-            //                 MessageBoxButton.YesNo,
-            //                 MessageBoxImage.Question,
-            //                 MessageBoxResult.Yes, System.Windows.MessageBoxOptions.ServiceNotification) == MessageBoxResult.Yes;
-
             bool result = false;
 
-            System.Threading.Thread thread = new System.Threading.Thread(() =>
+            var dispatcher = System.Windows.Application.Current?.Dispatcher
+                             ?? System.Windows.Threading.Dispatcher.CurrentDispatcher;
+
+            dispatcher.Invoke(() =>
             {
-                var response = System.Windows.Forms.MessageBox.Show(
+                result = System.Windows.MessageBox.Show(
                     message,
                     title,
-                    System.Windows.Forms.MessageBoxButtons.YesNo,
-                    System.Windows.Forms.MessageBoxIcon.Question
-                );
-                result = response == System.Windows.Forms.DialogResult.Yes;
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Question,
+                    System.Windows.MessageBoxResult.Yes
+                ) == System.Windows.MessageBoxResult.Yes;
             });
-
-            thread.SetApartmentState(System.Threading.ApartmentState.STA);
-            thread.IsBackground = true;
-            thread.Start();
-            thread.Join();
 
             return result;
         }

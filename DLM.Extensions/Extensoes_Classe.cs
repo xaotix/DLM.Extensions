@@ -7,7 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Web.UI.WebControls;
 using System.Windows;
+using System.Windows.Controls;
 using System.Xml.Serialization;
 
 
@@ -337,7 +339,18 @@ namespace Conexoes
                 return sel;
 
             }
-            return RetornaNull<T>();
+            else if(sender is RoutedEventArgs)
+            {
+                var sel = ((RoutedEventArgs)sender).Source;
+
+                if(sel is FrameworkElement)
+                {
+                    var ctrl = ((FrameworkElement)sel);
+                    return (T)ctrl.DataContext;
+                }
+
+            }
+                return RetornaNull<T>();
         }
 
 
