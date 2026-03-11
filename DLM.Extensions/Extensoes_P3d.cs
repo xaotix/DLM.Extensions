@@ -50,6 +50,18 @@ namespace Conexoes
             }
             return origens;
         }
+
+        public static P3d MaisProximo(this P3d origem, List<P3d> candidatos)
+        {
+            P3d melhor = null;
+            double menorDist = double.MaxValue;
+            foreach (var c in candidatos)
+            {
+                double d = origem.Distancia(c);
+                if (d < menorDist) { menorDist = d; melhor = c; }
+            }
+            return melhor;
+        }
         public static List<P3d> Offset(this List<P3d> Origem, double offset, bool raio_cantos = false)
         {
 

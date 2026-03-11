@@ -46,37 +46,41 @@ namespace Conexoes
         }
         public static void Show<T>(this T objeto)
         {
-            var valores = new List<Celula>();
             if (objeto == null) { return; }
-
 
             if (objeto is Tabela)
             {
                 (objeto as Tabela).Show(false);
             }
-            else if (objeto is Acessos.User)
+            if (objeto is Tabelas)
             {
-                valores.AddRange((objeto as Acessos.User).Linha);
+                foreach(var item in (objeto as Tabelas))
+                {
+                    item.Show();
+                }
             }
             else if (objeto is Exception)
             {
                 var obj = objeto as Exception;
                 obj.Alerta();
             }
+            else if(objeto is List<Celula>)
+            {
+                new Linha((objeto as List<Celula>)).Show();
+            }
             else if (objeto is Linha)
             {
-                valores.AddRange((objeto as Linha));
+                var mm = new DLM.WPF.DatagridProps();
+                mm.Title = $"Propriedades {objeto.ToString()}";
+                mm.Lista.ItemsSource = (objeto as Linha).Celulas;
+                mm.Show();
             }
             else
             {
-                valores.AddRange(objeto.GetLinha(false, false, false));
+                objeto.GetLinha(false, false, false).Show();
             }
 
-            var mm = new DLM.WPF.DatagridProps();
-            mm.Title = $"Propriedades {objeto.ToString()}";
-            mm.Lista.ItemsSource = valores;
 
-            mm.Show();
         }
         public static bool Propriedades<T>(this T objeto, string Titulo = null, Window owner = null, bool topmost = false)
         {
