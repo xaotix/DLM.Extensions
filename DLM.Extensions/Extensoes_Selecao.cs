@@ -50,9 +50,9 @@ namespace Conexoes
 
             if (objeto is Tabela)
             {
-                (objeto as Tabela).Show(false);
+                (objeto as Tabela).Show(false);               
             }
-            if (objeto is Tabelas)
+            else if (objeto is Tabelas)
             {
                 foreach(var item in (objeto as Tabelas))
                 {

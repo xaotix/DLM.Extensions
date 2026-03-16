@@ -46,22 +46,22 @@ namespace Conexoes
             return valor != null ? valor.ToString(format) : "";
         }
 
-        public static string String(this string Valor, int padleft = 0, char padding = '0')
+        public static string String(this string valor, int padleft = 0, char padding = '0')
         {
-            if (Valor == null)
+            if (valor == null)
             {
                 return null;
             }
-            return Valor.ToString().PadLeft(padleft, padding);
+            return valor.ToString().PadLeft(padleft, padding);
         }
         public static string String<TEnum>(this TEnum value, int padLeft = 0, char padding = '0') where TEnum : Enum
         {
             return value.ToString().PadLeft(padLeft, padding);
         }
 
-        public static string String(this long Valor, int padleft = 0, char padding = '0')
+        public static string String(this long valor, int padleft = 0, char padding = '0')
         {
-            return Valor.ToString().PadLeft(padleft, padding);
+            return valor.ToString().PadLeft(padleft, padding);
         }
         public static string String(this long? valor, int padleft = 0, char padding = '0')
         {
