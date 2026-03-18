@@ -21,7 +21,7 @@ namespace Conexoes
 
         public static List<string> ToString(this List<Arquivo> arquivos)
         {
-            return arquivos.Select(x => x.Endereco.ToUpper()).Distinct().ToList();
+            return arquivos.Select(x => x.Endereco.Upper()).Distinct().ToList();
         }
         public static List<string> ToString(this List<Pasta> pastas)
         {
@@ -214,7 +214,7 @@ namespace Conexoes
         }
         public static Pasta AsPasta(this string dir, Pasta pai = null)
         {
-            dir = dir.ToUpper();
+            dir = dir.Upper();
             if (dir.Replace(@"\", "").Replace(@"/", "").EndsW($@".{Cfg.Init.EXT_Obra}"))
             {
                 return new ObraTecnoMetal(dir, pai);
@@ -327,7 +327,7 @@ namespace Conexoes
         }
         public static string GetSubPasta(this string root, string folder, bool create = true)
         {
-            var novo_dir = root.ToUpper();
+            var novo_dir = root.Upper();
             if (novo_dir.Contem($@"\") && !novo_dir.EndsW($@"\"))
             {
                 novo_dir += $@"\";
@@ -542,7 +542,7 @@ namespace Conexoes
 
             if (File.Exists(arquivo_destino))
             {
-                if (arquivo_origem.ToUpper() == arquivo_destino.ToUpper())
+                if (arquivo_origem.Upper() == arquivo_destino.Upper())
                 {
                     return true;
                 }
@@ -685,7 +685,7 @@ namespace Conexoes
             if (arq.LenghtStr() == 0) { return ""; }
             var ext = System.IO.Path.GetExtension(arq).TrimStart('.');
 
-            return upper ? ext.ToUpper() : ext;
+            return upper ? ext.Upper() : ext;
         }
         public static string getNome(this string arq, bool extensao = false)
         {
@@ -729,7 +729,7 @@ namespace Conexoes
         {
             if (dir.LenghtStr() == 0) { return ""; }
             if (!dir.EndsW(@"\")) { dir = dir + @"\"; }
-            return System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\")).ToUpper();
+            return System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\")).Upper();
         }
 
     }

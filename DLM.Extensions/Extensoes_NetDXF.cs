@@ -84,12 +84,12 @@ namespace DLM.desenho
         }
         public static DimensionStyle GetEstilo(this DxfDocument doc, string Nome, double escala)
         {
-            var s = doc.DimensionStyles.ToList().Find(X => X.Name.ToUpper().Replace(" ", "") == Nome.ToUpper().Replace(" ", ""));
+            var s = doc.DimensionStyles.ToList().Find(X => X.Name.Upper().Replace(" ", "") == Nome.Upper().Replace(" ", ""));
             if (s != null)
             {
                 return s;
             }
-            var st = DLM.desenho.Dxf.GetEstilo(Nome.ToUpper().Replace(" ", ""), escala);
+            var st = DLM.desenho.Dxf.GetEstilo(Nome.Upper().Replace(" ", ""), escala);
             return st;
         }
 
@@ -107,11 +107,11 @@ namespace DLM.desenho
         {
             try
             {
-                var block = dxf_destino.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper());
+                var block = dxf_destino.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
 
                 if (block == null)
                 {
-                    block = dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper());
+                    block = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
                     block = block.Clone() as netDxf.Blocks.Block;
                 }
 
@@ -365,7 +365,7 @@ namespace DLM.desenho
             var nome = prefix;
 
 
-            var igual = dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome);
+            var igual = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome);
             if (igual != null)
             {
                 var insert1 = new netDxf.Entities.Insert(igual);
@@ -497,7 +497,7 @@ namespace DLM.desenho
             var nome = prefix;
 
 
-            var igual = dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome);
+            var igual = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome);
             if (igual != null)
             {
                 var insert1 = new Insert(igual);
@@ -507,7 +507,7 @@ namespace DLM.desenho
             }
 
             int c = 1;
-            while (dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome) != null)
+            while (dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome) != null)
             {
                 nome = $"{prefix}{c}";
                 c++;
@@ -651,7 +651,7 @@ namespace DLM.desenho
             int c = 1;
             if (!criar_se_existir)
             {
-                var blk = dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper());
+                var blk = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
                 if (blk != null)
                 {
                     var ent = new Insert(blk);
@@ -661,7 +661,7 @@ namespace DLM.desenho
                     return ent;
                 }
             }
-            while (dxf.Blocks.ToList().Find(x => x.Name.ToUpper() == nome.ToUpper()) != null)
+            while (dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper()) != null)
             {
                 nome = $"{prefix}_{c}";
                 c++;
@@ -688,7 +688,7 @@ namespace DLM.desenho
 
                     foreach (var cel in atributos)
                     {
-                        var tag = cel.Coluna.ToUpper();
+                        var tag = cel.Coluna.Upper();
 
                         var natt = new netDxf.Entities.AttributeDefinition(cel.Coluna);
                         natt.Value = cel.Valor;
@@ -991,7 +991,7 @@ namespace DLM.desenho
         }
         public static void SetAtributo(this Insert ins, string atributo, string Valor)
         {
-            var t = ins.Attributes.ToList().Find(x => x.Tag.ToUpper() == atributo.ToUpper());
+            var t = ins.Attributes.ToList().Find(x => x.Tag.Upper() == atributo.Upper());
             if (t != null)
             {
                 t.Value = Valor;
@@ -1001,7 +1001,7 @@ namespace DLM.desenho
         {
             try
             {
-                var block = destino.Blocks.ToList().Find(x => x.Name.ToUpper() == arquivo.getNome().ToUpper());
+                var block = destino.Blocks.ToList().Find(x => x.Name.Upper() == arquivo.getNome().Upper());
 
                 if (block == null)
                 {
@@ -1022,7 +1022,7 @@ namespace DLM.desenho
                     {
                         n_Bloco.Layer = l;
                     }
-                    var layouts = destino.Layouts.ToList().FindAll(x => x.AssociatedBlock.Name.ToUpper() == "*PAPER_SPACE");
+                    var layouts = destino.Layouts.ToList().FindAll(x => x.AssociatedBlock.Name.Upper() == "*PAPER_SPACE");
 
                     if (layout && layouts.Count > 0)
                     {
@@ -1099,13 +1099,13 @@ namespace DLM.desenho
         }
         public static Layer GetLayer(this DxfDocument dxf, string name, netDxf.AciColor color, Linetype line)
         {
-            var ss = dxf.Layers.ToList().Find(x => x.Name.ToUpper().Replace(" ", "") == name.ToUpper().Replace(" ", ""));
+            var ss = dxf.Layers.ToList().Find(x => x.Name.Upper().Replace(" ", "") == name.Upper().Replace(" ", ""));
             if (ss != null)
             {
                 return ss;
             }
 
-            var retorno = new Layer(name.Replace(" ", "").ToUpper());
+            var retorno = new Layer(name.Replace(" ", "").Upper());
             retorno.Color = color;
             retorno.Linetype = line;
             return retorno;
@@ -1540,9 +1540,9 @@ namespace DLM.desenho
             }
             else
             {
-                txt = txt.ToUpper();
-                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contem(txt)));
-                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.ToUpper().Contem(txt)));
+                txt = txt.Upper();
+                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.Upper().Contem(txt)));
+                retorno.AddRange(dxf.Entities.MTexts.ToList().FindAll(x => x.Value.Upper().Contem(txt)));
             }
 
 
@@ -1698,7 +1698,7 @@ namespace DLM.desenho
 
         public static string GetAtributo(this Insert insert, string atributo)
         {
-            var igual = insert.Attributes.ToList().Find(x => x.Tag.ToUpper() == atributo.ToUpper());
+            var igual = insert.Attributes.ToList().Find(x => x.Tag.Upper() == atributo.Upper());
             if (igual != null)
             {
                 return igual.Value;

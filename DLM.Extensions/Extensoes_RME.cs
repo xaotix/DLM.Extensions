@@ -486,9 +486,9 @@ namespace Conexoes
         }
         public static bool CORRESPONDE(this RME rme, string valor)
         {
-            var cfim = rme.CODIGOFIM.ToUpper().Replace(" ", "");
-            string valor2 = valor.ToUpper().Replace(" ", "").Replace("*", "");
-            if (valor2 == rme.MARCA_CUSTOM.ToUpper().Replace(" ", ""))
+            var cfim = rme.CODIGOFIM.Upper().Replace(" ", "");
+            string valor2 = valor.Upper().Replace(" ", "").Replace("*", "");
+            if (valor2 == rme.MARCA_CUSTOM.Upper().Replace(" ", ""))
             {
                 return true;
             }

@@ -155,13 +155,75 @@ namespace Conexoes
             newWindowThread.SetApartmentState(ApartmentState.STA);
             newWindowThread.Start();
         }
-        public static string GetTexto(this Exception ex, string adicional = "")
+        public static string GetTexto(this Exception ex, string adicional = "", int nivel = 0)
         {
-            return adicional +
-                (ex.Message.NotNullOrEmpty() ? $"Erro:\n{ex.Message}" : "") +
-                (ex.Source.NotNullOrEmpty() ? $"\n\nCódigo:\n{ex.Source}" : "") +
-                (ex.StackTrace.NotNullOrEmpty() ? $"\nFrame:\n{ex.StackTrace}" : "") +
-                (ex.InnerException.NotNullOrEmpty() ? $"\nMensagem Interna:\n{ex.InnerException}" : "");
+            if (ex == null) return adicional;
+
+            var indent = new string(' ', nivel * 4);
+            var retorno = new System.Text.StringBuilder();
+
+            if (adicional.NotNullOrEmpty())
+                retorno.AppendLine(adicional).AppendLine();
+
+            // Cabecalho com nivel de aninhamento
+            if (nivel > 0)
+                retorno.AppendLine($"{indent}--- Excecao Interna (nivel {nivel}) ---");
+
+            // Tipo da excecao
+            retorno.AppendLine($"{indent}Tipo:       {ex.GetType().FullName}");
+
+            // Mensagem principal
+            if (ex.Message.NotNullOrEmpty())
+                retorno.AppendLine($"{indent}Mensagem:   {ex.Message}");
+
+            // Metodo que lancou
+            if (ex.TargetSite != null)
+                retorno.AppendLine($"{indent}Metodo:     {ex.TargetSite.DeclaringType?.FullName}.{ex.TargetSite.Name}");
+
+            // Assembly/modulo de origem
+            if (ex.Source.NotNullOrEmpty())
+                retorno.AppendLine($"{indent}Origem:     {ex.Source}");
+
+            // Codigo HResult (Win32 / COM / HRESULT)
+            retorno.AppendLine($"{indent}HResult:    0x{ex.HResult:X8} ({ex.HResult})");
+
+            // Link de ajuda, se disponivel
+            if (ex.HelpLink.NotNullOrEmpty())
+                retorno.AppendLine($"{indent}HelpLink:   {ex.HelpLink}");
+
+            // Dados extras adicionados via ex.Data
+            if (ex.Data != null && ex.Data.Count > 0)
+            {
+                retorno.AppendLine($"{indent}Dados:");
+                foreach (System.Collections.DictionaryEntry entry in ex.Data)
+                    retorno.AppendLine($"{indent}    [{entry.Key}] = {entry.Value}");
+            }
+
+            // Stack trace
+            if (ex.StackTrace.NotNullOrEmpty())
+            {
+                retorno.AppendLine($"{indent}StackTrace:");
+                foreach (var linha in ex.StackTrace.Split('\n'))
+                    retorno.AppendLine($"{indent}    {linha.TrimEnd()}");
+            }
+
+            // AggregateException: itera todas as excecoes filhas
+            var aggregate = ex as AggregateException;
+            if (aggregate != null && aggregate.InnerExceptions.Count > 0)
+            {
+                retorno.AppendLine($"{indent}Excecoes Agregadas ({aggregate.InnerExceptions.Count}):");
+                for (int i = 0; i < aggregate.InnerExceptions.Count; i++)
+                {
+                    retorno.AppendLine($"{indent}  [{i + 1}]:");
+                    retorno.AppendLine(aggregate.InnerExceptions[i].GetTexto(nivel: nivel + 1));
+                }
+            }
+            else if (ex.InnerException != null)
+            {
+                retorno.AppendLine(ex.InnerException.GetTexto(nivel: nivel + 1));
+            }
+
+            return retorno.ToString();
         }
     }
 }

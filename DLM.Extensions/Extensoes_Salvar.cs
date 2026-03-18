@@ -20,7 +20,7 @@ namespace Conexoes
             }
 
 
-            saveFileDialog1.Filter = $"{extensao.ToUpper()}| *.{extensao.Replace("*.", "").Replace("*", "")}";
+            saveFileDialog1.Filter = $"{extensao.Upper()}| *.{extensao.Replace("*.", "").Replace("*", "")}";
             saveFileDialog1.Title = mensagem + extensao;
             if (!arquivo.IsNullOrEmpty())
             {

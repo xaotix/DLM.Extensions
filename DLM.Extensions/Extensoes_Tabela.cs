@@ -265,7 +265,7 @@ namespace Conexoes
                                 {
                                     tabelas[i].Nome = $"ABA_{i.String(3)}";
                                 }
-                                else if (tabelas.FindAll(x => x.Nome.ToUpper() == tabelas[i].Nome.ToUpper()).Count > 1)
+                                else if (tabelas.FindAll(x => x.Nome.Upper() == tabelas[i].Nome.Upper()).Count > 1)
                                 {
                                     tabelas[i].Nome += $"_{i}";
                                 }
@@ -308,7 +308,7 @@ namespace Conexoes
                                     l0 = tabela.Excel_L0 + 1;
                                     c0 = tabela.Excel_C0 + 1;
 
-                                    aba = nExcel.Workbook.Worksheets.ToList().Find(x => x.Name.ToUpper() == tabela.Nome.ToUpper());
+                                    aba = nExcel.Workbook.Worksheets.ToList().Find(x => x.Name.Upper() == tabela.Nome.Upper());
                                     if (aba == null)
                                     {
                                         aba = nExcel.Workbook.Worksheets.Add(tabela.Nome);

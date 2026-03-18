@@ -131,7 +131,7 @@ namespace Conexoes
             {
                 foreach (var txt in dxf.Entities.Texts)
                 {
-                    var vlr = txt.Value.ToUpper();
+                    var vlr = txt.Value.Upper();
                     if ((type == CanvasDXFType.Medajoist) && txt.Value.Contem("PARAFUSO", "VERSION", "NSD", "TIP"))
                     {
                         continue;
@@ -318,7 +318,7 @@ namespace Conexoes
             }
             foreach (var text in dxf.Entities.Texts)
             {
-                var vlr = text.Value.ToUpper();
+                var vlr = text.Value.Upper();
                 if ((type == CanvasDXFType.Medajoist) && vlr.Contem("PARAFUSO", "VERSION", "NSD", "TIP"))
                 {
                     continue;
@@ -526,16 +526,16 @@ namespace Conexoes
         public static TipoLinhaCanvas GetTipoLinha(this netDxf.Entities.Line line)
         {
             var lin = line.Linetype;
-            if (line.Linetype.Name.ToUpper() == netDxf.Tables.Linetype.ByLayer.Name.ToUpper())
+            if (line.Linetype.Name.Upper() == netDxf.Tables.Linetype.ByLayer.Name.Upper())
             {
                 lin = line.Layer.Linetype;
             }
 
-            if (lin.Name.ToUpper() == netDxf.Tables.Linetype.Dashed.Name.ToUpper())
+            if (lin.Name.Upper() == netDxf.Tables.Linetype.Dashed.Name.Upper())
             {
                 return TipoLinhaCanvas.Tracado;
             }
-            if (lin.Name.ToUpper() == netDxf.Tables.Linetype.DashDot.Name.ToUpper())
+            if (lin.Name.Upper() == netDxf.Tables.Linetype.DashDot.Name.Upper())
             {
                 return TipoLinhaCanvas.Traco_Ponto;
             }
@@ -562,16 +562,16 @@ namespace Conexoes
             //nObj.Y2 = line.EndPoint.Y + Y0;
 
             //var lin = line.Linetype;
-            //if (line.Linetype.Name.ToUpper() == netDxf.Tables.Linetype.ByLayer.Name.ToUpper())
+            //if (line.Linetype.Name.Upper() == netDxf.Tables.Linetype.ByLayer.Name.Upper())
             //{
             //    lin = line.Layer.Linetype;
             //}
 
-            //if (lin.Name.ToUpper() == netDxf.Tables.Linetype.Dashed.Name.ToUpper())
+            //if (lin.Name.Upper() == netDxf.Tables.Linetype.Dashed.Name.Upper())
             //{
             //    nObj.StrokeDashArray = new DoubleCollection() { 10, 10 };
             //}
-            //if (lin.Name.ToUpper() == netDxf.Tables.Linetype.DashDot.Name.ToUpper())
+            //if (lin.Name.Upper() == netDxf.Tables.Linetype.DashDot.Name.Upper())
             //{
             //    nObj.StrokeDashArray = new DoubleCollection() { 10, 2, 2, 2 };
             //}

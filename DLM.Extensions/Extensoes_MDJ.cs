@@ -163,7 +163,7 @@ namespace Conexoes
                 bool continuar = true;
                 while (continuar)
                 {
-                    var s = dxf.Blocks.ToList().Find(x => x.Name.ToUpper().Replace(" ", "") == Nome + (c > 0 ? "_" + c.String(2) : ""));
+                    var s = dxf.Blocks.ToList().Find(x => x.Name.Upper().Replace(" ", "") == Nome + (c > 0 ? "_" + c.String(2) : ""));
                     if (s != null)
                     {
                         c++;

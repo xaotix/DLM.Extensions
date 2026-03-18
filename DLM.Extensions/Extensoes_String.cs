@@ -58,6 +58,10 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        public static string Upper(this string txt)
+        {
+            return txt?.ToUpper();
+        }
         public static bool Contem(this object item, string valor, double porcentagem = 70)
         {
             if (item == null) { return false; }
@@ -67,8 +71,8 @@ namespace Conexoes
 
 
 
-                valor = valor.ToUpper().TrimStart().TrimEnd();
-                var descricao_item = item.ToString().ToUpper();
+                valor = valor.Upper().TrimStart().TrimEnd();
+                var descricao_item = item.ToString().Upper();
 
                 if (item is Celula)
                 {
@@ -210,7 +214,7 @@ namespace Conexoes
         {
             if (!txt.IsNullOrEmpty(false))
             {
-                return txt.ToUpper().Replace(" ", "").Replace(".", "");
+                return txt.Upper().Replace(" ", "").Replace(".", "");
             }
             return txt;
         }
@@ -227,7 +231,7 @@ namespace Conexoes
             }
             else if (text.LenghtStr() == 1)
             {
-                return text.ToUpper();
+                return text.Upper();
             }
             else
             {
@@ -244,7 +248,7 @@ namespace Conexoes
                     {
                         if (st.LenghtStr() == 1)
                         {
-                            str_join += st.ToUpper();
+                            str_join += st.Upper();
                         }
                         else
                         {
@@ -441,7 +445,7 @@ namespace Conexoes
             {
                 return false;
             }
-            foreach (char c in str.ToUpper().Remover(",", ".", " ", "-", "+", "E"))
+            foreach (char c in str.Upper().Remover(",", ".", " ", "-", "+", "E"))
             {
                 if (c < '0' || c > '9')
                     return false;

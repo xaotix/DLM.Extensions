@@ -289,7 +289,7 @@ namespace Conexoes
         public static List<ReadCAM> GetCAMs(this List<string> programas)
         {
             var items = new List<ReadCAM>();
-            programas = programas.Select(x => x.ToUpper()).Distinct().ToList();
+            programas = programas.Select(x => x.Upper()).Distinct().ToList();
             var lista = programas.Quebrar(500);
             foreach (var pack in lista)
             {
@@ -319,7 +319,7 @@ namespace Conexoes
         public static List<NC1> GetNCs(this List<string> programas)
         {
             var items = new List<NC1>();
-            programas = programas.Select(x => x.ToUpper()).Distinct().ToList();
+            programas = programas.Select(x => x.Upper()).Distinct().ToList();
             var lista = programas.Quebrar(500);
             foreach (var pack in lista)
             {

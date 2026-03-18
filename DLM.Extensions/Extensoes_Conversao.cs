@@ -398,7 +398,7 @@ namespace Conexoes
                 return true;
             }
 
-            valor = valor.ToUpper().Replace(" ", "");
+            valor = valor.Upper().Replace(" ", "");
             if (valor == "TRUE" | valor == "1" | valor == "X" | valor == "YES" | valor == "SIM" | valor == "Y" | valor == "S" | valor == "ON")
             {
                 return true;

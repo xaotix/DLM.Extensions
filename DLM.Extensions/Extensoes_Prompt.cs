@@ -19,7 +19,7 @@ namespace Conexoes
             string arq = Cfg.Init.DIR_APPDATA + @"cfguser_prompt.dlm";
             if (chave.LenghtStr() == 0)
             {
-                chave = titulo.ToUpper().RemoverCaracteresEspeciais();
+                chave = titulo.Upper().RemoverCaracteresEspeciais();
             }
             if (gravar_carregar)
             {

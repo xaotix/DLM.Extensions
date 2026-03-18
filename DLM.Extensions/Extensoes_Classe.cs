@@ -564,7 +564,7 @@ namespace Conexoes
         {
             string valor = "";
             var propriedaes = obj.GetPropriedades();
-            var prop = propriedaes.Find(x => x.Name.ToUpper() == propriedade.ToUpper());
+            var prop = propriedaes.Find(x => x.Name.Upper() == propriedade.Upper());
 
             if (prop != null)
             {

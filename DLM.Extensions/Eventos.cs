@@ -23,7 +23,7 @@ namespace Conexoes
         {
             if (sender is TextBox filtro && filtro.Tag is StackPanel grid)
             {
-                string chave = filtro.Text.ToUpper();
+                string chave = filtro.Text.Upper();
 
                 foreach (var item in grid.Children)
                 {
@@ -31,7 +31,7 @@ namespace Conexoes
                     {
                         if (chave.LenghtStr() > 2)
                         {
-                            bt.Visibility = bt.Content.ToString().ToUpper().Contem(chave)
+                            bt.Visibility = bt.Content.ToString().Upper().Contem(chave)
                                 ? Visibility.Visible
                                 : Visibility.Collapsed;
                         }
