@@ -473,6 +473,10 @@ namespace Conexoes
         {
             return valor % 2 == 0;
         }
+        public static bool EValido(this double value)
+        {
+            return !double.IsNaN(value) && !double.IsInfinity(value);
+        }
         public static bool Igual(this double valor, double comparar, double tol = 1)
         {
             return valor >= comparar - tol && valor <= comparar + tol;

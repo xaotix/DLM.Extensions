@@ -7,9 +7,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 
 namespace Conexoes
 {
+
+
     public static class Extensoes_Abrir
     {
         [DllImport("User32.dll")]

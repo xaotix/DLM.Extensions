@@ -482,65 +482,91 @@ namespace Conexoes
         {
             return txt.Replace(@"""", "");
         }
-        public static string Esquerda(this string Origem, int MaxComp, bool pontilhado = false)
+
+        /// <summary>
+        /// Remove caracteres duplicados que estão lado a lado
+        /// </summary>
+        /// <param name="texto"></param>
+        /// <param name="remover"></param>
+        /// <returns></returns>
+        public static string RemoverDuplicatas(this string texto, string remover)
         {
-            string txt = Origem;
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            string t = regex.Replace(texto, remover);
+            return t;
+        }
+        public static string Esquerda(this string stxt, int MaxComp, bool pontilhado = false)
+        {
+            string txt = stxt;
             if (txt.LenghtStr() > MaxComp)
             {
-                txt = Origem.Substring(0, MaxComp) + (pontilhado ? "..." : "");
+                txt = txt.Substring(0, MaxComp) + (pontilhado ? "..." : "");
             }
             return txt;
         }
 
-        public static string Direita(this string Origem, int Comp)
+        public static string CortarStringDireita(this string txt, int comp)
         {
-            string txt = Origem;
-            if (Comp < txt.LenghtStr())
+            if (txt.Length > comp)
             {
-                return txt.Substring(txt.LenghtStr() - Comp, Comp);
-            }
-
-            return Origem;
-        }
-
-
-        public static string RemoverNumeros(this string Nome)
-        {
-            return Regex.Replace(Nome, @"[\d-]", string.Empty);
-        }
-        public static string RemoverTextos(this string Nome, bool manter_sinais = false)
-        {
-            if (manter_sinais)
-            {
-                return Regex.Replace(Nome, "[^0-9.+-]", "");
+                return txt.Substring(txt.Length - comp);
             }
             else
             {
-                return Regex.Replace(Nome, "[^0-9.]", "");
+                return "";
+            }
+        }
+
+        public static string Direita(this string stxt, int comp)
+        {
+            string txt = stxt;
+            if (comp < txt.LenghtStr())
+            {
+                return txt.Substring(txt.LenghtStr() - comp, comp);
+            }
+
+            return txt;
+        }
+
+
+        public static string RemoverNumeros(this string txt)
+        {
+            return Regex.Replace(txt, @"[\d-]", string.Empty);
+        }
+        public static string RemoverTextos(this string txt, bool manter_sinais = false)
+        {
+            if (manter_sinais)
+            {
+                return Regex.Replace(txt, "[^0-9.+-]", "");
+            }
+            else
+            {
+                return Regex.Replace(txt, "[^0-9.]", "");
             }
         }
         /// <summary>
         /// Remove os espaços iniciais e finais
         /// </summary>
-        /// <param name="texto"></param>
+        /// <param name="txt"></param>
         /// <returns></returns>
-        public static string TrimTxt(this string texto)
+        public static string TrimTxt(this string txt)
         {
-            if (texto.NotNullOrEmpty())
+            if (txt.NotNullOrEmpty())
             {
-                return texto.TrimStart().TrimEnd();
+                return txt.TrimStart().TrimEnd();
             }
-            return texto;
+            return txt;
         }
-        public static string NormalizarTexto(this string texto)
+        public static string NormalizarTexto(this string txt)
         {
-            if (texto.IsNullOrEmpty())
-                return texto;
+            if (txt.IsNullOrEmpty())
+                return txt;
 
-            texto = texto.Replace("°", "o");
-            texto = Regex.Replace(texto, "[\u2010-\u2015\u2212\u00AD]", "-");
+            txt = txt.Replace("°", "o");
+            txt = Regex.Replace(txt, "[\u2010-\u2015\u2212\u00AD]", "-");
             // Normaliza para decompor caracteres acentuados (ex: "é" -> "e" + acento)
-            string sem_acento = texto.Normalize(NormalizationForm.FormD);
+            string sem_acento = txt.Normalize(NormalizationForm.FormD);
 
             // Remove marcas de acento (diacríticos)
             var sem_acento_diacritico = new StringBuilder();
@@ -564,15 +590,15 @@ namespace Conexoes
             // Remove espaços iniciais
             return retorno.TrimStart().TrimEnd();
         }
-        public static string RemoverCaracteresEspeciais(this string texto)
+        public static string RemoverCaracteresEspeciais(this string txt)
         {
-            if (texto == null) { return null; }
-            texto = texto.TrimStart().TrimEnd();
-            if (texto.LenghtStr() == 0)
+            if (txt == null) { return null; }
+            txt = txt.TrimStart().TrimEnd();
+            if (txt.LenghtStr() == 0)
             {
                 return "";
             }
-            var normalizar = texto.Normalize(NormalizationForm.FormD);
+            var normalizar = txt.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder(capacity: normalizar.LenghtStr());
 
             for (int i = 0; i < normalizar.LenghtStr(); i++)
@@ -590,6 +616,28 @@ namespace Conexoes
                 .Normalize(NormalizationForm.FormC);
 
             return Regex.Replace(ret, @"[^0-9a-zA-Z-]+", "_");
+        }
+
+
+        private static readonly object _randomLock = new object();
+        private static readonly Random _random = new Random();
+
+        private const string CharsDefault = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+        public static string RandomString(this int length, string chars = CharsDefault)
+        {
+            if (length <= 0)
+                throw new ArgumentOutOfRangeException("length", "O comprimento deve ser maior que zero.");
+            if (string.IsNullOrEmpty(chars))
+                throw new ArgumentException("O conjunto de caracteres nao pode ser vazio.", "chars");
+
+            char[] buffer = new char[length];
+            lock (_randomLock)
+            {
+                for (int i = 0; i < length; i++)
+                    buffer[i] = chars[_random.Next(chars.Length)];
+            }
+            return new string(buffer);
         }
     }
 }
