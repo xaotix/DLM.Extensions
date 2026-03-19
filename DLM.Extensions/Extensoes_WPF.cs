@@ -1,4 +1,5 @@
-﻿using DLM.vars;
+﻿using DLM;
+using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -96,7 +97,7 @@ namespace Conexoes
                         menu.Header = null;
                     }
 
-                    var Source = DLM.BufferImagem.GetIcone(chave, "");
+                    var Source = BufferImagem.GetIcone(chave);
 
 
                     menu.Icon = new System.Windows.Controls.Image()
