@@ -12,7 +12,7 @@ namespace Conexoes
     {
         public static void SetTitle(this Window window, string prefix)
         {
-            window.Title = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()} - [{Cfg.Init.SAP_Servidor}]";
+            window.Title = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()} - [SAP -{Cfg.Init.SAP_Servidor}]";
         }
         public static void Sair(this System.Windows.Window window)
         {

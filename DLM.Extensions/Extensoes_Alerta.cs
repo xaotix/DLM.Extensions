@@ -202,9 +202,21 @@ namespace Conexoes
             // Stack trace
             if (ex.StackTrace.NotNullOrEmpty())
             {
+                var st = new System.Diagnostics.StackTrace(ex, fNeedFileInfo: true);
+
                 retorno.AppendLine($"{indent}StackTrace:");
-                foreach (var linha in ex.StackTrace.Split('\n'))
-                    retorno.AppendLine($"{indent}    {linha.TrimEnd()}");
+                foreach (var frame in st.GetFrames() ?? new System.Diagnostics.StackFrame[0])
+                {
+                    var method = frame.GetMethod();
+                    var arquivo = frame.GetFileName();
+                    var linha = frame.GetFileLineNumber();
+
+                    var loc = arquivo.NotNullOrEmpty()
+                        ? $" em {System.IO.Path.GetFileName(arquivo)}:linha {linha}"
+                        : string.Empty;
+
+                    retorno.AppendLine($"{indent}    {method?.DeclaringType?.FullName}.{method?.Name}{loc}");
+                }
             }
 
             // AggregateException: itera todas as excecoes filhas
