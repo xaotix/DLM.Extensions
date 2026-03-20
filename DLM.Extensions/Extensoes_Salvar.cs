@@ -41,6 +41,10 @@ namespace Conexoes
         {
             return Conexoes.Utilz.Abrir_String(extensao, root, ponto, title);
         }
+        public static List<string> AbrirStrings(this string ext)
+        {
+            return Conexoes.Utilz.Abrir_Strings(ext);
+        }
         public static void Gravar(this List<List<string>> linhas, string extensao = "csv")
         {
             linhas.Select(x => string.Join(";", x)).ToList().Gravar(extensao);

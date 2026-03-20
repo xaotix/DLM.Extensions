@@ -1,5 +1,7 @@
-﻿using DLM.db;
+﻿using Conexoes.Janelas;
+using DLM.db;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
@@ -58,6 +60,11 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        public static List<string> SplitTabulation(this string str)
+        {
+            string[] partes = str.Split(new[] { "\r\n", "\n", "\r", "\t", "\v", "\f", "\u2028", "\u2029" }, StringSplitOptions.RemoveEmptyEntries);
+            return partes.ToList();
+        }
         public static string Upper(this string txt)
         {
             return txt?.ToUpper();

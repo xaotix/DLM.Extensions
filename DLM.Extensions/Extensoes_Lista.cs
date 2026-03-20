@@ -26,6 +26,14 @@ namespace Conexoes
         {
             return items.FindAll(x => x is T).Cast<T>().ToList();
         }
+        public static List<T> RemoveAll<T>(this List<T> items, List<T> remove)
+        {
+            foreach (var item in remove)
+            {
+                items.Remove(item);
+            }
+            return items;
+        }
         public static List<T> Simplificar<T>(this List<T> Origem)
         {
             return Origem.GroupBy(x => x).Select(g => g.First()).ToList();
