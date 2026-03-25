@@ -195,6 +195,7 @@ namespace Conexoes
         public static long Long<T>(this T comp)
         {
             if (comp == null) { return 0; }
+
             string comps = comp.ToString();
             if (comps == "") { comps = "0"; }
             try
