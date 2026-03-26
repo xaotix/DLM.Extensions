@@ -524,26 +524,27 @@ namespace Conexoes
         public static string RemoverSufixDesmembrado(this string nome)
         {
             var nNome = nome
-                    .Remover("_1"
-                    , "_2"
-                    , "_3"
-                    , "_4"
-                    , "_5"
-                    , "_6"
-                    , "_7"
-                    , "_8"
-                    , "_9"
-                    , "_10"
-                    , "_11"
-                    , "_12"
-                    , "_13"
-                    , "_14"
-                    , "_15"
-                    , "_16"
-                    , "_17"
-                    , "_18"
-                    , "_19"
-                    , "_U");
+                    .Remover(
+                     "_10",
+                     "_11",
+                     "_12",
+                     "_13",
+                     "_14",
+                     "_15",
+                     "_16",
+                     "_17",
+                     "_18",
+                     "_19",
+                     "_1",
+                     "_2",
+                     "_3",
+                     "_4",
+                     "_5",
+                     "_6",
+                     "_7",
+                     "_8",
+                     "_9",
+                     "_U");
             return nNome;
         }
         public static bool Backup(this string arquivo)

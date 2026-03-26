@@ -382,30 +382,38 @@ namespace Conexoes
 
         public static bool Exists(this string file)
         {
-            if (file == null) { return false; }
-            if (file.LenghtStr() == 0) { return false; }
+            if (file.IsNullOrEmpty()) { return false; }
 
-            if (file.IsDirectory())
+            if (File.Exists(file))
             {
-                try
-                {
-                    return Directory.Exists(file);
-                }
-                catch (Exception)
-                {
-
-                }
+                return true;
+            }
+            else if (Directory.Exists(file))
+            {
+                return true;
             }
 
+            //if (file.IsDirectory())
+            //{
+            //    try
+            //    {
+            //        return Directory.Exists(file);
+            //    }
+            //    catch (Exception ex)
+            //    {
 
-            try
-            {
-                return File.Exists(file);
-            }
-            catch (Exception)
-            {
+            //    }
+            //}
 
-            }
+
+            //try
+            //{
+            //    return File.Exists(file);
+            //}
+            //catch (Exception ex)
+            //{
+
+            //}
             return false;
         }
 
@@ -418,29 +426,43 @@ namespace Conexoes
             {
                 return true;
             }
+            else if (File.Exists(path))
+            {
+                return false;
+            }
+            else if (Directory.Exists(path))
+            {
+                return true;
+            }
+            else if ((File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                return true;
+            }
 
-            try
-            {
-                var attr = File.GetAttributes(path);
-                return attr.HasFlag(FileAttributes.Directory);
-            }
-            catch (FileNotFoundException)
-            {
-                return false; // existe mas é arquivo? não, então não é diretório
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return false; // não existe
-            }
-            catch (IOException)
-            {
-                return false; // caminho inválido
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // caminho existe mas sem permissão → ainda podemos saber se é diretório
-                return new DirectoryInfo(path).Exists;
-            }
+            return false;
+
+            //try
+            //{
+            //    var attr = File.GetAttributes(path);
+            //    return attr.HasFlag(FileAttributes.Directory);
+            //}
+            //catch (FileNotFoundException)
+            //{
+            //    return false; // existe mas é arquivo? não, então não é diretório
+            //}
+            //catch (DirectoryNotFoundException)
+            //{
+            //    return false; // não existe
+            //}
+            //catch (IOException)
+            //{
+            //    return false; // caminho inválido
+            //}
+            //catch (UnauthorizedAccessException)
+            //{
+            //    // caminho existe mas sem permissão → ainda podemos saber se é diretório
+            //    return new DirectoryInfo(path).Exists;
+            //}
         }
 
         //public static bool E_Diretorio(this string dir)
