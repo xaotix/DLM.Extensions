@@ -419,25 +419,36 @@ namespace Conexoes
 
         public static bool IsDirectory(this string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return false;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                    return false;
 
-            if (path.EndsW(@"\", @"/"))
-            {
-                return true;
+                if (path.EndsW(@"\", @"/"))
+                {
+                    return true;
+                }
+                else if (File.Exists(path))
+                {
+                    return false;
+                }
+                else if (Directory.Exists(path))
+                {
+                    return true;
+                }
+
+                return Path.GetExtension(path).IsNullOrEmpty();
+
+                //if ((File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory)
+                //{
+                //    return true;
+                //}
             }
-            else if (File.Exists(path))
+            catch (Exception ex)
             {
-                return false;
+                ex.Alerta();
             }
-            else if (Directory.Exists(path))
-            {
-                return true;
-            }
-            else if ((File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory)
-            {
-                return true;
-            }
+
 
             return false;
 
@@ -715,35 +726,37 @@ namespace Conexoes
             if (arq.LenghtStr() == 0) { return ""; }
             try
             {
-                if (arq.IsDirectory())
+                var nome_arq = System.IO.Path.GetFileNameWithoutExtension(arq);
+                if (nome_arq == "")
                 {
-                    var ret = arq;
-                    ret = ret.TrimEnd(@"/".ToCharArray());
-                    ret = ret.TrimEnd(@"\".ToCharArray());
-                    ret = ret.Replace(@"\", "|").Replace(@"/", "|");
-                    ret = ret.Split('|').ToList().Last();
-                    return ret;
+                    var dir = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(arq));
+                    return dir;
                 }
-                else
+                if (extensao)
                 {
-                    var nome_arq = System.IO.Path.GetFileNameWithoutExtension(arq);
-                    if (nome_arq == "")
-                    {
-                        return System.IO.Path.GetDirectoryName(arq);
-                    }
-                    if (extensao)
-                    {
-                        var ext = arq.getExtensao(false);
-                        return $"{nome_arq}.{ext}";
-                    }
+                    var ext = arq.getExtensao(false);
+                    return $"{nome_arq}.{ext}";
+                }
 
-                    return nome_arq;
-                }
+                return nome_arq;
+                //if (arq.IsDirectory())
+                //{
+                //    var ret = arq;
+                //    ret = ret.TrimEnd(@"/".ToCharArray());
+                //    ret = ret.TrimEnd(@"\".ToCharArray());
+                //    ret = ret.Replace(@"\", "|").Replace(@"/", "|");
+                //    ret = ret.Split('|').ToList().Last();
+                //    return ret;
+                //}
+                //else
+                //{
+
+                //}
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                ex.Alerta();
             }
             return arq;
         }
