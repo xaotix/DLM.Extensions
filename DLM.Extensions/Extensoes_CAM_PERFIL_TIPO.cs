@@ -12,63 +12,63 @@ namespace Conexoes
             switch (tipo)
             {
                 case CAM_PERFIL_TIPO.Z_Purlin:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Purlin");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Purlin");
                 case CAM_PERFIL_TIPO.Z_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Dobrado");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Dobrado");
                 case CAM_PERFIL_TIPO.C_Enrigecido:
-                    return BufferImagem.GetIconeResource("dbase_ico_C");
+                    return BufferImagem.GetIcone("dbase_ico_C");
                 case CAM_PERFIL_TIPO.L_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_L_Dobrado");
+                    return BufferImagem.GetIcone("dbase_ico_L_Dobrado");
                 case CAM_PERFIL_TIPO.Cartola:
-                    return BufferImagem.GetIconeResource("dbase_ico_OMEGA");
+                    return BufferImagem.GetIcone("dbase_ico_OMEGA");
                 case CAM_PERFIL_TIPO.Tubo_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_ico_TUBO_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_TUBO_REDONDO");
                 case CAM_PERFIL_TIPO.Tubo_Quadrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_TUBO_RETANGULAR");
+                    return BufferImagem.GetIcone("dbase_ico_TUBO_RETANGULAR");
                 case CAM_PERFIL_TIPO.Caixao:
-                    return BufferImagem.GetIconeResource("dbase_ico_CAIXAO");
+                    return BufferImagem.GetIcone("dbase_ico_CAIXAO");
                 case CAM_PERFIL_TIPO.I_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_ico_I_SOLDADO");
+                    return BufferImagem.GetIcone("dbase_ico_I_SOLDADO");
                 case CAM_PERFIL_TIPO.Barra_Chata:
-                    return BufferImagem.GetIconeResource("dbase_ico_FERRO_CHATO");
+                    return BufferImagem.GetIcone("dbase_ico_FERRO_CHATO");
                 case CAM_PERFIL_TIPO.T_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_ico_T");
+                    return BufferImagem.GetIcone("dbase_ico_T");
                 case CAM_PERFIL_TIPO.Barra_Redonda:
-                    return BufferImagem.GetIconeResource("dbase_ico_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_REDONDO");
                 case CAM_PERFIL_TIPO.L_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_ico_L");
+                    return BufferImagem.GetIcone("dbase_ico_L");
                 case CAM_PERFIL_TIPO.INP:
-                    return BufferImagem.GetIconeResource("dbase_ico_INP");
+                    return BufferImagem.GetIcone("dbase_ico_INP");
                 case CAM_PERFIL_TIPO.WLam:
-                    return BufferImagem.GetIconeResource("dbase_ico_W");
+                    return BufferImagem.GetIcone("dbase_ico_W");
                 case CAM_PERFIL_TIPO.UNP:
-                    return BufferImagem.GetIconeResource("dbase_ico_UNP");
+                    return BufferImagem.GetIcone("dbase_ico_UNP");
                 case CAM_PERFIL_TIPO.Chapa_Xadrez:
-                    return BufferImagem.GetIconeResource("dbase_ico_UNITARIO");
+                    return BufferImagem.GetIcone("dbase_ico_UNITARIO");
                 case CAM_PERFIL_TIPO.Chapa:
-                    return BufferImagem.GetIconeResource("dbase_ico_M2");
+                    return BufferImagem.GetIcone("dbase_ico_M2");
                 case CAM_PERFIL_TIPO.U_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_U");
+                    return BufferImagem.GetIcone("dbase_ico_U");
                 case CAM_PERFIL_TIPO.UAP:
-                    return BufferImagem.GetIconeResource("dbase_ico_UAP");
+                    return BufferImagem.GetIcone("dbase_ico_UAP");
                 case CAM_PERFIL_TIPO._Desconhecido:
-                    return BufferImagem.GetIconeResource("question");
+                    return BufferImagem.GetIcone("question");
                 case CAM_PERFIL_TIPO._Erro:
-                    return BufferImagem.GetIconeResource("dialog_warning");
+                    return BufferImagem.GetIcone("dialog_warning");
                 case CAM_PERFIL_TIPO.Generico:
-                    return BufferImagem.GetIconeResource("dbase_ico_GENERICO");
+                    return BufferImagem.GetIcone("dbase_ico_GENERICO");
                 case CAM_PERFIL_TIPO.T_Aresta_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_ico_T_ARESTA_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_T_ARESTA_REDONDO");
                 case CAM_PERFIL_TIPO.Z_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Laminado");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Laminado");
                 case CAM_PERFIL_TIPO.Elemento_Unitario:
-                    return BufferImagem.GetIconeResource("dbase_ico_UNITARIO");
+                    return BufferImagem.GetIcone("dbase_ico_UNITARIO");
                 case CAM_PERFIL_TIPO.Especial_2:
-                    return BufferImagem.GetIconeResource("dbase_ico_ESPECIAL_2");
+                    return BufferImagem.GetIcone("dbase_ico_ESPECIAL_2");
                 case CAM_PERFIL_TIPO.Especial_3:
-                    return BufferImagem.GetIconeResource("dbase_ico_ESPECIAL_3");
+                    return BufferImagem.GetIcone("dbase_ico_ESPECIAL_3");
                 default:
-                    return BufferImagem.GetIconeResource("question");
+                    return BufferImagem.GetIcone("question");
             }
         }
         public static CAM_FAMILIA GetFamilia(this CAM_PERFIL_TIPO Tipo)
@@ -436,66 +436,66 @@ namespace Conexoes
             switch (Tipo)
             {
                 case CAM_PERFIL_TIPO.Z_Purlin:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Purlin");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Purlin");
                 case CAM_PERFIL_TIPO.Especial_1:
-                    return BufferImagem.GetIconeResource("dbase_ico_ESPECIAL_1");
+                    return BufferImagem.GetIcone("dbase_ico_ESPECIAL_1");
                 case CAM_PERFIL_TIPO.Especial_2:
-                    return BufferImagem.GetIconeResource("dbase_ico_ESPECIAL_2");
+                    return BufferImagem.GetIcone("dbase_ico_ESPECIAL_2");
                 case CAM_PERFIL_TIPO.Especial_3:
-                    return BufferImagem.GetIconeResource("dbase_ico_ESPECIAL_3");
+                    return BufferImagem.GetIcone("dbase_ico_ESPECIAL_3");
                 case CAM_PERFIL_TIPO.Z_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Dobrado");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Dobrado");
                 case CAM_PERFIL_TIPO.C_Enrigecido:
-                    return BufferImagem.GetIconeResource("dbase_ico_C");
+                    return BufferImagem.GetIcone("dbase_ico_C");
                 case CAM_PERFIL_TIPO.L_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_L_Dobrado");
+                    return BufferImagem.GetIcone("dbase_ico_L_Dobrado");
                 case CAM_PERFIL_TIPO.Cartola:
-                    return BufferImagem.GetIconeResource("dbase_ico_OMEGA");
+                    return BufferImagem.GetIcone("dbase_ico_OMEGA");
                 case CAM_PERFIL_TIPO.Tubo_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_ico_TUBO_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_TUBO_REDONDO");
                 case CAM_PERFIL_TIPO.Tubo_Quadrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_TUBO_RETANGULAR");
+                    return BufferImagem.GetIcone("dbase_ico_TUBO_RETANGULAR");
                 case CAM_PERFIL_TIPO.Caixao:
-                    return BufferImagem.GetIconeResource("dbase_ico_CAIXAO");
+                    return BufferImagem.GetIcone("dbase_ico_CAIXAO");
                 case CAM_PERFIL_TIPO.I_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_ico_I_SOLDADO");
+                    return BufferImagem.GetIcone("dbase_ico_I_SOLDADO");
                 case CAM_PERFIL_TIPO.Barra_Chata:
-                    return BufferImagem.GetIconeResource("dbase_ico_FERRO_CHATO");
+                    return BufferImagem.GetIcone("dbase_ico_FERRO_CHATO");
                 case CAM_PERFIL_TIPO.T_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_ico_T");
+                    return BufferImagem.GetIcone("dbase_ico_T");
                 case CAM_PERFIL_TIPO.Barra_Redonda:
-                    return BufferImagem.GetIconeResource("dbase_ico_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_REDONDO");
                 case CAM_PERFIL_TIPO.L_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_ico_L");
+                    return BufferImagem.GetIcone("dbase_ico_L");
                 case CAM_PERFIL_TIPO.INP:
-                    return BufferImagem.GetIconeResource("dbase_ico_INP");
+                    return BufferImagem.GetIcone("dbase_ico_INP");
                 case CAM_PERFIL_TIPO.WLam:
-                    return BufferImagem.GetIconeResource("dbase_ico_W");
+                    return BufferImagem.GetIcone("dbase_ico_W");
                 case CAM_PERFIL_TIPO.UNP:
-                    return BufferImagem.GetIconeResource("dbase_ico_UNP");
+                    return BufferImagem.GetIcone("dbase_ico_UNP");
                 case CAM_PERFIL_TIPO.U_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_ico_U");
+                    return BufferImagem.GetIcone("dbase_ico_U");
                 case CAM_PERFIL_TIPO.UAP:
-                    return BufferImagem.GetIconeResource("dbase_ico_UAP");
+                    return BufferImagem.GetIcone("dbase_ico_UAP");
                 case CAM_PERFIL_TIPO.T_Aresta_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_ico_T_ARESTA_REDONDO");
+                    return BufferImagem.GetIcone("dbase_ico_T_ARESTA_REDONDO");
                 case CAM_PERFIL_TIPO.Z_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_ico_Z_Laminado");
+                    return BufferImagem.GetIcone("dbase_ico_Z_Laminado");
 
                 case CAM_PERFIL_TIPO.Chapa_Xadrez:
                 case CAM_PERFIL_TIPO.Chapa:
-                    return BufferImagem.GetIconeResource("chapa");
+                    return BufferImagem.GetIcone("chapa");
                 case CAM_PERFIL_TIPO._Desconhecido:
                 case CAM_PERFIL_TIPO.Generico:
                 case CAM_PERFIL_TIPO.Elemento_Unitario:
-                    return BufferImagem.GetIconeResource("nut_and_bolt_16x16");
+                    return BufferImagem.GetIcone("nut_and_bolt_16x16");
 
                 case CAM_PERFIL_TIPO._Erro:
-                    return BufferImagem.GetIconeResource("dialog_error");
+                    return BufferImagem.GetIcone("dialog_error");
 
 
             }
-            return BufferImagem.GetIconeResource("erro_cinza");
+            return BufferImagem.GetIcone("erro_cinza");
 
         }
         public static string GetTipoCode(this CAM_PERFIL_TIPO Tipo)
@@ -565,65 +565,65 @@ namespace Conexoes
             switch (Tipo)
             {
                 case CAM_PERFIL_TIPO.Z_Purlin:
-                    return BufferImagem.GetIconeResource("dbase_Z_Purlin");
+                    return BufferImagem.GetIcone("dbase_Z_Purlin");
                 case CAM_PERFIL_TIPO.Especial_1:
-                    return BufferImagem.GetIconeResource("dbase_ESPECIAL_1");
+                    return BufferImagem.GetIcone("dbase_ESPECIAL_1");
                 case CAM_PERFIL_TIPO.Especial_2:
-                    return BufferImagem.GetIconeResource("dbase_ESPECIAL_2");
+                    return BufferImagem.GetIcone("dbase_ESPECIAL_2");
                 case CAM_PERFIL_TIPO.Especial_3:
-                    return BufferImagem.GetIconeResource("dbase_ESPECIAL_3");
+                    return BufferImagem.GetIcone("dbase_ESPECIAL_3");
                 case CAM_PERFIL_TIPO.Z_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_Z_Dobrado");
+                    return BufferImagem.GetIcone("dbase_Z_Dobrado");
                 case CAM_PERFIL_TIPO.C_Enrigecido:
-                    return BufferImagem.GetIconeResource("dbase_C");
+                    return BufferImagem.GetIcone("dbase_C");
                 case CAM_PERFIL_TIPO.L_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_L_Dobrado");
+                    return BufferImagem.GetIcone("dbase_L_Dobrado");
                 case CAM_PERFIL_TIPO.Cartola:
-                    return BufferImagem.GetIconeResource("dbase_OMEGA");
+                    return BufferImagem.GetIcone("dbase_OMEGA");
                 case CAM_PERFIL_TIPO.Tubo_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_TUBO_REDONDO");
+                    return BufferImagem.GetIcone("dbase_TUBO_REDONDO");
                 case CAM_PERFIL_TIPO.Tubo_Quadrado:
-                    return BufferImagem.GetIconeResource("dbase_TUBO_RETANGULAR");
+                    return BufferImagem.GetIcone("dbase_TUBO_RETANGULAR");
                 case CAM_PERFIL_TIPO.Caixao:
-                    return BufferImagem.GetIconeResource("dbase_CAIXAO");
+                    return BufferImagem.GetIcone("dbase_CAIXAO");
                 case CAM_PERFIL_TIPO.I_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_I_SOLDADO");
+                    return BufferImagem.GetIcone("dbase_I_SOLDADO");
                 case CAM_PERFIL_TIPO.Barra_Chata:
-                    return BufferImagem.GetIconeResource("dbase_FERRO_CHATO");
+                    return BufferImagem.GetIcone("dbase_FERRO_CHATO");
                 case CAM_PERFIL_TIPO.T_Soldado:
-                    return BufferImagem.GetIconeResource("dbase_T");
+                    return BufferImagem.GetIcone("dbase_T");
                 case CAM_PERFIL_TIPO.Barra_Redonda:
-                    return BufferImagem.GetIconeResource("dbase_REDONDO");
+                    return BufferImagem.GetIcone("dbase_REDONDO");
                 case CAM_PERFIL_TIPO.L_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_L");
+                    return BufferImagem.GetIcone("dbase_L");
                 case CAM_PERFIL_TIPO.INP:
-                    return BufferImagem.GetIconeResource("dbase_INP");
+                    return BufferImagem.GetIcone("dbase_INP");
                 case CAM_PERFIL_TIPO.WLam:
-                    return BufferImagem.GetIconeResource("dbase_W");
+                    return BufferImagem.GetIcone("dbase_W");
                 case CAM_PERFIL_TIPO.UNP:
-                    return BufferImagem.GetIconeResource("dbase_UNP");
+                    return BufferImagem.GetIcone("dbase_UNP");
                 case CAM_PERFIL_TIPO.U_Dobrado:
-                    return BufferImagem.GetIconeResource("dbase_U");
+                    return BufferImagem.GetIcone("dbase_U");
                 case CAM_PERFIL_TIPO.UAP:
-                    return BufferImagem.GetIconeResource("dbase_UAP");
+                    return BufferImagem.GetIcone("dbase_UAP");
                 case CAM_PERFIL_TIPO.T_Aresta_Redondo:
-                    return BufferImagem.GetIconeResource("dbase_T_ARESTA_REDONDO");
+                    return BufferImagem.GetIcone("dbase_T_ARESTA_REDONDO");
                 case CAM_PERFIL_TIPO.Z_Laminado:
-                    return BufferImagem.GetIconeResource("dbase_Z_Laminado");
+                    return BufferImagem.GetIcone("dbase_Z_Laminado");
 
                 case CAM_PERFIL_TIPO.Chapa_Xadrez:
                 case CAM_PERFIL_TIPO.Chapa:
                 case CAM_PERFIL_TIPO._Desconhecido:
                 case CAM_PERFIL_TIPO.Generico:
                 case CAM_PERFIL_TIPO.Elemento_Unitario:
-                    return BufferImagem.GetIconeResource("dbase_UNITARIO");
+                    return BufferImagem.GetIcone("dbase_UNITARIO");
 
                 case CAM_PERFIL_TIPO._Erro:
-                    return BufferImagem.GetIconeResource("dialog_error");
+                    return BufferImagem.GetIcone("dialog_error");
 
 
             }
-            return BufferImagem.GetIconeResource("erro_cinza");
+            return BufferImagem.GetIcone("erro_cinza");
 
         }
     }
