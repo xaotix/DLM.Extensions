@@ -67,6 +67,10 @@ namespace Conexoes
         {
             return valor != null ? valor.Value.String(padleft, padding) : null;
         }
+        public static string String(this int? valor, int padleft = 0, char padding = '0')
+        {
+            return valor != null ? valor.Value.String(padleft, padding) : null;
+        }
         public static double Double(this decimal? valor)
         {
             return valor != null ? (double)valor.Value : 0;

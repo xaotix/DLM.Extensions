@@ -501,6 +501,10 @@ namespace Conexoes
             return 0;
         }
 
+        public static double? Round(this double? valor, int decimais)
+        {
+            return valor != null ? valor.Value.Round(decimais) : null;
+        }
         public static double Round(this double valor, int decimais)
         {
             if (decimais > 10)
