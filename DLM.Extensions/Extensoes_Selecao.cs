@@ -153,13 +153,13 @@ namespace Conexoes
 
             return (T)Convert.ChangeType(null, typeof(T));
         }
-        public static T ListaSelecionar<T>(this List<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default)
+        public static T ListaSelecionar<T>(this IEnumerable<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default)
         {
             if (objs == null)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            else if (objs.Count == 0)
+            else if (objs.Count() == 0)
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
@@ -182,7 +182,7 @@ namespace Conexoes
             }
             catch (Exception)
             {
-                return objs[0];
+                return objs.ToList()[0];
             }
         }
         public static Cor_RAL ListaSelecionar(this List<Cor_RAL> Objetos)
@@ -233,13 +233,13 @@ namespace Conexoes
         }
 
 
-        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, bool selecionar_tudo, string titulo = "Selecione")
+        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> Objetos, bool selecionar_tudo, string titulo = "Selecione")
         {
             if (Objetos == null)
             {
                 return new List<T>();
             }
-            if (Objetos.Count == 0)
+            if (Objetos.Count() == 0)
             {
                 return new List<T>();
             }
@@ -252,11 +252,11 @@ namespace Conexoes
                 return ListaSelecionarVarios(Objetos, new List<T>(), titulo);
             }
         }
-        public static List<T> ListaSelecionarVarios<T>(this List<T> Objetos, List<T> Selecionar = null, string titulo = "Selecione", Window window = null)
+        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> Objetos, IEnumerable<T> Selecionar = null, string titulo = "Selecione", Window window = null)
         {
             return ListaSelecionarVarios(Objetos, false, true, titulo, window, Selecionar);
         }
-        private static List<T> ListaSelecionarVarios<T>(this List<T> objs, bool selecionar_tudo, bool duas_colunas, string title, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
+        private static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, bool selecionar_tudo, bool duas_colunas, string title, Window window = null, IEnumerable<T> Selecionar = null, string msg_filtro = "Filtrar...")
         {
             if (!duas_colunas)
             {
