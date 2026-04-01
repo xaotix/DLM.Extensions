@@ -50,11 +50,11 @@ namespace Conexoes
 
             if (objeto is Tabela)
             {
-                (objeto as Tabela).Show(false);               
+                (objeto as Tabela).Show(false);
             }
             else if (objeto is Tabelas)
             {
-                foreach(var item in (objeto as Tabelas))
+                foreach (var item in (objeto as Tabelas))
                 {
                     item.Show();
                 }
@@ -64,7 +64,7 @@ namespace Conexoes
                 var obj = objeto as Exception;
                 obj.Alerta();
             }
-            else if(objeto is List<Celula>)
+            else if (objeto is List<Celula>)
             {
                 new Linha((objeto as List<Celula>)).Show();
             }
@@ -163,7 +163,7 @@ namespace Conexoes
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            var mm = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao);
+            var mm = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao, "", titulo);
             mm.Title = titulo;
             mm._filtro.Text = pesquisa;
             mm.ShowDialog();
@@ -256,12 +256,11 @@ namespace Conexoes
         {
             return ListaSelecionarVarios(Objetos, false, true, titulo, window, Selecionar);
         }
-        private static List<T> ListaSelecionarVarios<T>(this List<T> objs, bool selecionar_tudo, bool duas_colunas, string Titulo, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
+        private static List<T> ListaSelecionarVarios<T>(this List<T> objs, bool selecionar_tudo, bool duas_colunas, string title, Window window = null, List<T> Selecionar = null, string msg_filtro = "Filtrar...")
         {
             if (!duas_colunas)
             {
-                var mm = new JanelaSelecionar(selecionar_tudo, objs.Cast<object>().ToList(), null, msg_filtro);
-                mm.Title = Titulo;
+                var mm = new JanelaSelecionar(selecionar_tudo, objs.Cast<object>().ToList(), null, msg_filtro, title);
                 mm._lista.SelectionMode = System.Windows.Controls.SelectionMode.Extended;
 
 
@@ -287,8 +286,7 @@ namespace Conexoes
                 {
                     selecao = Selecionar.Cast<object>().ToList();
                 }
-                var mm = new JanelaAdicionarDuasColunas(objs.Cast<object>().ToList(), selecao, msg_filtro);
-                mm.Title = Titulo;
+                var mm = new JanelaAdicionarDuasColunas(objs.Cast<object>().ToList(), selecao, msg_filtro, title);
                 if (window != null)
                 {
                     mm.Owner = window;
@@ -312,7 +310,7 @@ namespace Conexoes
         {
             if (objeto == null) return;
 
-            if(view.SelectedItems.Count>0)
+            if (view.SelectedItems.Count > 0)
             {
                 view.SelectedItems.Clear();
             }
