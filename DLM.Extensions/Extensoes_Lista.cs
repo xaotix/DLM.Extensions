@@ -91,7 +91,7 @@ namespace Conexoes
 
             for (int i = 0; i < locations.Count; i += maximo)
             {
-                list.Add(locations.Linhas.GetRange(i, Math.Min(maximo, locations.Count - i)));
+                list.Add(locations.ToList().GetRange(i, Math.Min(maximo, locations.Count - i)));
             }
 
             return list;
