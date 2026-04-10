@@ -97,7 +97,7 @@ namespace Conexoes
                         menu.Header = null;
                     }
 
-                    var Source = BufferImagem.GetIcone(chave);
+                    var Source = chave.GetIcone();
 
 
                     menu.Icon = new System.Windows.Controls.Image()

@@ -60,6 +60,14 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        public static string Sanitize(this string str)
+        {
+            if(str!=null)
+            {
+                return str.TrimEnd().TrimStart().ToUpper().RemoverCaracteresEspeciais().Replace(" ","_");
+            }
+            return str;
+        }
         public static List<string> SplitTabulation(this string str)
         {
             string[] partes = str.Split(new[] { "\r\n", "\n", "\r", "\t", "\v", "\f", "\u2028", "\u2029" }, StringSplitOptions.RemoveEmptyEntries);
