@@ -50,7 +50,7 @@ namespace Conexoes
 
             if (objeto is Tabela)
             {
-                (objeto as Tabela).Show(false);
+                (objeto as Tabela).Show();
             }
             else if (objeto is Tabelas)
             {

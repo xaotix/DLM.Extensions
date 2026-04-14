@@ -115,7 +115,7 @@ namespace Conexoes
             return _Marcas;
         }
 
-        public static void Show(this Tabela tabela, bool display_names = false)
+        public static void Show(this Tabela tabela)
         {
             if (tabela.Count > 0)
             {

@@ -114,7 +114,11 @@ namespace Conexoes
                 }
                 else if (doubleValue > 0)
                 {
-                    _value = string.Format(culture, "{0:N0} Kg", doubleValue * 1000);
+                    var valor = (doubleValue * 1000).Round(2);
+                    if (valor > 0)
+                    {
+                        _value = string.Format(culture, "{0:N2} Kg", valor);
+                    }
                 }
                 else
                 {
@@ -126,7 +130,7 @@ namespace Conexoes
                 _value = "";
             }
 
-            if (negativo)
+            if (negativo && _value.NotNullOrEmpty())
             {
                 _value = $"-{_value}";
             }
@@ -172,7 +176,11 @@ namespace Conexoes
                 }
                 else
                 {
-                    _value = $"{doubleValue.ToString("0.##", culture)}";
+                    var valor = doubleValue.Round(2);
+                    if (valor > 0)
+                    {
+                        _value = $"{valor.ToString("N2", culture)}";
+                    }
                 }
             }
 
