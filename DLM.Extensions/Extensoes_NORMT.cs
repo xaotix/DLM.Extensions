@@ -163,6 +163,68 @@ namespace Conexoes
 
             return CAM_FAMILIA._Desconhecido;
         }
+        public static string GetTIP_PRO(this CAM_PERFIL_TIPO Tipo)
+        {
+            switch (Tipo)
+            {
+                case CAM_PERFIL_TIPO.Z_Purlin:
+                    return Cfg.Init.CAM_TipoPerfil_Z_Purlin;
+                case CAM_PERFIL_TIPO.Especial_1:
+                    return Cfg.Init.CAM_TipoPerfil_Especial_1;
+                case CAM_PERFIL_TIPO.Especial_2:
+                    return Cfg.Init.CAM_TipoPerfil_Especial_2;
+                case CAM_PERFIL_TIPO.Especial_3:
+                    return Cfg.Init.CAM_TipoPerfil_Especial_3;
+                case CAM_PERFIL_TIPO.Z_Dobrado:
+                    return Cfg.Init.CAM_TipoPerfil_Z_Dobrado;
+                case CAM_PERFIL_TIPO.C_Enrigecido:
+                    return Cfg.Init.CAM_TipoPerfil_C_Enrigecido;
+                case CAM_PERFIL_TIPO.L_Dobrado:
+                    return Cfg.Init.CAM_TipoPerfil_L_Dobrado;
+                case CAM_PERFIL_TIPO.Cartola:
+                    return Cfg.Init.CAM_TipoPerfil_Cartola;
+                case CAM_PERFIL_TIPO.Tubo_Redondo:
+                    return Cfg.Init.CAM_TipoPerfil_Tubo_Redondo;
+                case CAM_PERFIL_TIPO.Tubo_Quadrado:
+                    return Cfg.Init.CAM_TipoPerfil_Tubo_Quadrado;
+                case CAM_PERFIL_TIPO.Caixao:
+                    return Cfg.Init.CAM_TipoPerfil_Caixao;
+                case CAM_PERFIL_TIPO.I_Soldado:
+                    return Cfg.Init.CAM_TipoPerfil_I_Soldado;
+                case CAM_PERFIL_TIPO.Barra_Chata:
+                    return Cfg.Init.CAM_TipoPerfil_Barra_Chata;
+                case CAM_PERFIL_TIPO.T_Soldado:
+                    return Cfg.Init.CAM_TipoPerfil_T_Soldado;
+                case CAM_PERFIL_TIPO.Barra_Redonda:
+                    return Cfg.Init.CAM_TipoPerfil_Barra_Redonda;
+                case CAM_PERFIL_TIPO.L_Laminado:
+                    return Cfg.Init.CAM_TipoPerfil_L_Laminado;
+                case CAM_PERFIL_TIPO.INP:
+                    return Cfg.Init.CAM_TipoPerfil_INP;
+                case CAM_PERFIL_TIPO.WLam:
+                    return Cfg.Init.CAM_TipoPerfil_WLam;
+                case CAM_PERFIL_TIPO.UNP:
+                    return Cfg.Init.CAM_TipoPerfil_UNP;
+                case CAM_PERFIL_TIPO.Chapa_Xadrez:
+                    return Cfg.Init.CAM_TipoPerfil_Chapa_Xadrez;
+                case CAM_PERFIL_TIPO.U_Dobrado:
+                    return Cfg.Init.CAM_TipoPerfil_U_Dobrado;
+                case CAM_PERFIL_TIPO.UAP:
+                    return Cfg.Init.CAM_TipoPerfil_UAP;
+                case CAM_PERFIL_TIPO.T_Aresta_Redondo:
+                    return Cfg.Init.CAM_TipoPerfil_T_Aresta_Redondo;
+                case CAM_PERFIL_TIPO.Z_Laminado:
+                    return Cfg.Init.CAM_TipoPerfil_Z_Laminado;
+
+                case CAM_PERFIL_TIPO.Chapa:
+                case CAM_PERFIL_TIPO.Elemento_Unitario:
+                case CAM_PERFIL_TIPO._Desconhecido:
+                case CAM_PERFIL_TIPO._Erro:
+                case CAM_PERFIL_TIPO.Generico:
+                default:
+                    return Cfg.Init.CAM_TipoPerfil_Chapa;
+            }
+        }
         public static CAM_PERFIL_TIPO GetTipo(this TAB_NORMT NORMT)
         {
             switch (NORMT)
