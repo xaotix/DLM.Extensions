@@ -51,15 +51,21 @@ namespace Conexoes
         }
         public static void ResetSource(this System.Windows.Controls.DataGrid grid)
         {
-            grid.ItemsSource = null;
-            var filter = grid.GetFilter();
-            filter?.Clear();
+            if (grid != null)
+            {
+                grid.ItemsSource = null;
+                var filter = grid.GetFilter();
+                filter?.Clear();
+            }
+
         }
         public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, List<T> lista)
         {
-            grid.ResetSource();
-
-            grid.ItemsSource = lista;
+            if (grid != null)
+            {
+                grid.ResetSource();
+                grid.ItemsSource = lista;
+            }
         }
         /// <summary>
         /// Adiciona um evento quando o ItemSource muda
