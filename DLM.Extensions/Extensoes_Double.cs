@@ -31,9 +31,13 @@ namespace Conexoes
         {
             return new DLM.RSStr(value);
         }
-        public static DLM.PesoStr ToPesoStr(this double value)
+        public static DLM.PesoStrTon ToPesoStrTon(this double value)
         {
-            return new DLM.PesoStr(value);
+            return new DLM.PesoStrTon(value);
+        }
+        public static DLM.PesoStrKg ToPesoStrKg(this double value)
+        {
+            return new DLM.PesoStrKg(value);
         }
         public static bool IsValid(this double d)
         {

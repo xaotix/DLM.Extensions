@@ -164,9 +164,13 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor);
                 }
-                else if (prop == nameof(PesoStr).ToLower())
+                else if (prop == nameof(PesoStrTon).ToLower())
                 {
-                    Propriedade.SetValue(Objeto, Valor.PesoStr(20));
+                    Propriedade.SetValue(Objeto, Valor.PesoStrTon(20));
+                }
+                else if (prop == nameof(PesoStrKg).ToLower())
+                {
+                    Propriedade.SetValue(Objeto, Valor.PesoStrTon(20));
                 }
                 else if (prop == nameof(RSStr).ToLower())
                 {
@@ -614,7 +618,11 @@ namespace Conexoes
                 return "";
             }
 
-            if (property.PropertyType.Name == nameof(PesoStr))
+            if (property.PropertyType.Name == nameof(PesoStrTon))
+            {
+                return "Kg";
+            }
+            else if (property.PropertyType.Name == nameof(PesoStrKg))
             {
                 return "Kg";
             }

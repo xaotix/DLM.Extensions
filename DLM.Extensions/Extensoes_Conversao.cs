@@ -75,9 +75,13 @@ namespace Conexoes
         {
             return valor != null ? (double)valor.Value : 0;
         }
-        public static PesoStr PesoStr(this string valor, int decimais = 8)
+        public static PesoStrTon PesoStrTon(this string valor, int decimais = 8)
         {
-            return new PesoStr(valor.Double(decimais));
+            return new PesoStrTon(valor.Double(decimais));
+        }
+        public static PesoStrKg PesoStrKg(this string valor, int decimais = 8)
+        {
+            return new PesoStrKg(valor.Double(decimais));
         }
         public static RSStr RSStr(this string valor, int decimais = 8)
         {
