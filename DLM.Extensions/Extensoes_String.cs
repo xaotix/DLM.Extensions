@@ -188,12 +188,61 @@ namespace Conexoes
         {
             if (valor == null) { return true; }
 
+            if(valor is string)
+            {
+               var vlr = (string)valor;
+                if(vlr.Length == 0)
+                {
+                    return true;
+                }
+            }
 
 
             var str = valor.ToString();
             if (valor is Celula)
             {
                 str = ((Celula)valor).Valor;
+            }
+
+            if(str.LenghtStr() == 0)
+            {
+                return true;
+            }
+
+            if (valor is long?)
+            {
+                var vlr = (long?)valor;
+                return vlr == 0;
+            }
+            else if (valor is long)
+            {
+                var vlr = (long)valor;
+                return vlr == 0;
+            }
+            else if (valor is int?)
+            {
+                var vlr = (int?)valor;
+                return vlr == 0;
+            }
+            else if (valor is double?)
+            {
+                var vlr = (double?)valor;
+                return vlr == 0;
+            }
+            else if (valor is double)
+            {
+                var vlr = (double)valor;
+                return vlr == 0;
+            }
+            else if (valor is decimal?)
+            {
+                var vlr = (decimal?)valor;
+                return vlr == 0;
+            }
+            else if (valor is decimal)
+            {
+                var vlr = (decimal)valor;
+                return vlr == 0;
             }
 
             if (decimais)

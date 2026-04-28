@@ -275,9 +275,10 @@ namespace Conexoes
                 case TAB_NORMT.BARRA_CHATA:
                     return CAM_PERFIL_TIPO.Barra_Chata;
 
-
-                case TAB_NORMT.PERFIL_I_LAMINADO:
                 case TAB_NORMT.PERFIL_C_LAMINADO:
+                    return CAM_PERFIL_TIPO.UNP;
+                
+                case TAB_NORMT.PERFIL_I_LAMINADO:
                 case TAB_NORMT.PERFIL_T_LAMINADO:
                     return CAM_PERFIL_TIPO.WLam;
 

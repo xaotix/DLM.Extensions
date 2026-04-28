@@ -78,7 +78,7 @@ namespace Conexoes
         /// <param name="value"></param>
         /// <param name="multiplo"></param>
         /// <returns></returns>
-        public static string ToPeso(this object value, double multiplo = 1)
+        public static string ToPeso(this double value, double multiplo = 1)
         {
             var _value = "";
             var negativo = false;
@@ -141,7 +141,7 @@ namespace Conexoes
 
             return _value;
         }
-        public static string ToMoeda(this object value, string prefix = "R$ ")
+        public static string ToMoeda(this double value, string prefix = "R$ ")
         {
             string _value = "";
             bool negativo = false;
