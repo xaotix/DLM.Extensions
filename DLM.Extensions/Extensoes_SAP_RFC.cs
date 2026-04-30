@@ -11,6 +11,52 @@ namespace Conexoes
 {
     public static class Extensoes_SAP_RFC
     {
+        public static void SetValor(this IRfcDataContainer rfc, string col, object value)
+        {
+            rfc.SetValue(col, GetValor(value));
+        }
+
+        private static object GetValor(object value)
+        {
+            if (value == null)
+                return null;
+
+            if (value is bool)
+                return (bool)value ? "X" : "";
+
+            if (value is int?)
+                return ((int?)value).GetValueOrDefault();
+
+            if (value is long?)
+                return ((long?)value).GetValueOrDefault();
+
+            if (value is double?)
+                return ((double?)value).GetValueOrDefault();
+
+            if (value is decimal?)
+                return ((decimal?)value).GetValueOrDefault();
+
+            if (value is DateTime?)
+            {
+                var dt = (DateTime?)value;
+                return dt.HasValue ? (object)dt.Value : "";
+            }
+
+            if (value is RSStr)
+                return ((RSStr)value).Valor;
+
+            if (value is PesoStrKg)
+                return ((PesoStrKg)value).Valor;
+
+            if (value is PesoStrTon)
+                return ((PesoStrTon)value).Valor;
+
+            if (value is Celula)
+                return ((Celula)value).GetValor();
+
+            return value;
+        }
+
         public static void GetMaterialBase(this List<SAP_Material> materiais)
         {
             var pck_mats = materiais.FindAll(x => x.SAP > 100000).Quebrar(200);
@@ -34,7 +80,7 @@ namespace Conexoes
             try
             {
                 var rfc_tbl = funcao.GetTable(tabela);
-                if(rfc_tbl != null)
+                if (rfc_tbl != null)
                 {
                     var tbl = rfc_tbl.GetTabelaRFC();
                     tbl.Nome = tabela;
