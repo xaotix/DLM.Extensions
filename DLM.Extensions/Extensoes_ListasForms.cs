@@ -155,7 +155,7 @@ namespace Conexoes
         }
         public static void Exportar(this System.Windows.Controls.DataGrid lista)
         {
-            lista.GetTabela().GerarExcel(null, true, true);
+            lista.GetTabela().ExportarExcel();
         }
 
         private static Tabela GetTabela(this DataGrid lista, string nome = null)
