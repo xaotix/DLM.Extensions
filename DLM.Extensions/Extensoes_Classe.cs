@@ -1,9 +1,11 @@
 ﻿using DLM;
 using DLM.db;
+using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -343,18 +345,18 @@ namespace Conexoes
                 return sel;
 
             }
-            else if(sender is RoutedEventArgs)
+            else if (sender is RoutedEventArgs)
             {
                 var sel = ((RoutedEventArgs)sender).Source;
 
-                if(sel is FrameworkElement)
+                if (sel is FrameworkElement)
                 {
                     var ctrl = ((FrameworkElement)sel);
                     return (T)ctrl.DataContext;
                 }
 
             }
-                return RetornaNull<T>();
+            return RetornaNull<T>();
         }
 
 
@@ -375,6 +377,15 @@ namespace Conexoes
             }
 
             return (T)Convert.ChangeType(null, typeof(T));
+        }
+        public static DataView ToDataView<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, bool display_names = true, params string[] remover)
+        {
+            var l = obj.GetLinha(only_can_write, only_browsable, only_simple_properties, remover);
+            var lt = l.Transpor();
+            var tbl = new Tabela(lt);
+            var dt = tbl.GetDataTable(display_names);
+            var dv = dt.AsDataView();
+            return dv;
         }
 
         public static DLM.db.Linha GetLinha<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, params string[] remover)
@@ -420,14 +431,20 @@ namespace Conexoes
                 {
                     listagem = listagem.Filter();
                 }
-                if (only_browsable)
-                {
-                    listagem = listagem.FindAll(x => x.Browsable());
-                }
                 if (only_can_write)
                 {
-                    listagem = listagem.FindAll(x => x.CanWrite);
+                    listagem = listagem
+                  .Where(x => x.CanWrite)
+                  .ToList();
                 }
+
+                if (only_browsable)
+                {
+                    listagem = listagem
+                 .Where(x => x.Browsable())
+                 .ToList();
+                }
+
                 var colunas = listagem.Select(x => x.Name).ToList();
                 var display = listagem.Select(x => x.GetDisplayName()).ToList();
                 foreach (var item in lista)
@@ -614,7 +631,8 @@ namespace Conexoes
         }
         private static string GetDataFormatString(this PropertyInfo property)
         {
-            if (property == null) {
+            if (property == null)
+            {
                 return "";
             }
 

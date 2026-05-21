@@ -53,7 +53,7 @@ namespace Conexoes
             {
                 try
                 {
-                    return lista.SelectedItems.Cast<T>().ToList().First();
+                    return lista.SelectedItems.Cast<T>().ToList().Last();
                 }
                 catch (Exception)
                 {
