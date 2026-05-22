@@ -160,28 +160,40 @@ namespace Conexoes
 
         private static Tabela GetTabela(this DataGrid lista, string nome = null)
         {
-            var tabela = new Tabela(nome!=null?nome:lista.Name);
-
-            var linhas = lista.Items.Cast<DataRowView>().ToList().Select(x => x.Row).ToList().Select(x => x.ItemArray.ToList()).ToList();
-
-            if (linhas.Count > 0)
+            var tabela = new Tabela(nome != null ? nome : lista.Name);
+            if (lista.Items.Count > 0)
             {
-
-                var headers = lista.Items.Cast<DataRowView>().ToList()[0].Row.Table.Columns
-                            .Cast<DataColumn>().Select(c => (object)c.ColumnName).ToList();
-
-
-                foreach (var linha in linhas)
+                if (lista.Items[0] is Linha)
                 {
-                    var l = new Linha();
-                    for (var i = 0; i < linha.Count; i++)
+                    tabela.AddRange(lista.Items.Cast<Linha>());
+                }
+                else if (lista.Items[0] is Celula)
+                {
+                    tabela.AddRange(new Linha(lista.Items.Cast<Celula>()).Transpor());
+                }
+                else
+                {
+                    var linhas = lista.Items.Cast<DataRowView>().ToList().Select(x => x.Row).ToList().Select(x => x.ItemArray.ToList()).ToList();
+
+                    if (linhas.Count > 0)
                     {
-                        l.Add(headers[i].ToString(), linha[i]);
+
+                        var headers = lista.Items.Cast<DataRowView>().ToList()[0].Row.Table.Columns
+                                    .Cast<DataColumn>().Select(c => (object)c.ColumnName).ToList();
+
+
+                        foreach (var linha in linhas)
+                        {
+                            var l = new Linha();
+                            for (var i = 0; i < linha.Count; i++)
+                            {
+                                l.Add(headers[i].ToString(), linha[i]);
+                            }
+                            tabela.Add(l);
+                        }
                     }
-                    tabela.Add(l);
                 }
             }
-
             return tabela;
         }
 

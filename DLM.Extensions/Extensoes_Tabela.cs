@@ -204,6 +204,11 @@ namespace Conexoes
                 destino = "xlsx".SalvarArquivo();
                 abrir = true;
             }
+            else if (!destino.Contem("/", @"\"))
+            {
+                destino = "xlsx".SalvarArquivo("Selecione o destino.", destino);
+            }
+
             if (destino == null) { return false; }
             if (destino.LenghtStr() == 0) { return false; }
 

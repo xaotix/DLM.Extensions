@@ -72,7 +72,7 @@ namespace Conexoes
             {
                 var mm = new DLM.WPF.DatagridProps();
                 mm.Title = $"Propriedades {objeto.ToString()}";
-                mm.Lista.ItemsSource = (objeto as Linha).Celulas;
+                mm.grid.SetBinding((objeto as Linha));
                 mm.Show();
             }
             else
@@ -109,7 +109,7 @@ namespace Conexoes
         public static void Propriedades<T>(this List<T> objetos)
         {
             var menu = new DLM.WPF.DatagridProps();
-            menu.Lista.ItemsSource = objetos;
+            menu.grid.SetBinding(objetos);
             menu.ShowDialog();
         }
         public static T ListaSelecionarCombo<T>(this List<T> objs, T selecionar, string Titulo = "Selecione")

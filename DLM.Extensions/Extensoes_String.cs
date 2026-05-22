@@ -167,7 +167,7 @@ namespace Conexoes
 
             return retorno;
         }
-        public static int LenghtStr(this string valor)
+        public static int LenghtStr(this object valor)
         {
             if (valor != null)
             {
