@@ -549,7 +549,14 @@ namespace Conexoes
             foreach (var l in lista)
             {
                 var prop = l.PropertyType.Name.ToLower();
-                if (l.PropertyType.IsPrimitive | l.PropertyType.IsEnum | prop == "string" | prop == "datetime" | prop == "decimal" | prop == "pesostr" | prop == "rsstr")
+                if (l.PropertyType.IsPrimitive ||
+                    l.PropertyType.IsEnum ||
+                    prop == "string" ||
+                    prop == "datetime" ||
+                    prop == "decimal" ||
+                    prop == nameof(PesoStrTon).ToLower() ||
+                    prop == nameof(PesoStrKg).ToLower() ||
+                    prop == nameof(RSStr).ToLower())
                 {
                     retorno.Add(l);
                 }

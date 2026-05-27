@@ -487,9 +487,9 @@ namespace Conexoes
                 {
                     excel_cel.Style.Numberformat.Format = "$ #,##0.00;[Red]-$ #,##0.00";
                 }
-                else if (cel.StringFormat == "Kg")
+                else if (cel.StringFormat == "Kg" && cel.DoubleNull() > 0)
                 {
-                    excel_cel.Style.Numberformat.Format = "#,##";
+                    excel_cel.Style.Numberformat.Format = "#,##0.00";
                 }
                 else if (cel.StringFormat == "P")
                 {

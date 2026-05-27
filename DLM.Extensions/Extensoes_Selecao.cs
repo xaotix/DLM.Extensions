@@ -52,6 +52,11 @@ namespace Conexoes
             {
                 (objeto as Tabela).Show();
             }
+            else if (objeto is List<Linha>)
+            {
+                var tbl = new Tabela(objeto as List<Linha>);
+                tbl.Show();
+            }
             else if (objeto is Tabelas)
             {
                 foreach (var item in (objeto as Tabelas))
@@ -74,6 +79,16 @@ namespace Conexoes
                 mm.Title = $"Propriedades {objeto.ToString()}";
                 mm.grid.SetBinding((objeto as Linha));
                 mm.Show();
+            }
+            else if (objeto is System.Collections.IEnumerable)
+            {
+                var tbl = new Tabela();
+                var objs = objeto as System.Collections.IEnumerable;
+                foreach (var obj in objs)
+                {
+                    tbl.Add(obj.GetLinha(false, false, false));
+                }
+                tbl.Show();
             }
             else
             {

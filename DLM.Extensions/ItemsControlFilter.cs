@@ -3,6 +3,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Conexoes
 {
@@ -87,13 +88,18 @@ namespace Conexoes
             this._list = _list;
 
             this._list.Loaded += _loaded;
-            this._filter.TextChanged += _text_changed;
+            this._filter.KeyUp += _key_up;
             this._filter.GotFocus += _got_focus;
             this._filter.LostFocus += _leave;
             _filter.Text = Msg;
 
 
             _list.ItemSourceChanged(this._itemsource_changed);
+        }
+
+        private void _key_up(object sender, KeyEventArgs e)
+        {
+            this.SetFilter();
         }
 
         private void _leave(object sender, RoutedEventArgs e)
