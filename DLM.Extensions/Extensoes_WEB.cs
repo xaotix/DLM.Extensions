@@ -131,7 +131,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta();
+                ex.Show();
             }
             return retorno;
         }
@@ -156,7 +156,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta();
+                ex.Show();
             }
         }
 
@@ -229,7 +229,7 @@ namespace Conexoes
         //         }
         //catch (Exception ex)
         //{
-        //             ex.Alerta();
+        //             ex.Show();
         //}
         //     }
 

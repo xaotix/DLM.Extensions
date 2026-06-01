@@ -111,7 +111,7 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    ex.Alerta();
+                    ex.Show();
                 }
             }
             return retorno;
@@ -235,7 +235,7 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    ex.Alerta();
+                    ex.Show();
                 }
             }
             return diferentes;
@@ -297,7 +297,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta();
+                ex.Show();
             }
         }
         public static System.Windows.Media.Color GetColor(this System.Drawing.Color color)

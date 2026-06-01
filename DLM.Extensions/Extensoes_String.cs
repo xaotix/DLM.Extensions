@@ -118,7 +118,7 @@ namespace Conexoes
 
                     if (cc > 0)
                     {
-                        double x = 100 * cc / chaves.Count().Double();
+                        double x = 100.0 * cc / chaves.Count().Double();
                         return (x >= porcentagem);
                     }
                     else

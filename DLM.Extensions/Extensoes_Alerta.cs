@@ -104,6 +104,7 @@ namespace Conexoes
             {
                 propertyName = "Erro";
             }
+            Conexoes.Utilz.WaitClose();
             DLM.log.Log(ex, logfile, propertyName, descricao);
             var texto = ex.GetTexto();
             var desc = $"{descricao} [{propertyName}]";

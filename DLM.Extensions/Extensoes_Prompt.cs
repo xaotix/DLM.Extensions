@@ -143,6 +143,14 @@ namespace Conexoes
             }
             return null;
         }
+        public static double? Prompt(this double? valor, string titulo = "Digite", int decimais = -1, string string_format = null, bool gravar_carregar = false, string chave = "")
+        {
+            if (valor != null)
+            {
+                return ((double)valor).Prompt(titulo, decimais, string_format, gravar_carregar, chave);
+            }
+            return null;
+        }
         public static double? Prompt(this double valor, string titulo = "Digite", int decimais = -1, string string_format = null, bool gravar_carregar = false, string chave = "")
         {
             if (decimais < 0)

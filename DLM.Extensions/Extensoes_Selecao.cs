@@ -168,7 +168,7 @@ namespace Conexoes
 
             return (T)Convert.ChangeType(null, typeof(T));
         }
-        public static T ListaSelecionar<T>(this IEnumerable<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default)
+        public static T ListaSelecionar<T>(this IEnumerable<T> objs, string titulo = "Selecione", string pesquisa = "", T selecao = default, string filtro = null)
         {
             if (objs == null)
             {
@@ -178,7 +178,7 @@ namespace Conexoes
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-            var mm = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao, "", titulo);
+            var mm = new JanelaSelecionar(false, objs.Cast<object>().ToList(), selecao, "", titulo, filtro);
             mm.Title = titulo;
             mm._filtro.Text = pesquisa;
             mm.ShowDialog();
@@ -248,7 +248,7 @@ namespace Conexoes
         }
 
 
-        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, bool selecionar_tudo, string titulo = "Selecione", string msg_vazio = null)
+        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, bool selecionar_tudo, string titulo = "Selecione", string msg_vazio = null, string filtro = null)
         {
             if (objs == null)
             {
@@ -260,22 +260,31 @@ namespace Conexoes
             }
             if (selecionar_tudo)
             {
-                return ListaSelecionarVarios(new List<T>(), objs, titulo, null, msg_vazio);
+                return ListaSelecionarVarios(new List<T>(), objs, titulo, null, null, msg_vazio);
             }
             else
             {
-                return ListaSelecionarVarios(objs, new List<T>(), titulo, null, msg_vazio);
+                return ListaSelecionarVarios(objs, new List<T>(), titulo, null, null, msg_vazio);
             }
         }
-        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, IEnumerable<T> select = null, string titulo = "Selecione", Window window = null, string msg_vazio = null)
+        public static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, IEnumerable<T> select = null, string title = "Selecione", Window window = null, string msg_filtro = null, string msg_vazio = null, string filtro = null)
         {
-            return ListaSelecionarVarios(objs, false, true, titulo, window, select, msg_vazio);
+            return ListaSelecionarVarios(objs, false, true, title, window, select, msg_filtro, msg_vazio, filtro);
         }
-        private static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, bool selecionar_tudo, bool duas_colunas, string title, Window window = null, IEnumerable<T> Selecionar = null, string msg_filtro = "Filtrar...", string msg_vazio = null)
+        private static List<T> ListaSelecionarVarios<T>(this IEnumerable<T> objs, bool selecionar_tudo, bool duas_colunas, string title, Window window = null, IEnumerable<T> select = null, string msg_filtro = "Filtrar...", string msg_vazio = null, string filtro = null)
         {
+            if (msg_filtro == null)
+            {
+                msg_filtro = "Filtrar...";
+            }
+            if (title == null)
+            {
+                title = "Selecione:";
+            }
+
             if (!duas_colunas)
             {
-                var mm = new JanelaSelecionar(selecionar_tudo, objs.Cast<object>().ToList(), null, msg_filtro, title);
+                var mm = new JanelaSelecionar(selecionar_tudo, objs.Cast<object>().ToList(), null, msg_filtro, title, filtro);
                 mm._lista.SelectionMode = System.Windows.Controls.SelectionMode.Extended;
 
 
@@ -297,11 +306,11 @@ namespace Conexoes
             else
             {
                 var selecao = new List<object>();
-                if (Selecionar != null)
+                if (select != null)
                 {
-                    selecao = Selecionar.Cast<object>().ToList();
+                    selecao = select.Cast<object>().ToList();
                 }
-                var mm = new JanelaAdicionarDuasColunas(objs.Cast<object>().ToList(), selecao, msg_filtro, title, msg_vazio);
+                var mm = new JanelaAdicionarDuasColunas(objs.Cast<object>().ToList(), selecao, msg_filtro, title, msg_vazio, filtro);
                 if (window != null)
                 {
                     mm.Owner = window;

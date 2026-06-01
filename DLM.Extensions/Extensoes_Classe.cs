@@ -85,7 +85,7 @@ namespace Conexoes
                             }
                             catch (Exception ex)
                             {
-                                ex.Alerta();
+                                ex.Show();
                             }
                         }
 
@@ -321,7 +321,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta();
+                ex.Show();
                 texto = "";
             }
             return texto;
@@ -373,7 +373,7 @@ namespace Conexoes
             }
             catch (Exception ex)
             {
-                ex.Alerta();
+                ex.Show();
             }
 
             return (T)Convert.ChangeType(null, typeof(T));

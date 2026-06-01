@@ -230,14 +230,14 @@ namespace Conexoes
             return allDates;
 
         }
-        public static List<string> GetRangeMeses(this DateTime inicio, DateTime fim)
+        public static List<string> GetRangeMeses(this DateTime inicio, DateTime fim, string stringformat = "MM/yyyy")
         {
             var retorno = new List<string>();
 
             var dt = inicio.FirstDayOfMonth();
             while (dt < fim)
             {
-                retorno.Add(dt.String("MM/yyyy"));
+                retorno.Add(dt.String(stringformat));
                 dt = dt.AddMonths(1);
             }
 
