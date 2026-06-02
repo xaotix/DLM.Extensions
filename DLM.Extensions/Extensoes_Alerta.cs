@@ -112,20 +112,22 @@ namespace Conexoes
         }
         private static void JanelaErro(this string texto, string titulo)
         {
-            new Action(() =>
-            {
-                var report = new List<Report> { new Report(titulo, $"{titulo}\n\n{texto}", TipoReport.Critico) };
-                report.Show();
-                //var mm = new VerTextoReport();
-                //mm.texto.Text = $"{titulo}\n\n{texto}";
-                //mm.Title = $"Erro! {titulo.Esquerda(30)}";
-                //mm.Topmost = true;
-                //mm.texto.Foreground = System.Windows.Media.Brushes.Red;
-                //mm.texto.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                //mm.texto.TextAlignment = TextAlignment.Left;
-                //mm.texto.VerticalAlignment = VerticalAlignment.Stretch;
-                //mm.Show();
-            }).NovaInstancia();
+            var report = new List<Report> { new Report(titulo, $"{titulo}\n\n{texto}", TipoReport.Critico) };
+            report.Show();
+            //new Action(() =>
+            //{
+            //    var report = new List<Report> { new Report(titulo, $"{titulo}\n\n{texto}", TipoReport.Critico) };
+            //    report.Show();
+            //    //var mm = new VerTextoReport();
+            //    //mm.texto.Text = $"{titulo}\n\n{texto}";
+            //    //mm.Title = $"Erro! {titulo.Esquerda(30)}";
+            //    //mm.Topmost = true;
+            //    //mm.texto.Foreground = System.Windows.Media.Brushes.Red;
+            //    //mm.texto.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            //    //mm.texto.TextAlignment = TextAlignment.Left;
+            //    //mm.texto.VerticalAlignment = VerticalAlignment.Stretch;
+            //    //mm.Show();
+            //}).NovaInstancia();
         }
         public static void JanelaTexto(this string mensagem, string titulo = "", bool top = true, bool pendurar = false)
         {
