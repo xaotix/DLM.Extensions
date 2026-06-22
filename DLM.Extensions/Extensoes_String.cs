@@ -1,5 +1,6 @@
 ﻿using Conexoes.Janelas;
 using DLM.db;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,6 +22,10 @@ namespace Conexoes
                 return value.ToString();
             var attribute = member.GetCustomAttribute<DisplayAttribute>();
             return attribute?.Name ?? value.ToString();
+        }
+        public static List<T> ToList<T>() where T : struct, Enum
+        {
+            return Enum.GetValues(typeof(T)).Cast<T>().ToList();
         }
     }
     public static class Extensoes_HTML
