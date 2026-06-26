@@ -64,9 +64,7 @@ namespace Conexoes
 
             if (menu.Header is string || menu.ToolTip is string)
             {
-                chave = (menu.Header is string ? menu.Header as string : menu.ToolTip as string).Replace("_", "");
-
-                chave = chave.Upper().Replace(" ", "");
+                chave = (menu.Header is string ? menu.Header as string : menu.ToolTip as string);
 
                 if (chave.IsNullOrEmpty())
                 {
@@ -75,10 +73,6 @@ namespace Conexoes
 
                 if (chave != "")
                 {
-
-                    //menu.VerticalContentAlignment = VerticalAlignment.Center;
-                    //menu.VerticalAlignment = VerticalAlignment.Center;
-                    //menu.Background = System.Windows.Media.Brushes.Transparent;
                     if (menu.Header.NotNullOrEmpty())
                     {
                         var txt = new TextBlock();
@@ -91,24 +85,33 @@ namespace Conexoes
                         txt.Margin = new Thickness(2, 0, 0, 0);
                         txt.ToolTip = menu.ToolTip;
                         menu.Header = txt;
+                        menu.ToolTip = null;
                     }
                     else
                     {
                         menu.Header = null;
                     }
 
-                    var Source = chave.GetIcone();
-
-
-                    menu.Icon = new System.Windows.Controls.Image()
+                    // Criação do ícone com melhorias visuais e de renderizaçãox
+                    var imagemIcone = new System.Windows.Controls.Image()
                     {
-                        Source = Source,
+                        Source = chave.GetIcone(),
                         ToolTip = menu.ToolTip,
                         VerticalAlignment = System.Windows.VerticalAlignment.Center,
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+
                         Width = 16,
-                        Height = 16
+                        Height = 16,
+
+                        Stretch = System.Windows.Media.Stretch.Uniform,
+
+                        SnapsToDevicePixels = true,
+                        UseLayoutRounding = true
                     };
+
+                    System.Windows.Media.RenderOptions.SetBitmapScalingMode(imagemIcone, System.Windows.Media.BitmapScalingMode.HighQuality);
+
+                    menu.Icon = imagemIcone;
 
                 }
             }

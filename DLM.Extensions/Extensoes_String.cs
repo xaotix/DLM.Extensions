@@ -65,11 +65,55 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+
+
+        public static string AjustarPascalCase(this string codigoGerado)
+        {
+            if (string.IsNullOrEmpty(codigoGerado)) return "";
+
+            // 1. Ajusta o nome da classe (captura o que está após 'class ')
+            codigoGerado = Regex.Replace(codigoGerado, @"(?<=class\s+)([a-zA-Z0-9_]+)", m =>
+            {
+                return CapitalizarTexto(m.Value);
+            });
+
+            // 2. Ajusta as propriedades (captura o nome da propriedade antes de ' {get;set;}')
+            codigoGerado = Regex.Replace(codigoGerado, @"([a-zA-Z0-9_]+)(?=\s*\{get;set;\})", m =>
+            {
+                return CapitalizarTexto(m.Value);
+            });
+
+            return codigoGerado;
+        }
+
+        // Função interna que transforma "eventos_email_regras" em "Eventos_Email_Regras"
+        // ou "prioridade" em "Prioridade"
+        private static string CapitalizarTexto(string texto)
+        {
+            if (string.IsNullOrEmpty(texto)) return texto;
+
+            // Se tiver underline, capitaliza cada parte mantendo o underline
+            if (texto.Contains("_"))
+            {
+                var partes = texto.Split('_');
+                for (int i = 0; i < partes.Length; i++)
+                {
+                    if (partes[i].Length > 0)
+                    {
+                        partes[i] = char.ToUpper(partes[i][0]) + partes[i].Substring(1);
+                    }
+                }
+                return string.Join("_", partes);
+            }
+
+            // Se for uma palavra única, apenas bota a primeira letra em maiúscula
+            return char.ToUpper(texto[0]) + texto.Substring(1);
+        }
         public static string Sanitize(this string str)
         {
-            if(str!=null)
+            if (str != null)
             {
-                return str.TrimEnd().TrimStart().ToUpper().RemoverCaracteresEspeciais().Replace(" ","_");
+                return str.TrimStart("_").TrimEnd("_").TrimEnd().TrimStart().ToUpper().RemoverCaracteresEspeciais().Replace(" ", "_");
             }
             return str;
         }
@@ -193,10 +237,10 @@ namespace Conexoes
         {
             if (valor == null) { return true; }
 
-            if(valor is string)
+            if (valor is string)
             {
-               var vlr = (string)valor;
-                if(vlr.Length == 0)
+                var vlr = (string)valor;
+                if (vlr.Length == 0)
                 {
                     return true;
                 }
@@ -209,7 +253,7 @@ namespace Conexoes
                 str = ((Celula)valor).Valor;
             }
 
-            if(str.LenghtStr() == 0)
+            if (str.LenghtStr() == 0)
             {
                 return true;
             }
@@ -658,6 +702,37 @@ namespace Conexoes
 
             // Remove espaços iniciais
             return retorno.TrimStart().TrimEnd();
+        }
+        public static string RemoverAcentos(this string txt)
+        {
+            if (txt == null) { return null; }
+
+            txt = txt.TrimStart().TrimEnd();
+            if (txt.LenghtStr() == 0)
+            {
+                return "";
+            }
+
+            // O FormD separa a letra base do seu acento (ex: 'É' vira 'E' + '´')
+            var normalizar = txt.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder(capacity: normalizar.LenghtStr());
+
+            for (int i = 0; i < normalizar.LenghtStr(); i++)
+            {
+                char c = normalizar[i];
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+
+                // Se NÃO for um acento (NonSpacingMark), nós mantemos o caractere base
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            // Retorna para o FormC (junta novamente caracteres que não deviam ter sido separados)
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
         }
         public static string RemoverCaracteresEspeciais(this string txt)
         {
