@@ -108,12 +108,18 @@ namespace Conexoes
             }
             return Para;
         }
-        public static void CopiarVars<T>(this T Para, DLM.db.Linha De, string prefix = "", bool ignorar_vazias = false)
+        public static void CopiarVars<T>(this T para, DLM.db.Linha de, string prefix = "", bool ignorar_vazias = false)
         {
-            var props_para = Para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
+            if (de == null) { return; }
+
+            if(para is NotificarL)
+            {
+                (para as NotificarL).Linha = de;
+            }
+            var props_para = para.GetPropriedades().Filter().FindAll(x => x.CanWrite);
             foreach (var prop_para in props_para)
             {
-                var valor = De[$"{prefix}{prop_para.Name}", true];
+                var valor = de[$"{prefix}{prop_para.Name}", true];
 
                 if (valor != null)
                 {
@@ -123,7 +129,7 @@ namespace Conexoes
                     }
                     else
                     {
-                        SetValor(Para, prop_para, valor.Valor);
+                        SetValor(para, prop_para, valor.Valor);
                     }
                 }
                 else
