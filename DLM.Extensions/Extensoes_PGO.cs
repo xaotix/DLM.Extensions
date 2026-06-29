@@ -85,7 +85,7 @@ namespace DLM
                 }
             }
 
-            DLM.SAP.SetInfosSAP(materiais);
+            DLM.SAP.GetInfoMateriaisSAP(materiais);
 
             var retorno = new List<LT_PMP>();
             foreach (var material in materiais)
