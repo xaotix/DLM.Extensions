@@ -50,7 +50,11 @@ namespace Conexoes
             var recs = new List<Recorte>();
             var soldas = new List<Solda>();
             var dobs = new List<Dobra>();
-            if (OrigemLiv == OrigemLiv.Cima_Baixo | OrigemLiv == OrigemLiv.Baixo_Cima | OrigemLiv == OrigemLiv.Cima_BaixoRebatido)
+            if (
+                   OrigemLiv == OrigemLiv.Cima_Baixo 
+                || OrigemLiv == OrigemLiv.Baixo_Cima 
+                || OrigemLiv == OrigemLiv.Cima_BaixoRebatido
+                )
             {
                 pts = face.Liv.Select(x => x.SetY(-x.Origem.Y - face.Largura)).ToList();
                 frs = face.Furacoes.Select(x => x.SetY(-x.Origem.Y - face.Largura)).ToList();
@@ -195,18 +199,18 @@ namespace Conexoes
             {
                 var furos_desloc_mesaS = face.FurosMesaParaChapa(Perfil).Select(x => x.MoverY(ps.Esp_MI)).ToList();
                 if (
-                      Perfil.Tipo == CAM_PERFIL_TIPO.I_Soldado
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.Caixao
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.Cartola
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.C_Enrigecido
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.INP
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.UAP
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.UNP
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.U_Dobrado
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.WLam
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.Z_Dobrado
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.Z_Purlin
-                    | Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
+                       Perfil.Tipo == CAM_PERFIL_TIPO.I_Soldado
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.Caixao
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.Cartola
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.C_Enrigecido
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.INP
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.UAP
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.UNP
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.U_Dobrado
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.WLam
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.Z_Dobrado
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.Z_Purlin
+                    || Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
                     )
                 {
 
@@ -231,7 +235,7 @@ namespace Conexoes
                         return s;
                     }
                 }
-                else if (Perfil.Tipo == CAM_PERFIL_TIPO.L_Dobrado | Perfil.Tipo == CAM_PERFIL_TIPO.L_Laminado)
+                else if (Perfil.Tipo == CAM_PERFIL_TIPO.L_Dobrado || Perfil.Tipo == CAM_PERFIL_TIPO.L_Laminado)
                 {
                     face.LivSegmentada.Quebrar(
                          new P3d(-face.Comprimento * 10, ps.Esp + descontar),
@@ -472,7 +476,7 @@ namespace Conexoes
             double descontar = 0.0;
             List<Liv> l1;
             List<Liv> l2;
-            if (cima > 0 | baixo > 0)
+            if (cima > 0 || baixo > 0)
             {
                 double xmin = 0;
                 double ymax = 0;

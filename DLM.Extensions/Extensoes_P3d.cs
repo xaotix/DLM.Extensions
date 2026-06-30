@@ -13,15 +13,15 @@ namespace Conexoes
         public static P3d Tratar(this P3d origem, int decimais = 5)
         {
             var p0 = new P3d(origem.X, origem.Y);
-            if (Double.IsNaN(p0.X) | Double.IsInfinity(p0.X))
+            if (Double.IsNaN(p0.X) || Double.IsInfinity(p0.X))
             {
                 p0.X = 0;
             }
-            if (Double.IsNaN(p0.Y) | Double.IsInfinity(p0.Y))
+            if (Double.IsNaN(p0.Y) || Double.IsInfinity(p0.Y))
             {
                 p0.Y = 0;
             }
-            if (Double.IsNaN(p0.Z) | Double.IsInfinity(p0.Z))
+            if (Double.IsNaN(p0.Z) || Double.IsInfinity(p0.Z))
             {
                 p0.Z = 0;
             }
@@ -708,12 +708,12 @@ namespace Conexoes
             Y /= (6 * polygon_area);
 
 
-            if ((centros.X > 0 && X < 0) | (centros.X < 0 && X > 0))
+            if ((centros.X > 0 && X < 0) || (centros.X < 0 && X > 0))
             {
                 X = -X;
             }
 
-            if ((centros.Y > 0 && Y < 0) | (centros.Y < 0 && Y > 0))
+            if ((centros.Y > 0 && Y < 0) || (centros.Y < 0 && Y > 0))
             {
                 Y = -Y;
             }

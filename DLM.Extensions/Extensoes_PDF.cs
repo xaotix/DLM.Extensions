@@ -78,7 +78,7 @@ namespace Conexoes
                         {
                             fa = (fr.X - furos[i - 1].X);
                         }
-                        if (fa > 1.5 | i == 0)
+                        if (fa > 1.5 || i == 0)
                         {
                             furacoes.Add(new List<string> { fr.X.String(0, 5), string.Join(",", fr.Gages), fr.Diametro.Replace("Ø", ""), fa > 0 ? fa.String(0) : "" });
                         }

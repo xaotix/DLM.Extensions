@@ -338,7 +338,7 @@ namespace Conexoes
                                         var cel = aba.Cells[l0, i + 1];
 
                                         var valor = cel.Text;
-                                        if (valor == null | valor == "")
+                                        if (valor == null || valor == "")
                                         {
                                             valor = cel.Address;
                                         }
@@ -479,7 +479,7 @@ namespace Conexoes
                         break;
                 }
 
-                if (cel.Tipo == Celula_Tipo_Valor.Moeda | cel.StringFormat == "c0" | cel.StringFormat == "R$")
+                if (cel.Tipo == Celula_Tipo_Valor.Moeda || cel.StringFormat == "c0" || cel.StringFormat == "R$")
                 {
                     excel_cel.Style.Numberformat.Format = "R$ #,##0.00;[Red]-R$ #,##0.00";
                 }

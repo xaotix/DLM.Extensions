@@ -664,7 +664,7 @@ namespace Conexoes
         }
         private static Border GetText(netDxf.Entities.EntityObject entity, double X0 = 0, double Y0 = 0)
         {
-            if (entity is netDxf.Entities.Text | entity is netDxf.Entities.MText)
+            if (entity is netDxf.Entities.Text || entity is netDxf.Entities.MText)
             {
                 var Cor = entity.GetCor();
                 //SolidColorBrush Cor = Brushes.Cyan;

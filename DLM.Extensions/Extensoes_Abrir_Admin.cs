@@ -35,7 +35,7 @@ namespace Conexoes
             }
 
             string fullCommand = $"/C start \"\" \"{appToRun}\" {arguments}";
-            if (arguments == "" | arguments == null)
+            if (arguments == "" || arguments == null)
             {
                 fullCommand = $"/C start \"\" \"{appToRun}\"";
             }

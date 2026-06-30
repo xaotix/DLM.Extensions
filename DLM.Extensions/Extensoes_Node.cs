@@ -163,7 +163,7 @@ namespace Conexoes
                 var Chaves = f.Valor.Split(' ').ToList();
                 Chaves = Chaves.Select(x => x.Replace(" ", "")).ToList().FindAll(y => y != "").ToList();
                 int y0 = 3;
-                if (furos.Valor == Cfg.Init.CAM_H_LIV2 | furos.Valor == Cfg.Init.CAM_H_LIV3)
+                if (furos.Valor == Cfg.Init.CAM_H_LIV2 || furos.Valor == Cfg.Init.CAM_H_LIV3)
                 {
                     y0 = 4;
                 }

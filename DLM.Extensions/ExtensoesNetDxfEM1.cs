@@ -68,7 +68,7 @@ namespace DLM.desenho
             double x2 = parte.Origem_Final.Acumulada_X + DLM.vars.Global.EM1.Degrau_Distancia_Horizontal + DLM.vars.Global.EM1.Perfil_U_Largura;
 
             //cantoneira da base
-            if (parte.Tipo == Tipo.Inicial | parte.Tipo == Tipo.Simples)
+            if (parte.Tipo == Tipo.Inicial || parte.Tipo == Tipo.Simples)
             {
 
                 //cantoneiras
@@ -85,7 +85,7 @@ namespace DLM.desenho
 
             foreach (var t in parte.Furos_ESQ)
             {
-                if (t.Face == Furo_Face.Aba1 | t.Face == Furo_Face.Aba2)
+                if (t.Face == Furo_Face.Aba1 || t.Face == Furo_Face.Aba2)
                 {
                     dxf.AddFuro(l, x1 - (DLM.vars.Global.EM1.Perfil_U_Largura / 2), parte.Origem_Final.Origem_Y + t.Origem.X, DLM.vars.Global.EM1.Cantoneira_Furo_Diametro, Desenho_Furo.Vista, true, Sentido.Horizontal);
                 }
@@ -97,7 +97,7 @@ namespace DLM.desenho
             }
             foreach (var t in parte.Furos_DIR)
             {
-                if (t.Face == Furo_Face.Aba1 | t.Face == Furo_Face.Aba2)
+                if (t.Face == Furo_Face.Aba1 || t.Face == Furo_Face.Aba2)
                 {
                     dxf.AddFuro(l, x2 + (DLM.vars.Global.EM1.Perfil_U_Largura / 2), parte.Origem_Final.Origem_Y + t.Origem.X, DLM.vars.Global.EM1.Cantoneira_Furo_Diametro, Desenho_Furo.Vista, true, Sentido.Horizontal);
                 }

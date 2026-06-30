@@ -94,9 +94,9 @@ namespace Conexoes
             int coluna = grid.Columns.IndexOf(grid.CurrentColumn);
 
             if (e.Key == Key.Up) { direcao = Direcao.Cima; }
-            else if ((e.Key == Key.Down) | e.Key == Key.Enter) { direcao = Direcao.Baixo; }
-            else if ((e.Key == Key.Left) | (e.KeyboardDevice.IsKeyDown(Key.LeftShift) && e.Key == Key.Tab)) { direcao = Direcao.Esquerda; }
-            else if ((e.Key == Key.Right) | e.Key == Key.Tab) { direcao = Direcao.Direita; } else { return; }
+            else if ((e.Key == Key.Down) || e.Key == Key.Enter) { direcao = Direcao.Baixo; }
+            else if ((e.Key == Key.Left) || (e.KeyboardDevice.IsKeyDown(Key.LeftShift) && e.Key == Key.Tab)) { direcao = Direcao.Esquerda; }
+            else if ((e.Key == Key.Right) || e.Key == Key.Tab) { direcao = Direcao.Direita; } else { return; }
 
             var textos_anteriores = celula_atual.GetChildren<System.Windows.Controls.TextBox>().ToList();
             var texto_com_foco = textos_anteriores.Find(x => x.IsFocused);
@@ -148,7 +148,7 @@ namespace Conexoes
 
 
             var textos_novos = celula_nova.GetChildren<System.Windows.Controls.TextBox>().ToList();
-            while (textos_novos.Count == 0 && celula_nova != null && (direcao == Direcao.Esquerda | direcao == Direcao.Direita) && coluna > 0 && linha > 0 && coluna < grid.Columns.Count && linha < grid.Items.Count)
+            while (textos_novos.Count == 0 && celula_nova != null && (direcao == Direcao.Esquerda || direcao == Direcao.Direita) && coluna > 0 && linha > 0 && coluna < grid.Columns.Count && linha < grid.Items.Count)
             {
                 celula_nova = grid.SetCell(linha, coluna);
                 textos_novos = celula_nova.GetChildren<System.Windows.Controls.TextBox>().ToList();
@@ -198,7 +198,7 @@ namespace Conexoes
         {
             //cancela o enter ir pra proxima linha
             //base.OnKeyDown(e);
-            if (e.Key == Key.Enter | e.Key == Key.Tab | e.Key == Key.Up | e.Key == Key.Down)
+            if (e.Key == Key.Enter || e.Key == Key.Tab || e.Key == Key.Up || e.Key == Key.Down)
             {
                 e.Handled = true;
             }

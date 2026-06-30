@@ -82,7 +82,11 @@ namespace Conexoes.Macros
                 fn.Posicao = Tipo_Posicao_Purlin.Rebatido;
                 fn.Texto.Value = s.Posicao.GetStr() + " - " + s.ToString();
                 //só rebate se não encontra nenhum furo
-                if (furos.Find(x => (x.X).Round(0) == (fn.X).Round(0) | (x.X).Round(0) == (fn.X - 1).Round(0) | (x.X).Round(0) == (fn.X + 1).Round(0)) == null)
+                if (
+                    furos.Find(x => 
+                       (x.X).Round(0) == (fn.X).Round(0) 
+                    || (x.X).Round(0) == (fn.X - 1).Round(0) 
+                    || (x.X).Round(0) == (fn.X + 1).Round(0)) == null)
                 {
                     //só rebate se não encontra nenhum furo próximo
                     if (Rebater_Furos_Ignorar)
@@ -108,7 +112,7 @@ namespace Conexoes.Macros
             }
             else
             {
-                return furos.FindAll(x => x.Anterior.DistanciaX(x) < Dist_Min | x.Proximo.DistanciaX(x) < Dist_Min).OrderBy(x => x.X).ToList();
+                return furos.FindAll(x => x.Anterior.DistanciaX(x) < Dist_Min || x.Proximo.DistanciaX(x) < Dist_Min).OrderBy(x => x.X).ToList();
             }
         }
     }

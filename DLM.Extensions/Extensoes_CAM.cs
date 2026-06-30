@@ -193,7 +193,7 @@ namespace Conexoes
                             var dist = f2.DistanciaBorda(f1).Abs();
                             var dist_fr = f1.Origem.Distancia(f2.Origem);
 
-                            if (dist <= min_borda | dist <= 0 | dist_fr == 0)
+                            if (dist <= min_borda || dist <= 0 || dist_fr == 0)
                             {
                                 f2.Validado = true;
                                 txt2.Add(
@@ -230,7 +230,7 @@ namespace Conexoes
             {
                 comp_max = Cfg.Init.CAM_Quebra_Compmax;
             }
-            if ((Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa | Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa_Xadrez) && Origem.Comprimento > comp_max)
+            if ((Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa || Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa_Xadrez) && Origem.Comprimento > comp_max)
             {
                 int cCam = 1;
                 var Pedacos = Origem.Formato.LIV1.Quebrar(comp_max);

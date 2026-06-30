@@ -144,7 +144,7 @@ namespace Conexoes
             try
             {
                 var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsW("-") | str.StartsW("-"))
+                if (str.EndsW("-") || str.StartsW("-"))
                 {
                     str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;
@@ -334,7 +334,7 @@ namespace Conexoes
             try
             {
                 var str = comp.ToString().Replace(" ", "").Replace("%", "").Replace("@", "").Replace("#", "");
-                if (str.EndsW("-") | str.StartsW("-"))
+                if (str.EndsW("-") || str.StartsW("-"))
                 {
                     str = str.TrimEnd('-').TrimStart("-");
                     negativo = true;
@@ -402,13 +402,8 @@ namespace Conexoes
             if (obj == null) { return false; }
             var valor = obj.ToString();
 
-            if (valor == "1" | valor == "X" | valor == "x" | valor == "Y" | valor == "S" | valor == "true" | valor == "True")
-            {
-                return true;
-            }
-
             valor = valor.Upper().Replace(" ", "");
-            if (valor == "TRUE" | valor == "1" | valor == "X" | valor == "YES" | valor == "SIM" | valor == "Y" | valor == "S" | valor == "ON")
+            if (valor == "TRUE" || valor == "1" || valor == "X" || valor == "YES" || valor == "SIM" || valor == "Y" || valor == "S" || valor == "ON")
             {
                 return true;
             }

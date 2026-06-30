@@ -224,7 +224,7 @@ namespace Conexoes
                 {
                     Propriedade.SetValue(Objeto, Valor.Int());
                 }
-                else if (prop == "datetime" | (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.DateTime")))
+                else if (prop == "datetime" || (prop == "nullable`1" && Propriedade.PropertyType.FullName.Contem("System.DateTime")))
                 {
                     Propriedade.SetValue(Objeto, Valor.DataNull());
                 }

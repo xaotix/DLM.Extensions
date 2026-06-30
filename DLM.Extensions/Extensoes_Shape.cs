@@ -137,7 +137,7 @@ namespace Conexoes
 
 
 
-            if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Redonda | shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Redondo)
+            if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Redonda || shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Redondo)
             {
                 return (shape.Perfil.GetPesoMetro() / 1000 * shape.Comprimento).Round(Cfg.Init.CAM_Decimais_Peso);
             }
@@ -151,11 +151,11 @@ namespace Conexoes
                 {
                     return planificada.GetPeso(shape.Perfil);
                 }
-                else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.INP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.WLam)
+                else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.INP || shape.Perfil.Tipo == CAM_PERFIL_TIPO.WLam)
                 {
                     return (liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
-                else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.UAP | shape.Perfil.Tipo == CAM_PERFIL_TIPO.UNP)
+                else if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.UAP || shape.Perfil.Tipo == CAM_PERFIL_TIPO.UNP)
                 {
                     return (liv1P.GetPeso(shape.Perfil) + liv2P.GetPeso(shape.Perfil) + liv3P.GetPeso(shape.Perfil)).Round(Cfg.Init.CAM_Decimais_Peso);
                 }
@@ -165,7 +165,7 @@ namespace Conexoes
                 }
 
             }
-            else if (shape.Perfil.Familia == CAM_FAMILIA.Dobrado | shape.Perfil.Primitivo == CAM_PRIMITIVO._)
+            else if (shape.Perfil.Familia == CAM_FAMILIA.Dobrado || shape.Perfil.Primitivo == CAM_PRIMITIVO._)
             {
                 return planificada.GetPeso(shape.Perfil);
             }
@@ -467,7 +467,7 @@ namespace Conexoes
         public static Face LIV3_Aba_Menor(this Shape shape, bool descontar_dobra)
         {
             var pf = shape.Perfil;
-            if (pf.Tipo == CAM_PERFIL_TIPO.Z_Purlin | pf.Tipo == CAM_PERFIL_TIPO.C_Enrigecido)
+            if (pf.Tipo == CAM_PERFIL_TIPO.Z_Purlin || pf.Tipo == CAM_PERFIL_TIPO.C_Enrigecido)
             {
                 var face = shape.GetLIV3_MesaParaChapa();
                 if (face.Liv.Count == 0)
@@ -489,7 +489,7 @@ namespace Conexoes
         public static Face LIV2_Aba_Menor(this Shape shape, bool descontar_dobra)
         {
             var pf = shape.Perfil;
-            if (pf.Tipo == CAM_PERFIL_TIPO.Z_Purlin | pf.Tipo == CAM_PERFIL_TIPO.C_Enrigecido && shape.LIV2.Liv.Count > 3)
+            if (pf.Tipo == CAM_PERFIL_TIPO.Z_Purlin || pf.Tipo == CAM_PERFIL_TIPO.C_Enrigecido && shape.LIV2.Liv.Count > 3)
             {
                 var pts = shape.GetLIV2_MesaParaChapa().RebaterY().Liv.GroupBy(x => x.Origem.Y).OrderBy(x => x.Key).ToList();
                 var max = pts.Max(x => x.Key);

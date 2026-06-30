@@ -277,7 +277,7 @@ namespace Conexoes
 
                 case TAB_NORMT.PERFIL_C_LAMINADO:
                     return CAM_PERFIL_TIPO.UNP;
-                
+
                 case TAB_NORMT.PERFIL_I_LAMINADO:
                 case TAB_NORMT.PERFIL_T_LAMINADO:
                     return CAM_PERFIL_TIPO.WLam;
@@ -338,43 +338,43 @@ namespace Conexoes
                 return CAM_TIPO_BASE.Marca;
             }
             else if (
-                  NORMT == TAB_NORMT.CHAPA |
-                  NORMT == TAB_NORMT.VIGA_MESA |
-                  NORMT == TAB_NORMT.VIGA_ALMA
+                    NORMT == TAB_NORMT.CHAPA
+                 || NORMT == TAB_NORMT.VIGA_MESA
+                 || NORMT == TAB_NORMT.VIGA_ALMA
                 )
             {
                 return CAM_TIPO_BASE.Chapa;
             }
             else if (
-                  NORMT == TAB_NORMT.PERFIL_DOBRADO |
-                  NORMT == TAB_NORMT.BANZO_INFERIOR_MEDABAR |
-                  NORMT == TAB_NORMT.BANZO_INFERIOR_TIPO_D |
-                  NORMT == TAB_NORMT.BANZO_SUPERIOR_MEDABAR |
-                  NORMT == TAB_NORMT.BANZO_SUPERIOR_TIPO_D |
-                  NORMT == TAB_NORMT.DIAGONAL_MEDABAR |
-                  NORMT == TAB_NORMT.DIAGONAL_MEDAJOIST
+                     NORMT == TAB_NORMT.PERFIL_DOBRADO
+                  || NORMT == TAB_NORMT.BANZO_INFERIOR_MEDABAR
+                  || NORMT == TAB_NORMT.BANZO_INFERIOR_TIPO_D
+                  || NORMT == TAB_NORMT.BANZO_SUPERIOR_MEDABAR
+                  || NORMT == TAB_NORMT.BANZO_SUPERIOR_TIPO_D
+                  || NORMT == TAB_NORMT.DIAGONAL_MEDABAR
+                  || NORMT == TAB_NORMT.DIAGONAL_MEDAJOIST
                   )
             {
                 return CAM_TIPO_BASE.Perfil_Dobrado;
             }
             else if (
-                  NORMT == TAB_NORMT.PERFIL_C_PADRAO_125
-                | NORMT == TAB_NORMT.PERFIL_C_PADRAO_165
-                | NORMT == TAB_NORMT.PERFIL_C_PADRAO_185
-                | NORMT == TAB_NORMT.PERFIL_C_PADRAO_216
-                | NORMT == TAB_NORMT.PERFIL_C_PADRAO_292
+                   NORMT == TAB_NORMT.PERFIL_C_PADRAO_125
+                || NORMT == TAB_NORMT.PERFIL_C_PADRAO_165
+                || NORMT == TAB_NORMT.PERFIL_C_PADRAO_185
+                || NORMT == TAB_NORMT.PERFIL_C_PADRAO_216
+                || NORMT == TAB_NORMT.PERFIL_C_PADRAO_292
                 )
             {
                 return CAM_TIPO_BASE.Purlin_C;
             }
             else if (
-                 NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_185
-               | NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_360
-               | NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_245
-               | NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_300
-               | NORMT == TAB_NORMT.PERFIL_Z_PADRAO_165
-               | NORMT == TAB_NORMT.PERFIL_Z_PADRAO_216
-               | NORMT == TAB_NORMT.PERFIL_Z_PADRAO_292
+                  NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_185
+               || NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_360
+               || NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_245
+               || NORMT == TAB_NORMT.PERFIL_Z_ENRIJECIDO_300
+               || NORMT == TAB_NORMT.PERFIL_Z_PADRAO_165
+               || NORMT == TAB_NORMT.PERFIL_Z_PADRAO_216
+               || NORMT == TAB_NORMT.PERFIL_Z_PADRAO_292
                )
             {
                 return CAM_TIPO_BASE.Purlin_Z;
@@ -395,17 +395,17 @@ namespace Conexoes
                 return CAM_TIPO_BASE.Telha;
             }
             else if (
-                NORMT == TAB_NORMT.CANTONEIRA_LAMINADA |
-                NORMT == TAB_NORMT.CHAPA_XADREZ |
-                NORMT == TAB_NORMT.CHAPA_EXPANDIDA |
-                NORMT == TAB_NORMT.FERRO_REDONDO |
-                NORMT == TAB_NORMT.TUBO_QUADRADO |
-                NORMT == TAB_NORMT.TUBO_REDONDO |
-                NORMT == TAB_NORMT.TUBO_RETANGULAR |
-                NORMT == TAB_NORMT.PERFIL_C_LAMINADO |
-                NORMT == TAB_NORMT.PERFIL_T_LAMINADO |
-                NORMT == TAB_NORMT.GRADE |
-                NORMT == TAB_NORMT.TELA
+                   NORMT == TAB_NORMT.CANTONEIRA_LAMINADA 
+                || NORMT == TAB_NORMT.CHAPA_XADREZ 
+                || NORMT == TAB_NORMT.CHAPA_EXPANDIDA 
+                || NORMT == TAB_NORMT.FERRO_REDONDO 
+                || NORMT == TAB_NORMT.TUBO_QUADRADO 
+                || NORMT == TAB_NORMT.TUBO_REDONDO 
+                || NORMT == TAB_NORMT.TUBO_RETANGULAR 
+                || NORMT == TAB_NORMT.PERFIL_C_LAMINADO 
+                || NORMT == TAB_NORMT.PERFIL_T_LAMINADO 
+                || NORMT == TAB_NORMT.GRADE 
+                || NORMT == TAB_NORMT.TELA
                 )
             {
                 return CAM_TIPO_BASE.Laminado;
@@ -423,9 +423,9 @@ namespace Conexoes
                 return CAM_TIPO_BASE.Trins;
             }
             else if (
-                  NORMT == TAB_NORMT.KIT_PIE
-                | NORMT == TAB_NORMT.MARCA_KIT_PIE
-                | NORMT == TAB_NORMT.ALMOX_FABRICACAO
+                   NORMT == TAB_NORMT.KIT_PIE
+                || NORMT == TAB_NORMT.MARCA_KIT_PIE
+                || NORMT == TAB_NORMT.ALMOX_FABRICACAO
                 )
             {
                 return CAM_TIPO_BASE.Almox;
@@ -520,7 +520,7 @@ namespace Conexoes
 
                 case CAM_PERFIL_TIPO.Chapa:
                     var tipo = Nome.GetTipoDesmembrado();
-                    if (tipo == CAM_TIPO_DESMEMBRADO.Mesa_I | tipo == CAM_TIPO_DESMEMBRADO.Mesa_S)
+                    if (tipo == CAM_TIPO_DESMEMBRADO.Mesa_I || tipo == CAM_TIPO_DESMEMBRADO.Mesa_S)
                     {
                         return TAB_NORMT.VIGA_MESA;
                     }
