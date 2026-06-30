@@ -134,6 +134,14 @@ namespace Conexoes
                 return retorno.ToString();
             }
         }
+        public static int? Prompt(this int? valor, string titulo = "Digite")
+        {
+            if(valor == null)
+            {
+                valor = 0;
+            }
+            return valor.Value.Prompt(titulo);
+        }
         public static int? Prompt(this int valor, string titulo = "Digite")
         {
             var retorno = ((double)valor).Prompt(titulo, 0, "N0");

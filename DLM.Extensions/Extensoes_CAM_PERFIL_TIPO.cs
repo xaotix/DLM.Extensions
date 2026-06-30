@@ -147,25 +147,25 @@ namespace Conexoes
 
                 case FaceNum.LIV2:
                     if (tipo == CAM_PERFIL_TIPO.C_Enrigecido
-                        | tipo == CAM_PERFIL_TIPO.L_Dobrado
-                        | tipo == CAM_PERFIL_TIPO.L_Laminado
-                        | tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
-                        | tipo == CAM_PERFIL_TIPO.U_Dobrado
-                        | tipo == CAM_PERFIL_TIPO.UAP
-                        | tipo == CAM_PERFIL_TIPO.UNP
-                        | tipo == CAM_PERFIL_TIPO.Z_Dobrado
-                        | tipo == CAM_PERFIL_TIPO.Z_Purlin
+                        || tipo == CAM_PERFIL_TIPO.L_Dobrado
+                        || tipo == CAM_PERFIL_TIPO.L_Laminado
+                        || tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
+                        || tipo == CAM_PERFIL_TIPO.U_Dobrado
+                        || tipo == CAM_PERFIL_TIPO.UAP
+                        || tipo == CAM_PERFIL_TIPO.UNP
+                        || tipo == CAM_PERFIL_TIPO.Z_Dobrado
+                        || tipo == CAM_PERFIL_TIPO.Z_Purlin
                         )
                     {
                         return OrigemLiv.Baixo_Cima;
                     }
                     else if (tipo == CAM_PERFIL_TIPO.Caixao
-                        | tipo == CAM_PERFIL_TIPO.Cartola
-                        | tipo == CAM_PERFIL_TIPO.I_Soldado
-                        | tipo == CAM_PERFIL_TIPO.WLam
-                        | tipo == CAM_PERFIL_TIPO.INP
-                        | tipo == CAM_PERFIL_TIPO.T_Soldado
-                        | tipo == CAM_PERFIL_TIPO.T_Aresta_Redondo
+                        || tipo == CAM_PERFIL_TIPO.Cartola
+                        || tipo == CAM_PERFIL_TIPO.I_Soldado
+                        || tipo == CAM_PERFIL_TIPO.WLam
+                        || tipo == CAM_PERFIL_TIPO.INP
+                        || tipo == CAM_PERFIL_TIPO.T_Soldado
+                        || tipo == CAM_PERFIL_TIPO.T_Aresta_Redondo
                         )
                     {
                         return OrigemLiv.Centro;
@@ -182,20 +182,20 @@ namespace Conexoes
                     }
                     else if (
                             tipo == CAM_PERFIL_TIPO.Caixao
-                          | tipo == CAM_PERFIL_TIPO.Cartola
-                          | tipo == CAM_PERFIL_TIPO.I_Soldado
-                          | tipo == CAM_PERFIL_TIPO.WLam
-                          | tipo == CAM_PERFIL_TIPO.INP
+                          || tipo == CAM_PERFIL_TIPO.Cartola
+                          || tipo == CAM_PERFIL_TIPO.I_Soldado
+                          || tipo == CAM_PERFIL_TIPO.WLam
+                          || tipo == CAM_PERFIL_TIPO.INP
                           )
                     {
                         return OrigemLiv.Centro;
                     }
                     else if (
                            tipo == CAM_PERFIL_TIPO.C_Enrigecido
-                         | tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
-                         | tipo == CAM_PERFIL_TIPO.U_Dobrado
-                         | tipo == CAM_PERFIL_TIPO.UAP
-                         | tipo == CAM_PERFIL_TIPO.UNP
+                         || tipo == CAM_PERFIL_TIPO.Tubo_Quadrado
+                         || tipo == CAM_PERFIL_TIPO.U_Dobrado
+                         || tipo == CAM_PERFIL_TIPO.UAP
+                         || tipo == CAM_PERFIL_TIPO.UNP
                          )
                     {
                         return OrigemLiv.Cima_Baixo;

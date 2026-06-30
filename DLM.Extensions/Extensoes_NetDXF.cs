@@ -241,7 +241,7 @@ namespace DLM.desenho
             retorno.Add(dxf.AddLine(l, esc.puL - esc.puE, 0, esc.puL - esc.puE, comp, Linetype.Dashed));
             foreach (var furo in parte.ESQ.Furos)
             {
-                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
+                if (furo.Face == Furo_Face.Aba1 || furo.Face == Furo_Face.Aba2)
                 {
                     retorno.AddRange(dxf.AddFuro(l, esc.puL - esc.puLM, furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
                 }
@@ -259,7 +259,7 @@ namespace DLM.desenho
             retorno.Add(dxf.AddLine(l, esc.puE, 0, esc.puE, comp, Linetype.Dashed));
             foreach (var furo in parte.DIR.Furos)
             {
-                if (furo.Face == Furo_Face.Aba1 | furo.Face == Furo_Face.Aba2)
+                if (furo.Face == Furo_Face.Aba1 || furo.Face == Furo_Face.Aba2)
                 {
                     retorno.AddRange(dxf.AddFuro(l, esc.puLM, furo.Origem.X, esc.caD, Desenho_Furo.Vista, true, Sentido.Horizontal));
                 }
@@ -274,7 +274,7 @@ namespace DLM.desenho
 
 
             //cantoneira da base
-            if ((parte.Tipo == EM2_Tipo.Parte_Inicial | parte.Tipo == EM2_Tipo.Parte_Simples) && esc.Considerar_Cantoneira_Base)
+            if ((parte.Tipo == EM2_Tipo.Parte_Inicial || parte.Tipo == EM2_Tipo.Parte_Simples) && esc.Considerar_Cantoneira_Base)
             {
                 //cantoneiras
                 //esquerdo
@@ -572,7 +572,7 @@ namespace DLM.desenho
                         };
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l, Color = AciColor.ByLayer });
             }
-            else if (lado == Orientacao.HDS | lado == Orientacao.HES)
+            else if (lado == Orientacao.HDS || lado == Orientacao.HES)
             {
                 var Vetores = new List<Vector3>();
                 Vetores = new List<Vector3> {
@@ -586,7 +586,7 @@ namespace DLM.desenho
                 block.Entities.Add(new Polyline3D(Vetores) { Layer = l });
                 block.AddLine(l, 0 - m_comp, 0 + esp, 0 + m_comp, 0 + esp, Linetype.Dashed);
             }
-            else if (lado == Orientacao.HDI | lado == Orientacao.HEI)
+            else if (lado == Orientacao.HDI || lado == Orientacao.HEI)
             {
                 var Vetores = new List<Vector3>();
                 Vetores = new List<Vector3> {
@@ -1466,12 +1466,12 @@ namespace DLM.desenho
 
         public static bool Horizontal(this Line l)
         {
-            return Math.Abs(l.Angulo()) == 0 | Math.Abs(l.Angulo()) == 180;
+            return Math.Abs(l.Angulo()) == 0 || Math.Abs(l.Angulo()) == 180;
         }
 
         public static bool Vertical(this Line l)
         {
-            return Math.Abs(l.Angulo()) == 90 | Math.Abs(l.Angulo()) == 270;
+            return Math.Abs(l.Angulo()) == 90 || Math.Abs(l.Angulo()) == 270;
         }
         public static double MinX(this Line l)
         {

@@ -52,6 +52,11 @@ namespace Conexoes
             {
                 (objeto as Tabela).Show();
             }
+            else if (objeto is List<Report>)
+            {
+                var mm = new Conexoes.Janelas.VerReports(objeto as List<Report>);
+                mm.ShowDialog();
+            }
             else if (objeto is List<Linha>)
             {
                 var tbl = new Tabela(objeto as List<Linha>);
