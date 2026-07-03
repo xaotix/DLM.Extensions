@@ -151,6 +151,15 @@ namespace Conexoes
             }
             return null;
         }
+        public static long? Prompt(this long valor, string titulo = "Digite")
+        {
+            var retorno = ((double)valor).Prompt(titulo, 0, "N0");
+            if (retorno != null)
+            {
+                return (long)retorno;
+            }
+            return null;
+        }
         public static double? Prompt(this double? valor, string titulo = "Digite", int decimais = -1, string string_format = null, bool gravar_carregar = false, string chave = "")
         {
             if (valor != null)
