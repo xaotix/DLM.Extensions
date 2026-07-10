@@ -32,7 +32,7 @@ namespace Conexoes
 
             return result;
         }
-        public static void Alerta(this string mensagem, int tempo, string titulo = "")
+        public static void Alerta(this string mensagem, int tempo = 30, string titulo = "")
         {
             if (!mensagem.IsNullOrEmpty())
             {
@@ -40,7 +40,7 @@ namespace Conexoes
                 menu.ShowDialog();
             }
         }
-        public static void Alerta(this string mensagem, string titulo = "Alerta.", MessageBoxImage icone = MessageBoxImage.Information)
+        public static void Alerta(this string mensagem, string titulo, MessageBoxImage icone = MessageBoxImage.Information)
         {
             var tipo = TipoReport.Critico;
             switch (icone)

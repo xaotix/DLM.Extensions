@@ -48,7 +48,12 @@ namespace Conexoes
         {
             if (objeto == null) { return; }
 
-            if (objeto is Tabela)
+            if (objeto is Exception)
+            {
+                var obj = objeto as Exception;
+                obj.Alerta();
+            }
+            else if (objeto is Tabela)
             {
                 (objeto as Tabela).Show();
             }
@@ -69,21 +74,16 @@ namespace Conexoes
                     item.Show();
                 }
             }
-            else if (objeto is Exception)
-            {
-                var obj = objeto as Exception;
-                obj.Alerta();
-            }
-            else if (objeto is List<Celula>)
-            {
-                new Linha((objeto as List<Celula>)).Show();
-            }
             else if (objeto is Linha)
             {
                 var mm = new DLM.WPF.DatagridProps();
                 mm.Title = $"Propriedades {objeto.ToString()}";
                 mm.grid.SetBinding((objeto as Linha));
                 mm.Show();
+            }
+            else if (objeto is List<Celula>)
+            {
+                new Linha((objeto as List<Celula>)).Show();
             }
             else if (objeto is System.Collections.IEnumerable)
             {

@@ -65,7 +65,118 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        /// <summary>
+        /// valida se o pep segue o padrão
+        ///00-000000.P00.000.XXY
+        ///20-123456.P00.001.30A
+        ///
+        ///0 = numeros de 0 a 9
+        ///X = letra ou numero
+        ///Y = se é A, ou B ou C
+        /// </summary>
+        /// <param name="texto"></param>
+        /// <returns></returns>
+        public static string ValidarPEP(this string texto)
+        {
+            if (texto.IsNullOrEmpty())
+            {
+                return "Erro: O texto deve ter pelo menos 21 caracteres.";
+            }
+            // 1. Validação de tamanho mínimo
+            if (string.IsNullOrEmpty(texto) || texto.Length < 21)
+            {
+                return "Erro: O texto deve ter pelo menos 21 caracteres.";
+            }
 
+            // Extrai apenas os primeiros 21 caracteres para validação do padrão
+            string primeiros21 = texto.Substring(0, 21);
+
+            // 2. Construção da Expressão Regular (Regex)
+            // ^[0-9]{2}      -> Dois números (00)
+            // -              -> Um hífen (-)
+            // [0-9]{6}      -> Seis números (000000)
+            // \.P            -> Um ponto seguido da letra P (.P)
+            // [0-9]{2}      -> Dois números (00)
+            // \.             -> Um ponto (.)
+            // [0-9]{3}      -> Três números (000)
+            // \.             -> Um ponto (.)
+            // [A-Za-z0-9]{2} -> Dois caracteres alfanuméricos (XX - letra ou número)
+            // [ABCabc]       -> Uma letra que deve ser A, B ou C (Y)
+            string padraoRegex = @"^[0-9]{2}-[0-9]{6}\.P[0-9]{2}\.[0-9]{3}\.[A-Za-z0-9]{2}[ABCabc]$";
+
+            // 3. Validação do padrão
+            if (!Regex.IsMatch(primeiros21, padraoRegex))
+            {
+                // Se falhar, vamos identificar o que falhou para dar um retorno mais detalhado
+                return DetalharErros(primeiros21);
+            }
+
+            return "OK";
+        }
+
+        private static string DetalharErros(string trecho)
+        {
+            StringBuilder erros = new StringBuilder("Erro: O padrão dos primeiros 21 caracteres está incorreto. Detalhes:");
+            var pep_padrao = "00-000000.P00.000.00X";
+            // Validações individuais para ajudar o usuário a corrigir o texto
+            if (!Regex.IsMatch(trecho.Substring(0, 2), @"^[0-9]{2}$"))
+                erros.Append("\n- Os 2 primeiros caracteres devem ser números.");
+
+            if (trecho[2] != '-')
+                erros.Append($"\n O 3º caractere deve ser um hífen (-).");
+
+            if (!Regex.IsMatch(trecho.Substring(3, 6), @"^[0-9]{6}$"))
+                erros.Append($"\n- Do 4º ao 9º caractere devem ser 6 números.");
+
+            if (trecho.Substring(9, 2) != ".P")
+                erros.Append($"\n- Do 10º ao 11º caractere deve ser '.P'.");
+
+            if (!Regex.IsMatch(trecho.Substring(11, 2), @"^[0-9]{2}$"))
+                erros.Append("\n- Do 12º ao 13º caractere devem ser números.");
+
+            if (trecho[13] != '.')
+                erros.Append("\n- O 14º caractere deve ser um ponto (.).");
+
+            if (!Regex.IsMatch(trecho.Substring(14, 3), @"^[0-9]{3}$"))
+                erros.Append("\n- Do 15º ao 17º caractere devem ser 3 números.");
+
+            if (trecho[17] != '.')
+                erros.Append("\n- O 18º caractere deve ser um ponto (.).");
+
+            if (!Regex.IsMatch(trecho.Substring(18, 2), @"^[A-Za-z0-9]{2}$"))
+                erros.Append("\n- O 19º e 20º caractere (XX) devem ser letras ou números.");
+
+            if (!Regex.IsMatch(trecho.Substring(20, 1), @"^[ABCabc]$"))
+            {
+                var retr = trecho.Substring(19, 1);
+
+                var subs = trecho.Substring(19, 2);
+                if (retr == "R")
+                {
+                    var lista = new string[] { "RC", "RE", "RF", "RM", "RP", "RS", "RV" };
+
+                    if (!subs.EqualsOne(lista))
+                    {
+                        erros.Append($"\nEtapa de retrabalho inválida. Possíveis combinações:{string.Join(",", lista)}");
+                    }
+                    else
+                    {
+                        return "OK";
+                    }
+                }
+                else
+                {
+                    erros.Append("\n- O 21º caractere (Y) deve ser estritamente A, B ou C.");
+                }
+            }
+
+            if (erros.Length > 0)
+            {
+                erros = new StringBuilder($"{pep_padrao}\n{trecho}\n{erros}");
+            }
+
+            return erros.ToString();
+        }
 
         public static string AjustarPascalCase(this string codigoGerado)
         {
