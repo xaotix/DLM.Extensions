@@ -178,7 +178,7 @@ namespace Conexoes
                 }
                 else if (prop == nameof(PesoStrKg).ToLower())
                 {
-                    Propriedade.SetValue(Objeto, Valor.PesoStrTon(20));
+                    Propriedade.SetValue(Objeto, Valor.PesoStrKg(20));
                 }
                 else if (prop == nameof(RSStr).ToLower())
                 {

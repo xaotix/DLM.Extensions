@@ -6,6 +6,53 @@ namespace Conexoes
 {
     public static class ExtensoesCor
     {
+        /// <summary>
+        /// Escala de Verde até Vermelho
+        /// </summary>
+        /// <param name="desvio"></param>
+        /// <param name="escala"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static SolidColorBrush GetCorDesvio(this double desvio, double escala, double max)
+        {
+            // Se o desvio for zero ou negativo, retorna Verde Puro
+            if (desvio <= 0)
+                return new SolidColorBrush(Color.FromArgb(255, 0, 255, 0));
+
+            // Evita divisões por zero ou valores inconsistentes
+            if (max <= 0) max = 0.01;
+            if (escala <= 0) escala = 0.01;
+
+            // Desvio maior ou igual ao máximo: Vermelho Puro
+            if (desvio >= max)
+                return new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+
+            // Calcula o degrau. Se a escala for maior que o desvio, usamos o próprio desvio
+            // para evitar que o t caia sempre em 0.
+            double degrau = desvio < escala ? desvio : Math.Floor(desvio / escala) * escala;
+
+            double t = degrau / max;
+            t = Math.Min(1, Math.Max(0, t)); // Garante que fique entre 0 e 1
+
+            byte r, g;
+            if (t <= 0.5)
+            {
+                // De Verde (0, 255, 0) para Amarelo (255, 255, 0)
+                double local = t / 0.5;
+                r = (byte)Math.Round(local * 255);
+                g = 255;
+            }
+            else
+            {
+                // De Amarelo (255, 255, 0) para Vermelho (255, 0, 0)
+                double local = (t - 0.5) / 0.5;
+                r = 255;
+                g = (byte)Math.Round(255 - (local * 255));
+            }
+
+            // Usamos FromArgb garantindo Alpha em 255 (totalmente opaco)
+            return new SolidColorBrush(Color.FromArgb(255, r, g, 0));
+        }
         public static Brush Inverter(this Brush cor)
         {
             var color = (SolidColorBrush)cor;
