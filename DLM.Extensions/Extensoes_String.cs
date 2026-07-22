@@ -1,9 +1,11 @@
 ﻿using Conexoes.Janelas;
 using DLM.db;
+using DLM.vars;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -78,14 +80,13 @@ namespace Conexoes
         /// <returns></returns>
         public static string ValidarPEP(this string texto)
         {
-            if (texto.IsNullOrEmpty())
+            if (texto.IsNullOrEmpty() || texto.Length < 21)
             {
-                return "Erro: O texto deve ter pelo menos 21 caracteres.";
+                return "Erro: O PEP deve ter pelo menos 21 caracteres.";
             }
-            // 1. Validação de tamanho mínimo
-            if (string.IsNullOrEmpty(texto) || texto.Length < 21)
+            if (texto == Cfg.Init.DefaultPEP)
             {
-                return "Erro: O texto deve ter pelo menos 21 caracteres.";
+                return "Defina um PEP válido.";
             }
 
             // Extrai apenas os primeiros 21 caracteres para validação do padrão
@@ -137,7 +138,7 @@ namespace Conexoes
             if (trecho[13] != '.')
                 erros.Append("\n- O 14º caractere deve ser um ponto (.).");
 
-            if (!Regex.IsMatch(trecho.Substring(14, 3), @"^[0-9]{3}$"))
+            if (!Regex.IsMatch(trecho.Substring(14, 3), @"^[0-9]{3}$") && trecho.Substring(14, 3) != "ITC")
                 erros.Append("\n- Do 15º ao 17º caractere devem ser 3 números.");
 
             if (trecho[17] != '.')
@@ -158,6 +159,17 @@ namespace Conexoes
                     if (!subs.EqualsOne(lista))
                     {
                         erros.Append($"\nEtapa de retrabalho inválida. Possíveis combinações:{string.Join(",", lista)}");
+                    }
+                    else
+                    {
+                        return "OK";
+                    }
+                }
+                else if(trecho.Substring(14, 3) == "ITC")
+                {
+                    if(!trecho.Substring(18, 3).ESoNumero() && !trecho.Substring(18, 3).Contains("."))
+                    {
+                        erros.Append($"\nEtapa ITC inválida. Deve terminar com um número de 000 a 999");
                     }
                     else
                     {
@@ -555,13 +567,13 @@ namespace Conexoes
         }
         public static bool Contem(this string text, params string[] values)
         {
-            if (text.IsNullOrEmpty(false))
+            if (text.IsNullOrEmpty())
             {
                 return false;
             }
             foreach (var value in values)
             {
-                if (!value.IsNullOrEmpty(false))
+                if (value.LenghtStr()>0)
                 {
                     if (text.TrimStart().Contains(value))
                     {

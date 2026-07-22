@@ -24,6 +24,9 @@ namespace Conexoes
             if (value is bool)
                 return (bool)value ? "X" : "";
 
+            if (value is Celula)
+                return ((Celula)value).GetValor();
+
             if (value is int?)
                 return ((int?)value).GetValueOrDefault();
 

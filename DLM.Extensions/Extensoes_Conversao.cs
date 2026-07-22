@@ -421,57 +421,42 @@ namespace Conexoes
         }
         public static DateTime? GetDateTime(this string vlr)
         {
-            if (vlr.LenghtStr() > 0)
+            if (string.IsNullOrWhiteSpace(vlr))
+                return null;
+
+            // Remove valores nulos/inválidos conhecidos
+            if (vlr.Contains("0000") || vlr.Contains("0001"))
+                return null;
+
+            try
             {
-                try
+                // Tenta usar o parser nativo do C#, que lida corretamente com 00:00, 00:59, formatos ISO e culturais
+                if (DateTime.TryParse(vlr, out DateTime dt))
                 {
-                    if (!vlr.Contem("0000") && !vlr.Contem("0001"))
-                    {
-                        if (vlr.Contem(@"/", "-"))
-                        {
-                            var pcs = vlr.Split('/', '-', ' ', 'T').Select(x => x.Int()).ToList();
-                            if (pcs.Count() >= 3)
-                            {
-                                var dt = new DateTime();
-                                if (pcs[0] > 1000)
-                                {
-                                    dt = new DateTime(pcs[0], pcs[1], pcs[2]);
-                                }
-                                else
-                                {
-                                    dt = new DateTime(pcs[2], pcs[1], pcs[0]);
-                                }
-
-                                if (pcs.Count() > 3)
-                                {
-                                    var times = vlr.Split(' ', 'T');
-                                    if (times.Count() > 1)
-                                    {
-                                        if (times[1].Replace(":", "").Replace("0", "").LenghtStr() > 0)
-                                        {
-                                            var hrs = times[1].Split(':', '-');
-                                            if (hrs.Count() >= 3)
-                                            {
-                                                dt = dt.AddHours(hrs[0].Double());
-                                                dt = dt.AddMinutes(hrs[1].Double());
-                                                dt = dt.AddSeconds(hrs[2].Double());
-                                            }
-                                        }
-                                    }
-                                }
-
-                                return dt;
-                            }
-                        }
-                        return Convert.ToDateTime(vlr);
-                    }
+                    return dt;
                 }
-                catch (Exception ex)
+
+                // Fallback caso venha em formatos customizados que o TryParse padrão não pegue de primeira
+                // Formatos comuns suportados de forma limpa:
+                string[] formatos = {
+            "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss",
+            "yyyy-MM-dd HH:mm", "dd/MM/yyyy HH:mm",
+            "yyyy-MM-dd", "dd/MM/yyyy"
+        };
+
+                if (DateTime.TryParseExact(vlr, formatos, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
                 {
-                    DLM.log.Log(ex);
+                    return dt;
                 }
+
+                // Última tentativa com o conversor padrão se houver
+                return Convert.ToDateTime(vlr);
             }
-            return null;
+            catch (Exception ex) // Ou catch dependendo da sua estrutura de log
+            {
+                DLM.log.Log(ex);
+                return null;
+            }
         }
         public static DateTime Data<T>(this T Data)
         {
