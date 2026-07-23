@@ -88,15 +88,17 @@ namespace Conexoes
             }
 
         }
-        public static void Alerta(this UnhandledExceptionEventArgs ex, [CallerMemberName] String propertyName = "")
+        public static void Alerta(this UnhandledExceptionEventArgs ex, string descricao = "", [CallerMemberName] String propertyName = "", string logfile = null)
         {
-            ex.ExceptionObject.ToString().JanelaErro(propertyName);
-            DLM.log.Log(
-                $"======================================================================================" +
-                $"{DateTime.Now.ToString()}->" +
-                $"{ex.ExceptionObject.ToString()}" +
-                $"======================================================================================" +
-                $"\n");
+            if (propertyName == null)
+            {
+                propertyName = "Erro";
+            }
+            Conexoes.Utilz.WaitClose();
+            var desc = $"{descricao} [{propertyName}]";
+            var texto = $"{desc}\n{ex.GetTexto()}";
+            DLM.log.Log(texto, logfile, propertyName);
+            texto.JanelaErro(desc);
         }
         public static void Alerta(this Exception ex, string descricao = "", [CallerMemberName] String propertyName = "", string logfile = null)
         {
@@ -105,9 +107,9 @@ namespace Conexoes
                 propertyName = "Erro";
             }
             Conexoes.Utilz.WaitClose();
-            DLM.log.Log(ex, logfile, propertyName, descricao);
-            var texto = ex.GetTexto();
             var desc = $"{descricao} [{propertyName}]";
+            var texto = $"{desc}\n{ex.GetTexto()}";
+            DLM.log.Log(texto, logfile, propertyName);
             texto.JanelaErro(desc);
         }
         private static void JanelaErro(this string texto, string titulo)
@@ -157,6 +159,39 @@ namespace Conexoes
             ));
             newWindowThread.SetApartmentState(ApartmentState.STA);
             newWindowThread.Start();
+        }
+        public static string GetTexto(this UnhandledExceptionEventArgs args, string adicional = "")
+        {
+            if (args == null) return adicional;
+
+            var retorno = new System.Text.StringBuilder();
+
+            // Reutiliza a sua extensão NotNullOrEmpty() se existir, ou usa string.IsNullOrEmpty
+            if (!string.IsNullOrEmpty(adicional))
+                retorno.AppendLine(adicional).AppendLine();
+
+            // Informações exclusivas do UnhandledExceptionEventArgs
+            retorno.AppendLine("=== EXCEÇÃO NÃO TRATADA (Unhandled Exception) ===");
+            retorno.AppendLine($"Runtime Terminating: {args.IsTerminating}");
+            retorno.AppendLine("=================================================");
+
+            if (args.ExceptionObject is Exception ex)
+            {
+                // Chama o seu método de extensão GetTexto(this Exception ex)
+                retorno.Append(ex.GetTexto());
+            }
+            else if (args.ExceptionObject != null)
+            {
+                // Tratamento de fallback para objetos lançados que não herdam de System.Exception (raro, mas possível em C++/CLI)
+                retorno.AppendLine("Tipo de Objeto: " + args.ExceptionObject.GetType().FullName);
+                retorno.AppendLine("Detalhes: " + args.ExceptionObject.ToString());
+            }
+            else
+            {
+                retorno.AppendLine("ExceptionObject é nulo.");
+            }
+
+            return retorno.ToString();
         }
         public static string GetTexto(this Exception ex, string adicional = "", int nivel = 0)
         {

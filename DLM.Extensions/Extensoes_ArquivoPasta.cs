@@ -117,7 +117,7 @@ namespace Conexoes
                     }
                     if (log)
                     {
-                        DLM.log.Log(ex);
+                        ex.Log();
                     }
                 }
             }
@@ -139,7 +139,7 @@ namespace Conexoes
                     }
                     if (log)
                     {
-                        DLM.log.Log(ex);
+                        ex.Log();
                     }
 
                     return false;
@@ -558,7 +558,7 @@ namespace Conexoes
 
                     if (log)
                     {
-                        DLM.log.Log(ex);
+                        ex.Log();
                     }
 
                     return false;

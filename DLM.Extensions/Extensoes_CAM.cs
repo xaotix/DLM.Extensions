@@ -156,7 +156,6 @@ namespace Conexoes
                 case TAB_NORMT.TELHA_FORRO:
                     maktx = TAB_MAKTX.QUADRO_DE_TELA;
                     break;
-                    break;
                 case TAB_NORMT.TRINS:
                     maktx = TAB_MAKTX.ARREMATE;
                     break;

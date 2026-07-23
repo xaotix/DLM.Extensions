@@ -42,14 +42,14 @@ namespace DLM
         {
             var mats = materiais.GroupBy(x => x.SAP).ToList();
             var kanbans = mats.FindAll(x => x.Key.LenghtStr() == 12).ToList();
-            var skanban = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(kanbans.Select(x => new DLM.db.Linha("MATERIAL", x.Key, "WERKS", "1202")).ToList()));
+            var skanban = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(kanbans.Select(x => new DLM.db.Linha("MATERIAL", x.Key.String(), "WERKS", "1202")).ToList()));
 
             var sub_bobinas = mats.FindAll(x => x.Key.Int() > 1100000 && x.Key.Int() < 9000000).ToList();
-            var s_sub_bobinas = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(sub_bobinas.Select(x => new DLM.db.Linha("MATERIAL", x.Key, "WERKS", "1202")).ToList()));
+            var s_sub_bobinas = DLM.SAP.MontarMateriaisExplodidos(new db.Tabela(sub_bobinas.Select(x => new DLM.db.Linha("MATERIAL", x.Key.String(), "WERKS", "1202")).ToList()));
 
             foreach (var sap in kanbans)
             {
-                var sks = skanban.FindAll(x => x.Pai == sap.Key && x.Codigo != "");
+                var sks = skanban.FindAll(x => x.Pai == sap.Key && x.Codigo.NotNullOrEmpty());
                 if (sks.Count > 0)
                 {
                     foreach (var mat in sap)
@@ -68,7 +68,7 @@ namespace DLM
 
             foreach (var sap in sub_bobinas)
             {
-                var sks = s_sub_bobinas.FindAll(x => x.Pai == sap.Key && x.Codigo != "");
+                var sks = s_sub_bobinas.FindAll(x => x.Pai == sap.Key && x.Codigo.NotNullOrEmpty());
                 if (sks.Count > 0)
                 {
                     foreach (var mat in sap)

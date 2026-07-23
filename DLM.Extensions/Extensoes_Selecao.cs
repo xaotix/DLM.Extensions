@@ -53,6 +53,10 @@ namespace Conexoes
                 var obj = objeto as Exception;
                 obj.Alerta();
             }
+            else if(objeto is UnhandledExceptionEventArgs)
+            {
+                (objeto as UnhandledExceptionEventArgs).Alerta();
+            }
             else if (objeto is Tabela)
             {
                 (objeto as Tabela).Show();

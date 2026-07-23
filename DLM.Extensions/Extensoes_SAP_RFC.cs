@@ -66,14 +66,14 @@ namespace Conexoes
             foreach (var pck in pck_mats)
             {
                 var bases = DLM.SAP.MontarMateriaisExplodidos(pck.Select(x => x.SAP).ToList());
-                var bases_sap = bases.FindAll(x => x.Codigo != "").ToList();
+                var bases_sap = bases.FindAll(x => x.Codigo.NotNullOrEmpty()).ToList();
                 foreach (var base_sap in bases_sap)
                 {
                     var mp = pck.Find(x => x.SAP == base_sap.Pai.Int());
 
                     if (mp != null)
                     {
-                        mp.SAP_Base = base_sap.Codigo.Int();
+                        mp.SAP_Base = base_sap.Codigo.LongNull();
                     }
                 }
             }

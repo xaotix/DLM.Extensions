@@ -454,7 +454,7 @@ namespace Conexoes
             }
             catch (Exception ex) // Ou catch dependendo da sua estrutura de log
             {
-                DLM.log.Log(ex);
+                ex.Log();
                 return null;
             }
         }

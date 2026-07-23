@@ -369,18 +369,6 @@ namespace Conexoes
                 }
             }
 
-
-            var str = valor.ToString();
-            if (valor is Celula)
-            {
-                str = ((Celula)valor).Valor;
-            }
-
-            if (str.LenghtStr() == 0)
-            {
-                return true;
-            }
-
             if (valor is long?)
             {
                 var vlr = (long?)valor;
@@ -415,6 +403,17 @@ namespace Conexoes
             {
                 var vlr = (decimal)valor;
                 return vlr == 0;
+            }
+
+            var str = valor.ToString();
+            if (valor is Celula)
+            {
+                str = ((Celula)valor).Valor;
+            }
+
+            if (str.LenghtStr() == 0)
+            {
+                return true;
             }
 
             if (decimais)
