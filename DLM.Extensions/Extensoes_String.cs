@@ -165,9 +165,9 @@ namespace Conexoes
                         return "OK";
                     }
                 }
-                else if(trecho.Substring(14, 3) == "ITC")
+                else if (trecho.Substring(14, 3) == "ITC")
                 {
-                    if(!trecho.Substring(18, 3).ESoNumero() && !trecho.Substring(18, 3).Contains("."))
+                    if (!trecho.Substring(18, 3).ESoNumero() && !trecho.Substring(18, 3).Contains("."))
                     {
                         erros.Append($"\nEtapa ITC inválida. Deve terminar com um número de 000 a 999");
                     }
@@ -500,6 +500,7 @@ namespace Conexoes
         }
         public static bool StartsW(this string text, params string[] values)
         {
+            if (text == null) { return false; }
             if (text.IsNullOrEmpty(false))
             {
                 return false;
@@ -572,7 +573,7 @@ namespace Conexoes
             }
             foreach (var value in values)
             {
-                if (value.LenghtStr()>0)
+                if (value.LenghtStr() > 0)
                 {
                     if (text.TrimStart().Contains(value))
                     {
