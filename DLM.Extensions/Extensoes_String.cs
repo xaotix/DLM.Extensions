@@ -236,7 +236,7 @@ namespace Conexoes
         {
             if (str != null)
             {
-                return str.TrimStart("_").TrimEnd("_").TrimEnd().TrimStart().ToUpper().RemoverCaracteresEspeciais().Replace(" ", "_");
+                return str.TrimStart("_").TrimEnd("_").TrimEnd().TrimStart().Upper().RemoverCaracteresEspeciais().Replace(" ", "_");
             }
             return str;
         }
