@@ -115,23 +115,14 @@ namespace Conexoes
             return _Marcas;
         }
 
-        public static void Show(this Tabela tabela)
-        {
-            if (tabela.Count > 0)
-            {
-                var mm = new WPF.VerTabela(tabela);
-                mm.Show();
-            }
-        }
-        public static void Show(this List<Linha> linhas)
-        {
-
-            if (linhas.Count > 0)
-            {
-                var mm = new WPF.VerTabela(new Tabela(linhas));
-                mm.Show();
-            }
-        }
+        //public static void Show(this Tabela tabela, bool display_names = false, bool formated_values = false)
+        //{
+        //    if (tabela.Count > 0)
+        //    {
+        //        var mm = new WPF.VerTabela(tabela, display_names, formated_values);
+        //        mm.Show();
+        //    }
+        //}
         public static Linha ListaSelecionar(this Tabela tabela)
         {
             var mm = new WPF.VerTabela(tabela);

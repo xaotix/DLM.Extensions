@@ -44,7 +44,14 @@ namespace Conexoes
                 mm.ShowDialog();
             }
         }
-        public static void Show<T>(this T objeto)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objeto"></param>
+        /// <param name="display_names"></param>
+        /// <param name="formated_values"></param>
+        public static void Show<T>(this T objeto, bool display_names = false, bool formated_values = false, bool only_browsable = true, bool only_can_write = false, bool only_simple_properties = false, params string[] remover)
         {
             if (objeto == null) { return; }
 
@@ -57,10 +64,7 @@ namespace Conexoes
             {
                 (objeto as UnhandledExceptionEventArgs).Alerta();
             }
-            else if (objeto is Tabela)
-            {
-                (objeto as Tabela).Show();
-            }
+
             else if (objeto is List<Report>)
             {
                 var mm = new Conexoes.Janelas.VerReports(objeto as List<Report>);
@@ -68,15 +72,21 @@ namespace Conexoes
             }
             else if (objeto is List<Linha>)
             {
-                var tbl = new Tabela(objeto as List<Linha>);
-                tbl.Show();
+                var tabela = new Tabela(objeto as List<Linha>);
+                tabela.Show(display_names, formated_values);
             }
             else if (objeto is Tabelas)
             {
-                foreach (var item in (objeto as Tabelas))
+                foreach (var tabela in (objeto as Tabelas))
                 {
-                    item.Show();
+                    tabela.Show(display_names, formated_values);
                 }
+            }
+            else if (objeto is Tabela)
+            {
+                var tabela = (objeto as Tabela);
+                var mm = new WPF.VerTabela(tabela, display_names, formated_values);
+                mm.Show();
             }
             else if (objeto is Linha)
             {
@@ -95,13 +105,13 @@ namespace Conexoes
                 var objs = objeto as System.Collections.IEnumerable;
                 foreach (var obj in objs)
                 {
-                    tbl.Add(obj.GetLinha(false, false, false));
+                    tbl.Add(obj.GetLinha(only_can_write, only_browsable, only_simple_properties, remover));
                 }
-                tbl.Show();
+                tbl.Show(display_names, formated_values);
             }
             else
             {
-                objeto.GetLinha(false, false, false).Show();
+                objeto.GetLinha(only_can_write, only_browsable, only_simple_properties, remover).Show();
             }
 
 
