@@ -48,7 +48,7 @@ namespace Conexoes
         {
             return new DLM.db.Tabela(tabelas);
         }
-        public static List<MarcaTecnoMetal> GetMarcas(this DLM.db.Tabela consulta, ref List<Report> erros)
+        public static List<MarcaTecnoMetal> GetMarcas(this DLM.db.Tabela consulta, ref List<Report> _reports)
         {
             var _Marcas = new List<MarcaTecnoMetal>();
 
@@ -61,7 +61,7 @@ namespace Conexoes
 
             lista_pecas = lista_pecas.OrderBy(x => x.ToString()).ToList();
 
-            erros.AddRange(lista_pecas.Select(x => x[Cfg.Init.CAD_ATT_ERRO].Valor).Distinct().ToList().FindAll(x => x.LenghtStr() > 0).Select(x => new Report("Erro", x, TipoReport.Critico)));
+            _reports.AddRange(lista_pecas.Select(x => x[Cfg.Init.CAD_ATT_ERRO].Valor).Distinct().ToList().FindAll(x => x.LenghtStr() > 0).Select(x => new Report("Erro", x, TipoReport.Critico)));
 
             var ms = lista_pecas.Select(x => x.Nome).Distinct().ToList();
 
@@ -73,11 +73,11 @@ namespace Conexoes
                 var posicoes = iguais.FindAll(x => x.Nome_Posicao != "");
                 if (m == "")
                 {
-                    erros.Add("Blocos com erros ou não foi possível ler os dados das marcas.", $" {marcas[0].Arquivo} - Qtd: {marcas.Count} Blocos: {string.Join("|", marcas.Select(x => x.NomeBloco).Distinct())}", TipoReport.Critico);
+                    _reports.Add("Blocos com erros ou não foi possível ler os dados das marcas.", $" {marcas[0].Arquivo} - Qtd: {marcas.Count} Blocos: {string.Join("|", marcas.Select(x => x.NomeBloco).Distinct())}", TipoReport.Critico);
                 }
                 else if (posicoes.FindAll(x => x.Nome.Replace(" ", "") == "").Count > 0)
                 {
-                    erros.Add("Marca com posições com Blocos com erros ou não foi possível ler os dados das.", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
+                    _reports.Add("Marca com posições com Blocos com erros ou não foi possível ler os dados das.", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
                 }
                 else if (marcas.Count == 1)
                 {
@@ -96,7 +96,7 @@ namespace Conexoes
                 }
                 else if (marcas.Count > 1)
                 {
-                    erros.Add("Marcas duplicadas", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
+                    _reports.Add("Marcas duplicadas", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
                 }
             }
             var posp = _Marcas.SelectMany(x => x.GetPosicoes()).GroupBy(x => x.Nome_Posicao);
@@ -105,7 +105,7 @@ namespace Conexoes
                 var diferencas = posicao.ToList().GroupBy(x => x.GetChave()).ToList();
                 if (diferencas.Count > 1)
                 {
-                    erros.Add($"Posição com divergências",
+                    _reports.Add($"Posição com divergências",
                         $"\nPrancha(s)={string.Join(", ", posicao.ToList().GroupBy(x => x.Arquivo).Select(x => x.Key))}" +
                         $"\nDivergências:\n{posicao.Key}\n {string.Join("\n", diferencas.Select(x => x.Key.TrimStart().TrimEnd()))}");
                 }

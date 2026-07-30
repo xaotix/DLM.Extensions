@@ -36,14 +36,14 @@ namespace Conexoes
 
             return null;
         }
-        public static void Show(this List<Report> reports)
-        {
-            if (reports.Count > 0)
-            {
-                var mm = new Conexoes.Janelas.VerReports(reports);
-                mm.ShowDialog();
-            }
-        }
+        //public static void Show(this List<Report> reports)
+        //{
+        //    if (reports.Count > 0)
+        //    {
+        //        var mm = new Conexoes.Janelas.VerReports(reports);
+        //        mm.ShowDialog();
+        //    }
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -67,8 +67,12 @@ namespace Conexoes
 
             else if (objeto is List<Report>)
             {
-                var mm = new Conexoes.Janelas.VerReports(objeto as List<Report>);
-                mm.ShowDialog();
+                var objs = objeto as List<Report>;
+                if(objs.Count>0)
+                {
+                    var mm = new Conexoes.Janelas.VerReports(objs);
+                    mm.ShowDialog();
+                }
             }
             else if (objeto is List<Linha>)
             {

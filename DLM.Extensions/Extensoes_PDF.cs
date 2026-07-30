@@ -19,7 +19,7 @@ namespace Conexoes
             pos_mesas = pos_mesas.FindAll(x => x.Marca.Pacote.Tipo == Pacote_Tipo.MBS);
 
 
-            var erros = new List<Report>();
+            var _reports = new List<Report>();
             var cams_mesas = cams.FindAll(x => x.Formato.LIV1.Furacoes.Count > 0);
             cams_mesas.AddRange(pos_mesas.Select(x => x.GetCam()));
             cams_mesas = cams_mesas.GroupBy(x => x.Nome).Select(x => x.First()).ToList();
@@ -39,7 +39,7 @@ namespace Conexoes
 
                     if (!pdf_origem.Exists())
                     {
-                        erros.Add($"Arquivo PDF não encontrado: {pdf_origem}");
+                        _reports.Add($"Arquivo PDF não encontrado: {pdf_origem}");
                         continue;
                     }
 
@@ -114,7 +114,7 @@ namespace Conexoes
                 }
                 catch (Exception ex)
                 {
-                    erros.Add(new Report(ex));
+                    _reports.Add(new Report(ex));
                 }
             }
             string arq_destino = $"{destino}RESUMO.FLANGES";
@@ -123,9 +123,9 @@ namespace Conexoes
                 Conexoes.Utilz.Arquivo.Gravar(arq_destino, programas);
             }
 
-            erros.Show();
+            _reports.Show();
 
-            return erros.Count == 0;
+            return _reports.Count == 0;
         }
 
         public static void AddTabelas(this PdfReader pdf, string PDF_Destino, List<TabelaPDF> tabelas)

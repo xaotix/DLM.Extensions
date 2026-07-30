@@ -12,7 +12,7 @@ namespace Conexoes
     {
         public static void SincronizarDB(this List<RME> _lista)
         {
-            var erros = new List<Report>();
+            var _reports = new List<Report>();
             foreach (var rme in _lista)
             {
                 if (rme.id_db <= 0)
@@ -32,13 +32,13 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add(tipo.First().ToString(), "Peça não encontrada no banco de dados");
+                    _reports.Add("Peça não encontrada no banco de dados", tipo.First().ToString());
                 }
             }
         }
         public static void SincronizarDB(this List<RMT> _lista)
         {
-            var erros = new List<Report>();
+            var _reports = new List<Report>();
 
             var tipos = _lista.GroupBy(x => x.id_db).ToList();
             foreach (var tipo in tipos)
@@ -53,7 +53,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add(tipo.First().ToString(), "Peça não encontrada no banco de dados");
+                    _reports.Add("Peça não encontrada no banco de dados", tipo.First().ToString());
                 }
             }
         }
@@ -700,7 +700,7 @@ namespace Conexoes
         }
         public static List<Report> GerarCAMsDiagonais(this List<RME> rmes, string Destino_CAM)
         {
-            var erros = new List<Report>();
+            var _reports = new List<Report>();
             var fbus = rmes.FindAll(x => x.TIPO.Contem("FLANGE BRACE"));
             var diags_mdj = rmes.FindAll(x => x.TIPO.StartsW("DSD", "MTD", "DLD", "MTE", "MTI"));
 
@@ -713,7 +713,7 @@ namespace Conexoes
                 var igual = DBases.GetFBsConfig().Find(x => x.Prefixo == fbgrp.Key);
                 if (igual == null)
                 {
-                    erros.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Não há configuração para este tipo de flange brace. Consulte padronização.", TipoReport.Critico);
+                    _reports.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Não há configuração para este tipo de flange brace. Consulte padronização.", TipoReport.Critico);
                 }
                 else
                 {
@@ -725,7 +725,7 @@ namespace Conexoes
                         var fp = ncam.GetCAM(Destino_CAM, false, fb.GetInfo(), fb.COMP_USER, fb.CODIGOFIM);
                         if (!fp)
                         {
-                            erros.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Há algo de errado na configuração padrão. Consulte padronização.", TipoReport.Critico);
+                            _reports.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Há algo de errado na configuração padrão. Consulte padronização.", TipoReport.Critico);
                         }
                         w.somaProgresso();
                     }
@@ -745,7 +745,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                    _reports.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
@@ -761,12 +761,12 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                    _reports.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
             w.Close();
-            return erros;
+            return _reports;
         }
     }
 }

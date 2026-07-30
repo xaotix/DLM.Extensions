@@ -174,7 +174,7 @@ namespace Conexoes
         }
         public static List<Report> Verificar(this List<Furo> furos)
         {
-            var reports = new List<Report>();
+            var _reports = new List<Report>();
 
             for (int i = 0; i < furos.Count; i++)
             {
@@ -205,7 +205,7 @@ namespace Conexoes
                     if (txt2.Count > 0)
                     {
                         txt2.Insert(0, txt1);
-                        reports.Add("Inferferências furações", $"{string.Join("", txt2)}\n\n", TipoReport.Critico);
+                        _reports.Add("Inferferências furações", $"{string.Join("", txt2)}\n\n", TipoReport.Critico);
                     }
                 }
             }
@@ -213,7 +213,7 @@ namespace Conexoes
             {
                 furos[i].Validado = false;
             }
-            return reports;
+            return _reports;
         }
         public static double GetMinBorda(this Furo f1, Furo f2)
         {
@@ -690,39 +690,39 @@ namespace Conexoes
 
         public static List<Report> Comparar(this DLM.cam.ReadCAM p1, DLM.cam.ReadCAM p2)
         {
-            var reports = new List<Report>();
+            var _reports = new List<Report>();
 
             if (p1.Largura != p2.Largura)
             {
-                reports.Add("Largura Divergente", $"{p1.Nome} - {p1.Largura} / {p2.Nome} - {p2.Largura}");
+                _reports.Add("Largura Divergente", $"{p1.Nome} - {p1.Largura} / {p2.Nome} - {p2.Largura}");
             }
 
             if (p1.Comprimento != p2.Comprimento)
             {
-                reports.Add("Comprimento Divergente", $"{p1.Nome} - {p1.Comprimento} / {p2.Nome} - {p2.Comprimento}");
+                _reports.Add("Comprimento Divergente", $"{p1.Nome} - {p1.Comprimento} / {p2.Nome} - {p2.Comprimento}");
             }
             if (p1.Descricao != p2.Descricao)
             {
-                reports.Add("Obra Divergente", $"{p1.Nome} - {p1.Comprimento} / {p2.Nome} - {p2.Descricao}");
+                _reports.Add("Obra Divergente", $"{p1.Nome} - {p1.Comprimento} / {p2.Nome} - {p2.Descricao}");
             }
 
             foreach (var s in p1.Formato.LIV1.Furacoes.FindAll(x => p2.Formato.LIV1.Furacoes.Find(y =>
               y.GetLinha() == x.GetLinha()
           ) == null))
             {
-                reports.Add("Furo Divergente", $"{p1.Nome} - {s}");
+                _reports.Add("Furo Divergente", $"{p1.Nome} - {s}");
             }
 
             foreach (var s in p2.Formato.LIV1.Furacoes.FindAll(x => p1.Formato.LIV1.Furacoes.Find(y =>
              y.GetLinha() == x.GetLinha()
          ) == null))
             {
-                reports.Add("Furo Divergente", $"{p2.Nome} - {s}");
+                _reports.Add("Furo Divergente", $"{p2.Nome} - {s}");
             }
 
             if (p1.Espessura != p2.Espessura)
             {
-                reports.Add("Espessura Divergente", $"{p1.Nome} - {p1.Espessura} / {p2.Nome} - {p2.Espessura}");
+                _reports.Add("Espessura Divergente", $"{p1.Nome} - {p1.Espessura} / {p2.Nome} - {p2.Espessura}");
             }
 
             foreach (var s in p1.Formato.LIV1.Dobras
@@ -730,7 +730,7 @@ namespace Conexoes
                 .Find(y => y.GetLinhaCAM() == x.GetLinhaCAM()
          ) == null))
             {
-                reports.Add("Dobra Divergente", $"{p2.Nome} - {s}");
+                _reports.Add("Dobra Divergente", $"{p2.Nome} - {s}");
             }
             foreach (var s in p2.Formato.LIV1.Dobras
                 .FindAll(x => p1.Formato.LIV1.Dobras
@@ -738,10 +738,10 @@ namespace Conexoes
              y.GetLinhaCAM() == x.GetLinhaCAM()
          ) == null))
             {
-                reports.Add("Dobra Divergente", $"{p2.Nome} - {s}");
+                _reports.Add("Dobra Divergente", $"{p2.Nome} - {s}");
             }
 
-            return reports;
+            return _reports;
         }
 
 
