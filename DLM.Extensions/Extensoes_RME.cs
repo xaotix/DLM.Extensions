@@ -271,7 +271,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report($"Purlin, id_peca={purlin.id_peca}", "Peça Não encontrada", TipoReport.Critico));
+                    retorno.Add(new Report("Peça Não encontrada", $"Purlin, id_peca={purlin.id_peca}", TipoReport.Critico));
                 }
             }
 
@@ -713,7 +713,7 @@ namespace Conexoes
                 var igual = DBases.GetFBsConfig().Find(x => x.Prefixo == fbgrp.Key);
                 if (igual == null)
                 {
-                    erros.Add(new Report("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Não há configuração para este tipo de flange brace. Consulte padronização.", TipoReport.Critico));
+                    erros.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Não há configuração para este tipo de flange brace. Consulte padronização.", TipoReport.Critico);
                 }
                 else
                 {
@@ -725,7 +725,7 @@ namespace Conexoes
                         var fp = ncam.GetCAM(Destino_CAM, false, fb.GetInfo(), fb.COMP_USER, fb.CODIGOFIM);
                         if (!fp)
                         {
-                            erros.Add(new Report("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Há algo de errado na configuração padrão. Consulte padronização.", TipoReport.Critico));
+                            erros.Add("Não foi possível gerar o CAM.", $"[{fbgrp.Key}] => Há algo de errado na configuração padrão. Consulte padronização.", TipoReport.Critico);
                         }
                         w.somaProgresso();
                     }
@@ -745,7 +745,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add(new Report($"Não foi possível gerar o {Cfg.Init.EXT_CAM}", diag.COD_DB, TipoReport.Critico));
+                    erros.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
@@ -761,7 +761,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add(new Report($"Não foi possível gerar o {Cfg.Init.EXT_CAM}", diag.COD_DB, TipoReport.Critico));
+                    erros.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }

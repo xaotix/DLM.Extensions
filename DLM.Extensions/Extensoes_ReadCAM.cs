@@ -196,10 +196,10 @@ namespace Conexoes
         public static List<Report> VerificarFuros(this ReadCAM readCAM)
         {
             var Reports = new List<Report>();
-            Reports.AddRange(readCAM.Formato.LIV1.Furacoes.Verificar().Select(x => new Report("Furação", $"[LIV1] => {x.Descricao}", TipoReport.Alerta)));
-            Reports.AddRange(readCAM.Formato.LIV2.Furacoes.Verificar().Select(x => new Report("Furação", $"[LIV2] => {x.Descricao}", TipoReport.Alerta)));
-            Reports.AddRange(readCAM.Formato.LIV3.Furacoes.Verificar().Select(x => new Report("Furação", $"[LIV3] => {x.Descricao}", TipoReport.Alerta)));
-            Reports.AddRange(readCAM.Formato.LIV4.Furacoes.Verificar().Select(x => new Report("Furação", $"[LIV4] => {x.Descricao}", TipoReport.Alerta)));
+            Reports.AddRange(readCAM.Formato.LIV1.Furacoes.Verificar().Select(x => $"[LIV1] => {x.Descricao}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV2.Furacoes.Verificar().Select(x => $"[LIV2] => {x.Descricao}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV3.Furacoes.Verificar().Select(x => $"[LIV3] => {x.Descricao}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV4.Furacoes.Verificar().Select(x => $"[LIV4] => {x.Descricao}"), "Furação");
 
 
             if (Reports.Count > 0)

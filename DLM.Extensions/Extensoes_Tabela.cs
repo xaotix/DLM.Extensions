@@ -73,11 +73,11 @@ namespace Conexoes
                 var posicoes = iguais.FindAll(x => x.Nome_Posicao != "");
                 if (m == "")
                 {
-                    erros.Add(new Report("Blocos com erros ou não foi possível ler os dados das marcas.", $" {marcas[0].Arquivo} - Qtd: {marcas.Count} Blocos: {string.Join("|", marcas.Select(x => x.NomeBloco).Distinct())}", TipoReport.Critico));
+                    erros.Add("Blocos com erros ou não foi possível ler os dados das marcas.", $" {marcas[0].Arquivo} - Qtd: {marcas.Count} Blocos: {string.Join("|", marcas.Select(x => x.NomeBloco).Distinct())}", TipoReport.Critico);
                 }
                 else if (posicoes.FindAll(x => x.Nome.Replace(" ", "") == "").Count > 0)
                 {
-                    erros.Add(new Report("Marca com posições com Blocos com erros ou não foi possível ler os dados das.", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico));
+                    erros.Add("Marca com posições com Blocos com erros ou não foi possível ler os dados das.", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
                 }
                 else if (marcas.Count == 1)
                 {
@@ -96,7 +96,7 @@ namespace Conexoes
                 }
                 else if (marcas.Count > 1)
                 {
-                    erros.Add(new Report("Marcas duplicadas", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico));
+                    erros.Add("Marcas duplicadas", $" {marcas[0].Arquivo} - M: {m}", TipoReport.Critico);
                 }
             }
             var posp = _Marcas.SelectMany(x => x.GetPosicoes()).GroupBy(x => x.Nome_Posicao);
@@ -105,9 +105,9 @@ namespace Conexoes
                 var diferencas = posicao.ToList().GroupBy(x => x.GetChave()).ToList();
                 if (diferencas.Count > 1)
                 {
-                    erros.Add(new Report($"Posição com divergências",
+                    erros.Add($"Posição com divergências",
                         $"\nPrancha(s)={string.Join(", ", posicao.ToList().GroupBy(x => x.Arquivo).Select(x => x.Key))}" +
-                        $"\nDivergências:\n{posicao.Key}\n {string.Join("\n", diferencas.Select(x => x.Key.TrimStart().TrimEnd()))}", DLM.vars.TipoReport.Critico));
+                        $"\nDivergências:\n{posicao.Key}\n {string.Join("\n", diferencas.Select(x => x.Key.TrimStart().TrimEnd()))}");
                 }
             }
 
