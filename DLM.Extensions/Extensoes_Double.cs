@@ -160,30 +160,30 @@ namespace Conexoes
                 }
                 else if (doubleValue > 999_999_999)
                 {
-                    _value = $"{(doubleValue / 1_000_000_000).ToString("0.###", culture)} bi";
+                    _value = $"{(doubleValue / 1_000_000_000).String("0.###", culture)} bi";
                 }
                 else if (doubleValue > 99_999_999)
                 {
-                    _value = $"{(doubleValue / 1_000_000).ToString("0.##", culture)} mi";
+                    _value = $"{(doubleValue / 1_000_000).String("0.##", culture)} mi";
                 }
                 else if (doubleValue > 999_999)
                 {
-                    _value = $"{(doubleValue / 1_000_000).ToString("0.###", culture)} mi";
+                    _value = $"{(doubleValue / 1_000_000).String("0.###", culture)} mi";
                 }
                 else if (doubleValue > 9_999)
                 {
-                    _value = $"{(doubleValue / 1_000).ToString("0.#", culture)} mil";
+                    _value = $"{(doubleValue / 1_000).String("0.#", culture)} mil";
                 }
                 else if (doubleValue > 999)
                 {
-                    _value = $"{(doubleValue / 1_000).ToString("0.##", culture)} mil";
+                    _value = $"{(doubleValue / 1_000).String("0.##", culture)} mil";
                 }
                 else
                 {
                     var valor = doubleValue.Round(2);
                     if (valor > 0)
                     {
-                        _value = $"{valor.ToString("N2", culture)}";
+                        _value = $"{valor.String()}";
                     }
                 }
             }
@@ -215,19 +215,19 @@ namespace Conexoes
             }
             else if (num > 999999999 || num < -999999999)
             {
-                retorno = num.ToString("0,,,.### bi", CultureInfo.InvariantCulture);
+                retorno = num.String("0,,,.### bi");
             }
             else if (num > 999999 || num < -999999)
             {
-                retorno = num.ToString("0,,.## mi", CultureInfo.InvariantCulture);
+                retorno = num.String("0,,.## mi");
             }
             else if (num > 999 || num < -999)
             {
-                retorno = num.ToString("0,.K", CultureInfo.InvariantCulture);
+                retorno = num.String("0,.K");
             }
             else
             {
-                retorno = prefix + (num / 1000).ToString("N1") + " K";
+                retorno = prefix + (num / 1000).String("N1") + " K";
             }
 
             retorno = $"{prefix}{retorno}";

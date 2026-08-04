@@ -1,4 +1,5 @@
 ﻿using DLM.db;
+using DLM.encoder;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,6 +9,10 @@ namespace Conexoes
 {
     public static class Extensoes_Lista
     {
+        public static List<Report> Agrupar(this IEnumerable<Report> _reports)
+        {
+            return _reports.GroupBy(x => x.Descricao).Select(x => new Report(x.ToList())).ToList();
+        }
         public static DLM.db.Tabela GetTabela<T>(this List<T> Origem, [System.Runtime.CompilerServices.CallerMemberName] string nome = "")
         {
             return new DLM.db.Tabela(Origem.Select(x => x.GetLinha()).ToList(), nome);

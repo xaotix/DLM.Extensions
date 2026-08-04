@@ -5,6 +5,7 @@ using DLM.vars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DLM
 {
@@ -290,6 +291,163 @@ namespace DLM
             //    }
             //}
             //return Retorno.OrderBy(x => x.ToString()).ToList();
+        }
+
+
+        public static List<PGO_Peca> GetPecas(this List<DLM.orc.Range> ranges, bool p00 = false, bool verbas = false, bool c00 = false)
+        {
+            if (ranges.Count == 0) { return new List<PGO_Peca>(); }
+
+            var obra = ranges.First().Obra;
+            var Tarefas = new List<Task>();
+
+
+            var w = Utilz.Wait(10, "Mapeando peças...");
+
+            var prefix = $"{obra.Segmento.String(2)}-{obra.Contrato_SAP.String(6)}.{obra.Custos.Nome_Projeto}.";
+
+
+            var Tratamentos = obra.GetTratamentos();
+
+            var retorno = new List<PGO_Peca>();
+            foreach (var range in ranges)
+            {
+                var pecas_range = new List<PGO_Peca>();
+
+                if (range.Produto.Verba)
+                {
+                    var rm = DBases.GetBancoRM().GetRMA(range.id_material_verba);
+                    if (rm != null)
+                    {
+                        var peca = rm.Clonar();
+
+
+                        if (range.Produto.Nome.Length > 0)
+                        {
+                            peca.DESCRICAO = range.Produto.Nome;
+                        }
+
+                        if (peca.PESOUNIT <= 0)
+                        {
+                            peca.PESOUNIT = range.Produto.Peso_Unitario;
+                        }
+
+                        var produto_peca = new DLM.orc.PGO_Peca(peca);
+                        produto_peca.QuantidadeRange = range.Quantidade_Material_Verba;
+                        produto_peca.Quantidade = range.Quantidade_Material_Verba;
+                        pecas_range.Add(produto_peca);
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                    var pecas = range.Produto.GetPecasDB();
+
+                    foreach (var pecaDB in pecas.FindAll(x => x.Ativo))
+                    {
+                        var peca = pecaDB.GetPeca().GetNew(range.Quantidade, true);
+                        peca.QuantidadeRange = range.Quantidade;
+
+                        var subpecas = peca.GetSubPecasMacrosEditadas();
+
+                        foreach (var pc in subpecas)
+                        {
+                            pc.QuantidadeRange = pc.Quantidade;
+                        }
+
+                        if (subpecas.Count == 0)
+                        {
+                            pecas_range.Add(peca);
+                        }
+                        else
+                        {
+                            pecas_range.AddRange(subpecas);
+                        }
+                    }
+                }
+
+
+                /*para garantir o preenchimento do PEP nas linhas das ma*/
+                foreach (var peca in pecas_range)
+                {
+                    // 2025.01.16 - adição de PEP de consolidação
+                    // para importação de listas técnicas 
+                    var mt = DBases.GetPGO().GetMT(peca.WERKS);
+                    peca.PEP_FAB = $"{prefix}{mt}.{range.Predio.Numero}.{range.PEP}";
+                    peca.PEP_LT = $"{prefix}{mt}.{range.Predio.Numero}.{range.Produto.FERT}";
+
+                    if (c00)
+                    {
+                        peca.SetPEP(peca.PEP_LT);
+                    }
+                    else
+                    {
+                        peca.SetPEP(peca.PEP_FAB);
+                    }
+                }
+
+                retorno.AddRange(pecas_range);
+                range.SetPecas(pecas_range);
+            }
+
+            var tratamentos = ranges.Select(x => x.Tratamento.Descricao).Distinct().ToList().FindAll(x => x != "" && x != "0");
+
+            foreach (string Nome in tratamentos)
+            {
+                string tratamento = Nome.Upper().Replace(" ", "").Replace("0", "");
+                if (tratamento == "")
+                {
+                    continue;
+                }
+
+                var corr = Tratamentos.Find(x => x.Descricao.Upper().Replace(" ", "").Replace("0", "") == tratamento && x.Descricao.Upper().Replace(" ", "").Replace("0", "") != "");
+                if (corr != null)
+                {
+                    var rgs = ranges.FindAll(x => x.Tratamento.Descricao.Upper().Replace(" ", "").Replace("0", "") == tratamento);
+                    foreach (var range in rgs)
+                    {
+                        foreach (var pc in range.Pecas)
+                        {
+                            pc.Ficha = corr.Tipo.Descricao;
+                            pc.EsquemaPintura = corr.Codigo;
+                        }
+                    }
+                }
+            }
+
+
+            var sem_ficha_mas_com_pintura_especificada = ranges
+                .FindAll(x => x.Tratamento.Tipo.Descricao.Replace(" ", "").Replace("0", "") != "" && !x.Produto.Verba);
+
+            foreach (var range in sem_ficha_mas_com_pintura_especificada)
+            {
+                foreach (var pc in range.Pecas)
+                {
+                    if (pc.Ficha == "")
+                    {
+                        pc.Ficha = range.Tratamento.Tipo.Descricao;
+                    }
+                }
+            }
+
+
+            foreach (var peca in retorno)
+            {
+                peca.SaldoRange = peca.Quantidade;
+            }
+
+            w.Close();
+
+
+
+            var _ranges_pecas = new List<PGO_Peca>();
+            _ranges_pecas.AddRange(ranges.SelectMany(x => x.Pecas));
+            _ranges_pecas = _ranges_pecas.Juntar();
+
+
+            return _ranges_pecas;
         }
     }
 }

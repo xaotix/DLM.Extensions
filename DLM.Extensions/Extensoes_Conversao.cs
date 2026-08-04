@@ -18,12 +18,17 @@ namespace Conexoes
         {
             if (decimais >= 0)
             {
-                return Valor.Round(decimais).ToString($"F{decimais}", CultureInfo.InvariantCulture).PadLeft(padleft, padding);
+                return Valor.Round(decimais).String($"F{decimais}").PadLeft(padleft, padding);
             }
             else
             {
                 return Valor.ToString().PadLeft(padleft, padding);
             }
+        }
+        public static string String(this double valor, string format= "N2", CultureInfo culture = null)
+        {
+            if (culture == null) { culture = CultureInfo.InvariantCulture; }
+            return valor.ToString(format, culture);
         }
         public static string String(this int Valor, int padleft = 0, char padding = '0')
         {
