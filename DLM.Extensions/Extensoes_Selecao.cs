@@ -1,4 +1,5 @@
-﻿using DLM.db;
+﻿using Conexoes.Acessos;
+using DLM.db;
 using DLM.encoder;
 using System;
 using System.Collections.Generic;
@@ -102,6 +103,10 @@ namespace Conexoes
             else if (objeto is List<Celula>)
             {
                 new Linha((objeto as List<Celula>)).Show();
+            }
+            else if (objeto is User)
+            {
+                (objeto as User).Linha.Show();
             }
             else if (objeto is System.Collections.IEnumerable)
             {
