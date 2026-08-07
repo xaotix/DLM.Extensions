@@ -409,6 +409,19 @@ namespace Conexoes
             }
             return linha;
         }
+        public static DLM.db.Linha GetLinha<T>(this T obj, string prefix)
+        {
+            var linhas = obj.GetLinha(false, true);
+
+
+            var retorno = new Linha();
+            foreach(var r in linhas)
+            {
+                retorno.Add($"{prefix}{r.Coluna}", r.Valor, r.Tipo, r.Decimais, r.DisplayName, r.StringFormat, r.Anotacoes, r.X, r.Y);
+            }
+
+            return retorno;
+        }
 
         /// <summary>
         /// Extrai uma tabela com todas as propriedades da lista
@@ -437,6 +450,7 @@ namespace Conexoes
                 {
                     listagem = listagem.Filter();
                 }
+
                 if (only_can_write)
                 {
                     listagem = listagem

@@ -109,7 +109,7 @@ namespace Conexoes
 
             foreach (var arq in outros)
             {
-                Open(arq.Endereco, "", wait);
+                Open(arq.Endereco, argumentos, wait);
             }
 
             return true;

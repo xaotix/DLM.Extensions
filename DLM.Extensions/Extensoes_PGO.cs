@@ -294,7 +294,7 @@ namespace DLM
         }
 
 
-        public static List<PGO_Peca> GetPecas(this List<DLM.orc.Range> ranges, bool p00 = false, bool verbas = false, bool c00 = false)
+        public static List<PGO_Peca> GetPecas(this List<DLM.orc.Range> ranges, bool verbas = false, bool c00 = false)
         {
             if (ranges.Count == 0) { return new List<PGO_Peca>(); }
 
@@ -375,7 +375,7 @@ namespace DLM
                     // 2025.01.16 - adição de PEP de consolidação
                     // para importação de listas técnicas 
                     var mt = DBases.GetPGO().GetMT(peca.WERKS);
-                    peca.PEP_FAB = $"{prefix}{mt}.{range.Predio.Numero}.{range.PEP}";
+                    peca.PEP_FAB = $"{obra.PedidoSAP}.{range.Predio.Numero}.{range.PEP}";
                     peca.PEP_LT = $"{prefix}{mt}.{range.Predio.Numero}.{range.Produto.FERT}";
 
                     if (c00)

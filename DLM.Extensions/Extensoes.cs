@@ -782,7 +782,7 @@ namespace Conexoes
         }
 
 
-        public static List<T> GetChildren<T>(this Window window)
+        public static List<T> GetChildren<T>(this System.Windows.Controls.ContentControl window)
         {
             if (window.Content is Panel)
             {
@@ -932,33 +932,6 @@ namespace Conexoes
                 sel = pai;
             }
         }
-
-
-
-
-        public static void CriarCopiaRev(this string arquivo, int c = 1)
-        {
-            if (arquivo.Exists())
-            {
-                var pasta = arquivo.getPasta();
-                pasta = pasta.GetSubPasta("REVISOES");
-                var nome = arquivo.getNome();
-                var extensao = arquivo.getExtensao();
-                var rv = "R00";
-                var n_arquivo = $"{pasta}{nome}.{rv}.{extensao}";
-
-                while (n_arquivo.Exists())
-                {
-                    c++;
-                    n_arquivo = $"{pasta}{nome}.R{c.String(2)}{extensao}";
-                }
-                /*Cria uma cópia do arquivo atual*/
-                arquivo.Copiar(n_arquivo);
-            }
-        }
-
-
-
 
 
         //public static double Prompt(this double valor)

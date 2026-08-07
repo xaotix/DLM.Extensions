@@ -18,7 +18,26 @@ namespace Conexoes
     public static class Extensoes_ArquivoPasta
     {
 
+        public static void CriarCopiaRev(this string arquivo, int c = 1)
+        {
+            if (arquivo.Exists())
+            {
+                var pasta = arquivo.getPasta();
+                pasta = pasta.GetSubPasta("REVISOES");
+                var nome = arquivo.getNome();
+                var extensao = arquivo.getExtensao();
+                var rv = "R00";
+                var n_arquivo = $"{pasta}{nome}.{rv}.{extensao}";
 
+                while (n_arquivo.Exists())
+                {
+                    c++;
+                    n_arquivo = $"{pasta}{nome}.R{c.String(2)}{extensao}";
+                }
+                /*Cria uma cópia do arquivo atual*/
+                arquivo.Copiar(n_arquivo);
+            }
+        }
         public static List<string> ToString(this List<Arquivo> arquivos)
         {
             return arquivos.Select(x => x.Endereco.Upper()).Distinct().ToList();

@@ -301,10 +301,15 @@ namespace Conexoes
                 }
             }
         }
+        /// <summary>
+        /// Ajusta o valor para o padrão do PEP, substituindo espaços por "-" e "." e formatando conforme a estrutura do PEP.
+        /// </summary>
+        /// <param name="valor"></param>
+        /// <returns></returns>
         public static string ToPEP(this string valor)
         {
             var retorno = "";
-            var pep = valor.Replace(" ", "").Replace("-", "").Replace(".", "");
+            var pep = valor.Substituir(" ", "-", ".");
             //10-123456.P00.001.30A.F2
             //setor atividade
             if (pep.LenghtStr() > 1)
