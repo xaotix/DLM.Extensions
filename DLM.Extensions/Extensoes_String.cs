@@ -67,6 +67,75 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        // Dicionário com os mapeamentos dos ícones padrão SAP para Emojis
+        private static readonly Dictionary<string, string> IconMap = new(StringComparer.OrdinalIgnoreCase)
+        {
+            // Ícones existentes...
+            { "@A0@", "🚚" }, // ICON_DELIVERY / ICON_TRUCK (Caminhão / Entrega)
+            { "@B0@", "🚛" }, // ICON_TRANSPORT / ICON_FREIGHT (Transporte pesado / Frete)
+            { "@6C@", "📦" }, // ICON_PACKAGE / ICON_BOX (Pacote / Caixa)
+            { "@A1@", "🏬" }, // ICON_WAREHOUSE / ICON_PLANT (Centro de Distribuição / Depósito)
+            { "@AC@", "🏢" }, // ICON_STORE_LOCATION (Local de Armazenamento / Depósito)
+            { "@4B@", "✈️" }, // ICON_AIRPLANE (Transporte Aéreo)
+            { "@4C@", "🚢" }, // ICON_SHIP (Transporte Marítimo)
+            { "@4D@", "🚂" }, // ICON_TRAIN (Transporte Ferroviário)
+            { "@6S@", "📑" }, // ICON_DELIVERY_NOTE (Nota de Entrega / Romaneio)
+            { "@8M@", "🌐" }, // ICON_FOREIGN_TRADE (Comércio Exterior / Importação-Exportação)
+            { "@C0@", "🏭" }, // ICON_STORE (Depósito / Estoque)
+            { "@01@", "🆗" },  // ICON_OKAY
+            { "@02@", "❌" },  // ICON_CANCEL
+            { "@03@", "⬅️" },   // ICON_BACK
+            { "@04@", "🚪" },  // ICON_EXIT
+            { "@05@", "🖨️" },  // ICON_PRINT
+            { "@06@", "🔍" },  // ICON_SEARCH
+            { "@07@", "🔄" },  // ICON_REFRESH
+            { "@08@", "✅" },  // ICON_CHECK
+            { "@09@", "✏️" },   // ICON_CHANGE
+            { "@0A@", "🔴" },  // ICON_RED_LIGHT
+            { "@0B@", "🟡" },  // ICON_YELLOW_LIGHT
+            { "@0C@", "🟢" },  // ICON_GREEN_LIGHT
+            { "@0D@", "📄" },  // ICON_CREATE
+            { "@0E@", "🗑️" },  // ICON_DELETE
+            { "@0F@", "👁️" },  // ICON_DISPLAY
+            { "@11@", "💾" },  // ICON_SAVE
+            { "@12@", "📂" },  // ICON_OPEN
+            { "@14@", "📋" },  // ICON_PASTE
+            { "@15@", "✂️" },   // ICON_CUT
+            { "@1A@", "⭐" },  // ICON_FAVORITES
+            { "@2L@", "📧" },  // ICON_MAIL
+            { "@3B@", "📊" },  // ICON_GRAPHICS
+            { "@3V@", "⚙️" },  // ICON_SETTINGS
+            { "@3W@", "🔧" },  // ICON_TOOLS
+            { "@5B@", "📌" },  // ICON_PIN
+        
+            // Ícone que faltava:
+            { "@5D@", "👤" }, // ICON_EMPLOYEE (Homem / Empregado) - ou pode usar 👨‍💼
+        
+            // Outros ícones úteis da família de usuários/pessoas:
+            { "@5C@", "👥" }, // ICON_CUSTOMER (Cliente / Grupo)
+            { "@AD@", "👨‍💻" }, // ICON_USER (Usuário)
+            { "@7W@", "🔒" }, // ICON_LOCKED
+            { "@7X@", "🔓" },  // ICON_UNLOCKED
+            { "@2N@", "ℹ️" },
+        };
+
+        // Regex para capturar o padrão do código de ícone SAP (ex: @01@, @0A@, @3V@)
+        private static readonly Regex SapIconRegex = new(@"@[A-Za-z0-9]{2}@", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Procura e substitui todos os códigos de ícones SAP presentes no texto pelos seus emojis correspondentes.
+        /// </summary>
+        public static string ReplaceSapIcons(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            // O Regex.Replace encontra os códigos no texto e busca a correspondência no dicionário
+            return SapIconRegex.Replace(text, match =>
+            {
+                return IconMap.TryGetValue(match.Value, out var emoji) ? emoji : match.Value;
+            });
+        }
         /// <summary>
         /// valida se o pep segue o padrão
         ///00-000000.P00.000.XXY
@@ -309,7 +378,7 @@ namespace Conexoes
         public static string ToPEP(this string valor)
         {
             var retorno = "";
-            var pep = valor.Substituir(" ", "-", ".");
+            var pep = valor.Substituir("", "-", ".");
             //10-123456.P00.001.30A.F2
             //setor atividade
             if (pep.LenghtStr() > 1)
@@ -887,7 +956,12 @@ namespace Conexoes
                 .ToString()
                 .Normalize(NormalizationForm.FormC);
 
-            return Regex.Replace(ret, @"[^0-9a-zA-Z-]+", "_");
+            var retorno = Regex.Replace(ret, @"[^0-9a-zA-Z-]+", "_");
+
+            retorno = retorno.Substituir(" ", "\n", "\t", "\v", "\r", "\f", @"\N", @"\F", @"\V", @"\R", @"\F");
+            retorno = retorno.TrimStart("_").TrimEnd("_");
+
+            return retorno;
         }
 
 

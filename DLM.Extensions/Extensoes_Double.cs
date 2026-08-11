@@ -9,6 +9,10 @@ namespace Conexoes
 {
     public static class Extensoes_Double
     {
+        public static bool IsEqual(this double valor1, double valor2, double tolerancia = 0)
+        {
+            return Math.Abs(valor1 - valor2) <= tolerancia;
+        }
         public static RSStr Negativo(this RSStr valor)
         {
             if (valor == null) { return default(RSStr); }

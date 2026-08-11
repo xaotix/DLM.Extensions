@@ -294,6 +294,19 @@ namespace Conexoes
                 return tempo_data.TotalDays / tempo_total.TotalDays;
             }
         }
+        public static double Horas(this DateTime inicio, DateTime fim)
+        {
+            return (fim - inicio).TotalHours;
+        }
+        public static double Horas(this DateTime? inicio, DateTime? fim)
+        {
+            if (inicio == null || fim == null)
+            {
+                return 9999999;
+            }
+
+            return inicio.Value.Horas(fim.Value);
+        }
         public static int DiasUteis(this DateTime inicio, DateTime fim)
         {
             int days = 0;
