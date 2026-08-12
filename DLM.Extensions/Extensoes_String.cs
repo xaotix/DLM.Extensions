@@ -117,6 +117,7 @@ namespace Conexoes
             { "@7W@", "🔒" }, // ICON_LOCKED
             { "@7X@", "🔓" },  // ICON_UNLOCKED
             { "@2N@", "ℹ️" },
+            { "@5Y@", "✅" },  // ICON_GREEN_LIGHT
         };
 
         // Regex para capturar o padrão do código de ícone SAP (ex: @01@, @0A@, @3V@)
@@ -433,6 +434,25 @@ namespace Conexoes
         public static bool IsNullOrEmpty(this object valor, bool decimais = true)
         {
             if (valor == null) { return true; }
+
+            if (valor is Tabelas)
+            {
+                var tb = (Tabelas)valor;
+                if (tb == null) { return true; }
+                else if (tb.Count == 0) { return true; }
+            }
+            else if (valor is Tabela)
+            {
+                var tb = (Tabela)valor;
+                if (tb == null) { return true; }
+                else if (tb.Count == 0) { return true; }
+            }
+            else if (valor is Linha)
+            {
+                var tb = (Linha)valor;
+                if (tb == null) { return true; }
+                else if (tb.Count == 0) { return true; }
+            }
 
             if (valor is string)
             {
