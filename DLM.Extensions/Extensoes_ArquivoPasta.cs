@@ -741,42 +741,38 @@ namespace Conexoes
         }
         public static string getNome(this string arq, bool extensao = false)
         {
-            if (arq == null) { return ""; }
-            if (arq.LenghtStr() == 0) { return ""; }
+            if (string.IsNullOrWhiteSpace(arq)) { return ""; }
+
             try
             {
-                var nome_arq = System.IO.Path.GetFileNameWithoutExtension(arq);
-                if (nome_arq == "")
+                string caminhoLimpo = arq.TrimEnd('\\', '/');
+
+                bool isDirectory = System.IO.Directory.Exists(caminhoLimpo) || arq.EndsWith("\\") || arq.EndsWith("/");
+
+
+                if (isDirectory)
                 {
-                    var dir = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(arq));
-                    return dir;
+                    string nomePasta = System.IO.Path.GetFileName(caminhoLimpo);
+
+                    return string.IsNullOrEmpty(nomePasta) ? caminhoLimpo : nomePasta;
                 }
-                if (extensao)
+                else
                 {
-                    var ext = arq.getExtensao(false);
-                    return $"{nome_arq}.{ext}";
+                    if (extensao)
+                    {
+                        return System.IO.Path.GetFileName(caminhoLimpo);
+                    }
+                    else
+                    {
+                        return System.IO.Path.GetFileNameWithoutExtension(caminhoLimpo);
+                    }
                 }
-
-                return nome_arq;
-                //if (arq.IsDirectory())
-                //{
-                //    var ret = arq;
-                //    ret = ret.TrimEnd(@"/".ToCharArray());
-                //    ret = ret.TrimEnd(@"\".ToCharArray());
-                //    ret = ret.Replace(@"\", "|").Replace(@"/", "|");
-                //    ret = ret.Split('|').ToList().Last();
-                //    return ret;
-                //}
-                //else
-                //{
-
-                //}
-
             }
             catch (Exception ex)
             {
                 ex.Show();
             }
+
             return arq;
         }
         public static string getUpdir(this string dir)

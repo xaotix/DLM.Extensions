@@ -91,11 +91,11 @@ namespace Conexoes
                 TecnoMetalVars.MatarExecutavelChato();
                 if (arq.Endereco.StartsW(Cfg.Init.DIR_RAIZ_OBRAS))
                 {
-                    Open(Cfg.Init.GetCad(), $"{script} {Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                    Open(Cfg.Init.GetCad(), $@"{script} ""{arq.Endereco}""", wait);
                 }
                 else
                 {
-                    Open(Cfg.Init.GetCad(), $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                    Open(Cfg.Init.GetCad(), $@"""{arq.Endereco}""", wait);
                 }
                 TecnoMetalVars.MatarExecutavelChato();
             }
@@ -103,7 +103,7 @@ namespace Conexoes
             {
                 var script = TecnoMetalVars.GetScriptTecnoMetal();
                 TecnoMetalVars.MatarExecutavelChato();
-                Open(Cfg.Init.GetCad(), $"{Utilz._Aspas}{arq.Endereco}{Utilz._Aspas}", wait);
+                Open(Cfg.Init.GetCad(), $@"""{arq.Endereco}""", wait);
                 TecnoMetalVars.MatarExecutavelChato();
             }
 
@@ -158,11 +158,24 @@ namespace Conexoes
 
             try
             {
-                var process = Process.Start(arquivo_ou_pasta, argumentos);
-                if (wait)
+                //var process = Process.Start(arquivo_ou_pasta, argumentos);
+                //if (wait)
+                //{
+                //    process.WaitForExit();
+                //}
+
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    process.WaitForExit();
-                }
+                    FileName = arquivo_ou_pasta,
+                    Arguments = argumentos,
+                
+                    UseShellExecute = true,
+                    WorkingDirectory = arquivo_ou_pasta.getPasta().TrimEnd(@"\")
+                   
+                };
+
+                // 4. Execute
+                var process = Process.Start(startInfo);
                 return true;
             }
             catch (Exception ex)
