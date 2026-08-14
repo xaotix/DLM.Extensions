@@ -15,13 +15,202 @@ namespace Conexoes
 
     public static class ExtensoesCAM
     {
+        public static List<Report> VerificarCAMPurlin(this List<ReadCAM> cAMs)
+        {
+            var _reports = new List<Report>();
+
+            var purlins = DBases.GetBancoRM().GetPurlins();
+
+            if (purlins.Count > 0)
+            {
+                var cams_purlin = cAMs.FindAll(x =>
+                x.Formato.Perfil.Tipo == CAM_PERFIL_TIPO.C_Enrigecido ||
+                x.Formato.Perfil.Tipo == CAM_PERFIL_TIPO.Z_Purlin
+                );
+
+                var cams_nao_purlin = cAMs.FindAll(x =>
+                x.Formato.Perfil.Tipo != CAM_PERFIL_TIPO.C_Enrigecido &&
+                x.Formato.Perfil.Tipo != CAM_PERFIL_TIPO.Z_Purlin
+                );
+
+                _reports.AddRange(cams_nao_purlin.Select(x => $"[{x.Nome}] -> [{x.Descricao}] -> [{x.Formato.Perfil.Tipo}]"), "CAM não é do tipo purlin");
+
+                var perfis = cams_purlin.GroupBy(x => x.Descricao).ToList();
+
+
+                foreach (var perfil in perfis)
+                {
+                    var rm = purlins.Find(x => x.PERFIL.RemoverCaracteresEspeciais() == perfil.Key.RemoverCaracteresEspeciais());
+                    if (rm != null)
+                    {
+                        if (rm.GetGabarito_1().Count == 0)
+                        {
+                            _reports.Add("Gabarito de furações não encontrado no banco de dados RME. Solicite suporte.", $"[{perfil.Key}] -> {string.Join(", ", perfil.ToList().Select(x => x.Nome))}", TipoReport.Alerta);
+                        }
+                        else
+                        {
+                            var sub_gabaritos = DBases.GePerfisPurlin().FindAll(x => x.Secao == rm.SECAO);
+
+                            foreach (var cam in perfil.ToList())
+                            {
+                                try
+                                {
+                                    bool furos_ok = false;
+                                    var coord = new List<double>();
+
+                                    var gabaritos_p = new List<List<Furo>>();
+                                    gabaritos_p.Add(rm.GetGabarito_1());
+                                    gabaritos_p.AddRange(sub_gabaritos.FindAll(x => x.Perfis.FindAll(y => y == cam.Formato.Perfil.Tipo).Count > 0).Select(x => x.GetGabarito()));
+
+
+                                    if (gabaritos_p.Count > 0)
+                                    {
+                                        var erros = new List<Report>();
+                                        //verifica outros gabaritos.
+                                        foreach (var gab_1 in gabaritos_p)
+                                        {
+                                            var errosp = gab_1.VerificarGabaritoFuros(cam, out furos_ok, out coord);
+                                            if (errosp.Count == 0)
+                                            {
+                                                goto proximo;
+                                            }
+                                            else
+                                            {
+                                                erros.AddRange(errosp);
+                                            }
+                                        }
+                                        _reports.AddRange(erros);
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    _reports.Add(new Report(ex));
+                                }
+
+
+                            proximo:;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _reports.Add("Não foi encontrado um perfil padrão de purlin correspondente cadastrado no SIE", $"[{perfil.Key}] -> {string.Join(", ", perfil.ToList().Select(x => x.Nome))}", TipoReport.Alerta);
+                    }
+                }
+            }
+            else
+            {
+                _reports.Add("Erro Sistema", "Nenhuma peça tipo Purlin encontrada no banco de dados de RME. Contacte suporte", TipoReport.Critico);
+
+            }
+
+            return _reports;
+        }
+        public static List<Report> VerificarGabaritoFuros(this List<Furo> gabarito, ReadCAM cam, out bool furos_coordY_ok, out List<double> _coords)
+        {
+            var _reports = new List<Report>();
+            var furos = cam.Formato.LIV1.Furacoes;
+            var grp_furos = furos.GroupBy(x => x.Origem.X.Round(0)).ToList();
+
+            furos_coordY_ok = true;
+            _coords = new List<double>();
+            foreach (var grp_furo in grp_furos)
+            {
+                var lista = grp_furo.ToList();
+                var Y_Nao_Ok = new List<double>();
+                foreach (var fr in lista)
+                {
+                    var igual = gabarito.Find(x => x.Origem.Y.Igual(fr.Origem.Y, Cfg.Init.Purlin_Gabarito_Tolerancia) && x.Diametro.Igual(fr.Diametro) && x.Oblongo.Igual(fr.Oblongo));
+                    if (igual == null)
+                    {
+                        Y_Nao_Ok.Add(fr.Origem.Y);
+                    }
+                }
+
+
+                if (Y_Nao_Ok.Count > 0 || lista.Count != gabarito.Count)
+                {
+                    _reports.Add("Purlin Inválida", $"Furação Inválida - Não segue padrão Purlin -> [{cam.Nome}] -> [{cam.Descricao}] [Seção:{cam.Formato.Perfil.Altura}] -> " + $"[Y=[{grp_furo.First().Nome} -> {string.Join(", ", grp_furo.ToList().Select(y => y.Origem.Y))}] -> X={grp_furo.Key}]. " + $"Esperado: Y=[{gabarito.First().Nome} -> {string.Join(", ", gabarito.Select(x => x.Origem.Y))}]");
+                    furos_coordY_ok = false;
+                    break;
+                }
+                else
+                {
+                    foreach (var xs in grp_furo)
+                    {
+                        _coords.Add(xs.Origem.X);
+                    }
+                }
+            }
+            return _reports;
+        }
+        public static void Desmembrar(this IEnumerable<Arquivo> readCAMs, bool tecnometal = true)
+        {
+            if (readCAMs.Count() == 0)
+            {
+                return;
+            }
+            var raiz = readCAMs.First().Pasta;
+
+            var dest_desmemb = raiz.GetPasta("TMP");
+            dest_desmemb.Limpar();
+
+            var tarefas = new List<Task>();
+
+            foreach (var cam in readCAMs)
+            {
+                if (!cam.Nome.Contem("_"))
+                    tarefas.Add(Task.Factory.StartNew(() => cam.Endereco.Copiar(dest_desmemb)));
+            }
+            Task.WaitAll(tarefas.ToArray());
+
+
+            var arqs = dest_desmemb.GetArquivos("*.CAM").Select(x => x.Endereco).ToList();
+            if (tecnometal)
+            {
+                Conexoes.Utilz.TecnoMetalDesmembrarPerfis(dest_desmemb.Endereco);
+            }
+            else
+            {
+                tarefas.Clear();
+                foreach (var item in arqs)
+                {
+                    tarefas.Add(Task.Factory.StartNew(() =>
+                    {
+                        var ncam = new ReadCAM(item);
+                        if (ncam.Formato.Perfil.Familia == CAM_FAMILIA.Dobrado)
+                        {
+                            var readcam = ncam.GetCam();
+                            readcam.Desmembrar(true, Cfg.Init.NOTA_CAM_SEM_VERIFICACAO, false);
+                        }
+                    }));
+                }
+                Task.WaitAll(tarefas.ToArray());
+            }
+
+            var arqs_criados = dest_desmemb.GetArquivos("*.CAM").FindAll(x => x.Nome.Contem("_"));
+            tarefas.Clear();
+            foreach (string cam in arqs)
+            {
+                tarefas.Add(Task.Factory.StartNew(() => cam.Delete()));
+            }
+            Task.WaitAll(tarefas.ToArray());
+
+            tarefas.Clear();
+            foreach (var cam in arqs_criados)
+            {
+                tarefas.Add(Task.Factory.StartNew(() => cam.Endereco.Copiar(raiz.Endereco, true)));
+            }
+            Task.WaitAll(tarefas.ToArray());
+        }
         public static bool IsAlma(this ReadCAM cam)
         {
-            return cam.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_ALMA;
+            return cam.Formato.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_ALMA;
         }
         public static bool IsMesa(this ReadCAM cam)
         {
-            return cam.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_MESA;
+            return cam.Formato.Perfil.Tipo == CAM_PERFIL_TIPO.Chapa && cam.NORMT() == TAB_NORMT.VIGA_MESA;
         }
         public static List<CAM_Node> GetAll(this List<CAM_Node> nodes, string chave)
         {
@@ -220,24 +409,27 @@ namespace Conexoes
             return ((f2.Diametro / 2 + f1.Diametro / 2) * Cfg.Init.TestList_V_CAMS_Furacoes_Dist_Entre_furos_Borda).Round(1).Abs();
         }
 
-        public static List<Cam> Quebrar(this ReadCAM Origem, double comp_max)
+        public static List<Cam> Quebrar(this ReadCAM camOrigem, double comp_max)
         {
             var Retorno = new List<Cam>();
-            var Prefix = Origem.Nome + Cfg.Init.CAM_Quebra_Sufix;
+            var Prefix = camOrigem.Nome + Cfg.Init.CAM_Quebra_Sufix;
 
             if (comp_max <= 0)
             {
                 comp_max = Cfg.Init.CAM_Quebra_Compmax;
             }
-            if ((Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa || Origem.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa_Xadrez) && Origem.Comprimento > comp_max)
+            if ((
+                camOrigem.Formato.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa ||
+                camOrigem.Formato.Perfil.Tipo == DLM.vars.CAM_PERFIL_TIPO.Chapa_Xadrez
+                ) && camOrigem.Comprimento > comp_max)
             {
                 int cCam = 1;
-                var Pedacos = Origem.Formato.LIV1.Quebrar(comp_max);
+                var Pedacos = camOrigem.Formato.LIV1.Quebrar(comp_max);
                 foreach (var Pedaco in Pedacos)
                 {
-                    string Arquivo = $"{Origem.Pasta}{Prefix}{cCam}.{Cfg.Init.EXT_CAM}";
-                    var n_CAM = new Cam(Arquivo, Pedaco, Origem.Espessura);
-                    n_CAM.CopiarInfo(Origem);
+                    string Arquivo = $"{camOrigem.Pasta}{Prefix}{cCam}.{Cfg.Init.EXT_CAM}";
+                    var n_CAM = new Cam(Arquivo, Pedaco, camOrigem.Espessura);
+                    n_CAM.CopiarInfo(camOrigem);
                     cCam++;
                     Retorno.Add(n_CAM);
 
@@ -302,16 +494,12 @@ namespace Conexoes
                         {
                             var ncam = new ReadCAM(programa);
                             cams_map.Add(ncam);
-                            ncam.GetDesmembrados();
                         }
                     }));
                 }
 
                 Task.WaitAll(Tarefas.ToArray());
-
                 items.AddRange(cams_map);
-                items.AddRange(cams_map.SelectMany(x => x.GetDesmembrados()));
-                //_CAMs = _CAMs.OrderBy(x => x.Nome).ToList();
             }
             return items;
         }
@@ -462,9 +650,9 @@ namespace Conexoes
                     double acum = 0;
                     var c0 = lista_cam.First();
 
-                    var n_cam_1 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_1.CAM", c0.Alma.Perfil, 1000);
-                    var n_cam_2 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_2.CAM", c0.Mesa_S.Perfil, 1000);
-                    var n_cam_3 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_3.CAM", c0.Mesa_I.Perfil, 1000);
+                    var n_cam_1 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_1.CAM", c0.Alma.Formato.Perfil, 1000);
+                    var n_cam_2 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_2.CAM", c0.Mesa_S.Formato.Perfil, 1000);
+                    var n_cam_3 = new Cam($"{destino_cam}I.{s.String(2)}.{c.String(2)}_3.CAM", c0.Mesa_I.Formato.Perfil, 1000);
 
                     var faces_1 = new List<Face>();
                     var faces_2 = new List<Face>();
@@ -579,7 +767,7 @@ namespace Conexoes
             int c = 1;
             foreach (var lista_cam in lista_cams)
             {
-                var n_cam = new Cam($"{destino_cam}.{c.String(2)}.CAM", c0.Perfil, 1000);
+                var n_cam = new Cam($"{destino_cam}.{c.String(2)}.CAM", c0.Formato.Perfil, 1000);
                 double acum = 0;
                 var faces1 = new List<Face>();
                 var faces2 = new List<Face>();
@@ -615,7 +803,7 @@ namespace Conexoes
                     if (faces1.Count > 0)
                     {
                         var bordas = faces1.GetBordas();
-                        var bordas_corte = (c0.Perfil.Esp_M + folga_Y);
+                        var bordas_corte = (c0.Formato.Perfil.Esp_M + folga_Y);
 
                         var contorno_iterno = bordas.Cortar(bordas_corte, bordas_corte).MoverY(-folga_Y);
                         var p_contorno_interno = contorno_iterno.GetPath().GetPathsD();
@@ -677,7 +865,7 @@ namespace Conexoes
                 }
 
 
-                n_cam.Comprimento = n_cam.Formato.Comprimento;
+                n_cam.Comprimento = n_cam.Formato.GetComprimento();
                 c++;
             }
 

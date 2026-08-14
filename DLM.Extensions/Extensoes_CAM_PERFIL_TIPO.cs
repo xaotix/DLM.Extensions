@@ -138,7 +138,7 @@ namespace Conexoes
 
             return CAM_FAMILIA._Desconhecido;
         }
-        public static OrigemLiv Origem(this CAM_PERFIL_TIPO tipo, FaceNum face)
+        public static OrigemLiv GetOrigemLIV(this CAM_PERFIL_TIPO tipo, FaceNum face)
         {
             switch (face)
             {

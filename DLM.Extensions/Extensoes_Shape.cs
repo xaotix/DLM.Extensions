@@ -139,7 +139,7 @@ namespace Conexoes
 
             if (shape.Perfil.Tipo == CAM_PERFIL_TIPO.Barra_Redonda || shape.Perfil.Tipo == CAM_PERFIL_TIPO.Tubo_Redondo)
             {
-                return (shape.Perfil.GetPesoMetro() / 1000 * shape.Comprimento).Round(Cfg.Init.CAM_Decimais_Peso);
+                return (shape.Perfil.GetPesoMetro() / 1000 * shape.GetComprimento()).Round(Cfg.Init.CAM_Decimais_Peso);
             }
             else if (shape.Perfil.Familia == CAM_FAMILIA.Laminado)
             {
@@ -446,11 +446,11 @@ namespace Conexoes
         }
         public static Face GetLIV3_MesaParaChapa(this Shape shape)
         {
-            return shape.LIV3.MesaParaChapa(shape.Perfil, shape.Comprimento, shape.Perfil.Largura_MI, shape.Perfil.Esp_MI);
+            return shape.LIV3.MesaParaChapa(shape.Perfil, shape.GetComprimento(), shape.Perfil.Largura_MI, shape.Perfil.Esp_MI);
         }
         public static Face GetLIV2_MesaParaChapa(this Shape shape)
         {
-            return shape.LIV2.MesaParaChapa(shape.Perfil, shape.Comprimento, shape.Perfil.Largura_MS, shape.Perfil.Esp_MS);
+            return shape.LIV2.MesaParaChapa(shape.Perfil, shape.GetComprimento(), shape.Perfil.Largura_MS, shape.Perfil.Esp_MS);
         }
         public static Face LIV3_Cartola1(this Shape shape)
         {

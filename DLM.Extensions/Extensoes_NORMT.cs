@@ -437,7 +437,7 @@ namespace Conexoes
         }
         public static TAB_NORMT NORMT(this ReadCAM cam, string MAKTX = "")
         {
-            return NORMT(cam.Perfil.Tipo, MAKTX, cam.Nome, cam.Comprimento, cam.Formato.GetDobras(), cam.Perfil.Descricao);
+            return NORMT(cam.Formato.Perfil.Tipo, MAKTX, cam.Nome, cam.Comprimento, cam.Formato.GetDobras(), cam.Formato.Perfil.Descricao);
         }
         public static TAB_NORMT NORMT(this DLM.cam.NC1 cam, string maktx = "")
         {

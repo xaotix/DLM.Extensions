@@ -9,7 +9,7 @@ namespace Conexoes
     {
         public static Perfil GetPerfil(this CAM_Node ShapeHeader, string Descricao)
         {
-            var _Perfil = new Perfil();
+            var _Perfil = DLM.cam.Perfil.Novo();
             var Valores = new List<List<double>>();
             for (int i = 1; i < ShapeHeader.Nodes.Count; i++)
             {

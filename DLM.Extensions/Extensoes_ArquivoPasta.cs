@@ -287,6 +287,10 @@ namespace Conexoes
             }
             return tudo_ok;
         }
+        public static bool Mover(this string arquivo, Pasta destino, bool mensagem = false, bool log = false)
+        {
+            return arquivo.Mover(destino.Endereco, mensagem, log);
+        }
         public static bool Mover(this string arquivo, string destino, bool mensagem = false, bool log = false)
         {
             if (arquivo.Copiar(destino, mensagem, log))
@@ -520,6 +524,10 @@ namespace Conexoes
         //    }
         //}
 
+        public static bool Copiar(this string arquivo_origem, Pasta destino_pasta, bool mensagem = true, bool log = false)
+        {
+            return arquivo_origem.Copiar(destino_pasta.Endereco, mensagem, log);
+        }
         public static bool Copiar(this string arquivo_origem, string Destino_Pasta_Ou_Arquivo, bool mensagem = true, bool log = false)
         {
             if (!arquivo_origem.Exists())

@@ -39,6 +39,33 @@ namespace Conexoes
     }
     public static class Extensoes
     {
+        public static T GetParent<T>(this DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if (parentObject == null) return null;
+
+            if (parentObject is T parent)
+                return parent;
+
+            return GetParent<T>(parentObject);
+        }
+        public static void FecharMenu(this object sender)
+        {
+            if (sender is FrameworkElement element)
+            {
+                var cm = element.GetParent<ContextMenu>();
+                if (cm != null)
+                {
+                    cm.IsOpen = false;
+                }
+                var popup = element.GetParent<Popup>();
+                if (popup != null)
+                {
+                    popup.IsOpen = false;
+                    return;
+                }
+            }
+        }
         public static List<Celula> GetAllProps(this object obj1, string prefixo = "")
         {
             var retorno = new List<Celula>();

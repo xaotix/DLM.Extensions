@@ -51,7 +51,7 @@ namespace Conexoes
                     programas.Add($"COMP:{cam.Comprimento.Round(0)}");
                     programas.Add($"ESP:{cam.Espessura.String(2)}");
                     programas.Add($"PUNCOES:{furos.Count}");
-                    programas.Add($"RECORTE:{(cam.TemRecorte ? "SIM" : "NAO")}");
+                    programas.Add($"RECORTE:{(cam.Formato.TemRecorte ? "SIM" : "NAO")}");
                     programas.Add("@GAGES");
 
 

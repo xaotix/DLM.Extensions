@@ -1,5 +1,6 @@
 ﻿using DLM.db;
 using DLM.encoder;
+using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -79,9 +80,11 @@ namespace Conexoes
             return list;
         }
 
-        public static List<List<T>> Quebrar<T>(this List<T> locations, int maximo = 30)
+        public static List<List<T>> Quebrar<T>(this IEnumerable<T> lista, int maximo = 30)
         {
             var list = new List<List<T>>();
+
+            var locations = new List<T>(lista);
 
             for (int i = 0; i < locations.Count; i += maximo)
             {
