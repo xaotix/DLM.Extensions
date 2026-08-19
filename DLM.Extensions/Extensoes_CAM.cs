@@ -131,7 +131,7 @@ namespace Conexoes
 
                 if (Y_Nao_Ok.Count > 0 || lista.Count != gabarito.Count)
                 {
-                    _reports.Add("Purlin Inválida", $"Furação Inválida - Não segue padrão Purlin -> [{cam.Nome}] -> [{cam.Descricao}] [Seção:{cam.Formato.Perfil.Altura}] -> " + $"[Y=[{grp_furo.First().Nome} -> {string.Join(", ", grp_furo.ToList().Select(y => y.Origem.Y))}] -> X={grp_furo.Key}]. " + $"Esperado: Y=[{gabarito.First().Nome} -> {string.Join(", ", gabarito.Select(x => x.Origem.Y))}]");
+                    _reports.Add("Purlin Inválida", $"[{cam.Nome}] -> [{cam.Descricao}] [Seção:{cam.Formato.Perfil.Altura}] -> Furação Inválida - Não segue padrão Purlin -> [Y=[{grp_furo.First().Nome} -> {string.Join(", ", grp_furo.ToList().Select(y => y.Origem.Y))}] -> X={grp_furo.Key}]. " + $"Esperado: Y=[{gabarito.First().Nome} -> {string.Join(", ", gabarito.Select(x => x.Origem.Y))}]");
                     furos_coordY_ok = false;
                     break;
                 }

@@ -257,7 +257,7 @@ namespace Conexoes
                     {
                         nova.PDF_CUSTOM = true;
                         int furos = purlin.GetFurosVista(false).Count;
-                        if (nova.COMP_USER <= purlin.Comp_Min)
+                        if (nova.COMP_USER <= purlin.Comp_Min2)
                         {
                             nova.Marca.MAKTX = "PERFIL DOBRADO";
                             nova.Posicoes[0].MAKTX = purlin.Perfil_Dobrado;

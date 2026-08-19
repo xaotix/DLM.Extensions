@@ -196,15 +196,15 @@ namespace Conexoes
         public static List<Report> VerificarFuros(this ReadCAM readCAM)
         {
             var Reports = new List<Report>();
-            Reports.AddRange(readCAM.Formato.LIV1.Furacoes.Verificar().Select(x => $"[LIV1] => {x.Descricao}"), "Furação");
-            Reports.AddRange(readCAM.Formato.LIV2.Furacoes.Verificar().Select(x => $"[LIV2] => {x.Descricao}"), "Furação");
-            Reports.AddRange(readCAM.Formato.LIV3.Furacoes.Verificar().Select(x => $"[LIV3] => {x.Descricao}"), "Furação");
-            Reports.AddRange(readCAM.Formato.LIV4.Furacoes.Verificar().Select(x => $"[LIV4] => {x.Descricao}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV1.Furacoes.Verificar().Select(x => $"[LIV1] => {x.Propriedades}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV2.Furacoes.Verificar().Select(x => $"[LIV2] => {x.Propriedades}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV3.Furacoes.Verificar().Select(x => $"[LIV3] => {x.Propriedades}"), "Furação");
+            Reports.AddRange(readCAM.Formato.LIV4.Furacoes.Verificar().Select(x => $"[LIV4] => {x.Propriedades}"), "Furação");
 
 
             if (Reports.Count > 0)
             {
-                return new List<Report> { new Report("Furação", $"[{readCAM.Nome}] -> Furos batendo, sobrepostos ou com pouca borda:\n{string.Join("\n", Reports.Select(x => x.Descricao))}\n\n\n", TipoReport.Alerta) };
+                return new List<Report> { new Report("Furação", $"[{readCAM.Nome}] -> Furos batendo, sobrepostos ou com pouca borda:\n{string.Join("\n", Reports.Select(x => x.Propriedades))}\n\n\n", TipoReport.Alerta) };
             }
 
             return Reports;
