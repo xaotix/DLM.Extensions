@@ -50,6 +50,10 @@ namespace Conexoes
         {
             return valor != null ? valor.ToString(format) : "";
         }
+        public static string ToText(this DateTime valor, string format = "yyyy.MM.dd")
+        {
+            return valor != null ? valor.ToString(format) : "";
+        }
 
         public static string String(this string valor, int padleft = 0, char padding = '0')
         {
