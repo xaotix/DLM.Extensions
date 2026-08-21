@@ -1,4 +1,5 @@
-﻿using DLM;
+﻿using ACadSharp.Objects;
+using DLM;
 using DLM.ini;
 using DLM.sap.Avanco;
 using DLM.vars;
@@ -17,7 +18,73 @@ namespace Conexoes
 
     public static class Extensoes_ArquivoPasta
     {
+        public static bool Mover(this IEnumerable<Conexoes.Arquivo> arquivos, string destino, bool mensagem = false, bool log = false)
+        {
+            return arquivos.Select(x => x.Endereco).ToList().Mover(destino, mensagem, log);
+        }
+        public static bool Mover(this string arquivo, Pasta destino, bool mensagem = false, bool log = false)
+        {
+            return arquivo.Mover(destino.Endereco, mensagem, log);
+        }
+        public static bool Mover(this string arquivo, string destino, bool mensagem = false, bool log = false)
+        {
+            var copy = arquivo.Copiar(destino, mensagem, log);
+            if (copy)
+            {
+                return arquivo.Delete(mensagem, log);
+            }
+            else
+            {
+                return copy;
+            }
+        }
 
+        public static void Mover(this IEnumerable<Conexoes.Arquivo> arquivos, Pasta destino, bool mensagem = false, bool log = false)
+        {
+            arquivos.Select(x => x.Endereco).Mover(destino.Endereco, mensagem, log);
+        }
+        public static bool Mover(this Arquivo arquivo, Pasta destino, bool mensagem = false, bool log = false)
+        {
+            return new List<string> { arquivo.Endereco }.Mover(destino.Endereco, mensagem, log);
+        }
+        public static bool Mover(this Arquivo arquivo, string destino, bool mensagem = false, bool log = false)
+        {
+            return new List<string> { arquivo.Endereco }.Mover(destino, mensagem, log);
+        }
+        public static bool Mover(this IEnumerable<string> arquivos, string destino, bool mensagem = false, bool log = false)
+        {
+            var tudo_ok = true;
+            foreach (var arq in arquivos)
+            {
+                var mov = arq.Mover(destino);
+                if (!mov)
+                {
+                    tudo_ok = false;
+                }
+            }
+            return tudo_ok;
+        }
+
+
+        public static bool Copiar(this IEnumerable<Conexoes.Arquivo> arquivos, string destino, bool mensagem = false, bool log = false)
+        {
+            return arquivos.Select(x => x.Endereco).Copiar(destino, mensagem, log);
+        }
+        public static bool Copiar(this IEnumerable<string> arquivos, string destino, bool mensagem = false, bool log = false)
+        {
+            var tudo_ok = true;
+            foreach (var arquivo in arquivos)
+            {
+                var st = arquivo.Copiar(destino, mensagem, log);
+
+                if (!st)
+                {
+                    tudo_ok = false;
+                }
+            }
+
+            return tudo_ok;
+        }
         public static void CriarCopiaRev(this string arquivo, int c = 1)
         {
             if (arquivo.Exists())
@@ -263,49 +330,8 @@ namespace Conexoes
                 return new Pasta(dir, pai);
             }
         }
-        public static void Copiar(this List<Conexoes.Arquivo> arquivos, string destino, bool mensagem = false, bool log = false)
-        {
-            foreach (var arquivo in arquivos)
-            {
-                arquivo.Endereco.Copiar(destino, mensagem);
-            }
-        }
-        public static bool Mover(this List<Conexoes.Arquivo> arquivos, string destino, bool mensagem = false, bool log = false)
-        {
-            return arquivos.Select(x => x.Endereco).ToList().Mover(destino, mensagem, log);
-        }
-        public static bool Mover(this List<string> arquivos, string destino, bool mensagem = false, bool log = false)
-        {
-            var tudo_ok = true;
-            foreach (var arq in arquivos)
-            {
-                var mov = arq.Mover(destino);
-                if (!mov)
-                {
-                    tudo_ok = false;
-                }
-            }
-            return tudo_ok;
-        }
-        public static bool Mover(this string arquivo, Pasta destino, bool mensagem = false, bool log = false)
-        {
-            return arquivo.Mover(destino.Endereco, mensagem, log);
-        }
-        public static bool Mover(this string arquivo, string destino, bool mensagem = false, bool log = false)
-        {
-            if (arquivo.Copiar(destino, mensagem, log))
-            {
-                if (!arquivo.Delete(mensagem))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-            return true;
-        }
+
+
 
         public static string CreateDirectory(this string pasta)
         {

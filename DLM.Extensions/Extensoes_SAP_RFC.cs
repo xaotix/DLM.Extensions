@@ -11,6 +11,17 @@ namespace Conexoes
 {
     public static class Extensoes_SAP_RFC
     {
+        public static TAB_TIPO_PEP GetTipoPEP(this string pep)
+        {
+            int len = pep?.Length ?? 0;
+
+            if (Enum.IsDefined(typeof(TAB_TIPO_PEP), len))
+            {
+                return (TAB_TIPO_PEP)len;
+            }
+
+            return TAB_TIPO_PEP.Desconhecido;
+        }
         public static void SetValor(this IRfcDataContainer rfc, string col, object value)
         {
             rfc.SetValue(col, GetValor(value));
