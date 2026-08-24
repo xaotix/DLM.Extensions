@@ -111,40 +111,66 @@ namespace Conexoes
 
         public static List<T> MoveTop<T>(this List<T> list, List<T> mover)
         {
-            var retorno = new List<T>();
-            retorno.AddRange(list);
-            foreach (var item in mover)
-            {
-                retorno.Remove(item);
-            }
-            for (int i = 0; i < mover.Count; i++)
-            {
-                retorno.Insert(i, mover[i]);
-            }
-            return retorno;
+            List<T> result = new List<T>(list);
+            var orderedMovers = mover.OrderBy(m => list.IndexOf(m)).ToList();
+
+            foreach (var item in orderedMovers) result.Remove(item);
+            result.InsertRange(0, orderedMovers);
+
+            return result;
         }
+
         public static List<T> MoveBottom<T>(this List<T> list, List<T> mover)
         {
-            var retorno = new List<T>();
-            retorno.AddRange(list);
-            foreach (var item in mover)
-            {
-                retorno.Remove(item);
-            }
-            foreach (var item in mover)
-            {
-                retorno.Add(item);
-            }
-            return retorno;
+            List<T> result = new List<T>(list);
+            var orderedMovers = mover.OrderBy(m => list.IndexOf(m)).ToList();
+
+            foreach (var item in orderedMovers) result.Remove(item);
+            result.AddRange(orderedMovers);
+
+            return result;
         }
 
         public static List<T> MoveUP<T>(this List<T> list, List<T> mover)
         {
-            return list.Move(mover, -1);
+            List<T> result = new List<T>(list);
+            // Ordena de cima pra baixo. Itens no topo precisam se mover primeiro para não encavalar.
+            var orderedMovers = mover.OrderBy(m => list.IndexOf(m)).ToList();
+
+            for (int i = 0; i < orderedMovers.Count; i++)
+            {
+                var item = orderedMovers[i];
+                int index = result.IndexOf(item);
+
+                // Só move para cima se não estiver no topo absoluto possível para aquele grupo
+                if (index > i)
+                {
+                    result.RemoveAt(index);
+                    result.Insert(index - 1, item);
+                }
+            }
+            return result;
         }
+
         public static List<T> MoveDown<T>(this List<T> list, List<T> mover)
         {
-            return list.Move(mover, 1);
+            List<T> result = new List<T>(list);
+            // Ordena de baixo para cima. Itens no fundo precisam descer primeiro.
+            var orderedMovers = mover.OrderByDescending(m => list.IndexOf(m)).ToList();
+
+            for (int i = 0; i < orderedMovers.Count; i++)
+            {
+                var item = orderedMovers[i];
+                int index = result.IndexOf(item);
+
+                // Só move para baixo se não bater no limite inferior do grupo
+                if (index < result.Count - 1 - i)
+                {
+                    result.RemoveAt(index);
+                    result.Insert(index + 1, item);
+                }
+            }
+            return result;
         }
         public static List<T> Move<T>(this List<T> list, List<T> mover, int places)
         {
