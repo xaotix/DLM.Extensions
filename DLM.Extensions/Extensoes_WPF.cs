@@ -14,7 +14,7 @@ namespace Conexoes
         public static void SetTitle(this Window window, string prefix)
         {
             var tit = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()}";
-            if (!Cfg.Init.RM_TERCEIRO)
+            if (!Cfg.Init.SOFTWARE_TERCEIROS)
             {
                 tit += $" - [SAP -{Cfg.Init.SAP_Servidor}]";
             }
