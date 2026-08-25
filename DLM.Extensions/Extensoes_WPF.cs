@@ -2,6 +2,7 @@
 using DLM.vars;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +13,13 @@ namespace Conexoes
     {
         public static void SetTitle(this Window window, string prefix)
         {
-            window.Title = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()} - [SAP -{Cfg.Init.SAP_Servidor}]";
+            var tit = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()}";
+            if (!Cfg.Init.RM_TERCEIRO)
+            {
+                tit += $" - [SAP -{Cfg.Init.SAP_Servidor}]";
+            }
+
+            window.Title = tit;
         }
         public static void Sair(this System.Windows.Window window)
         {

@@ -811,6 +811,10 @@ namespace Conexoes
 
         public static List<T> GetChildren<T>(this System.Windows.Controls.ContentControl window)
         {
+            if(window==null)
+            {
+                return new List<T>();
+            }
             if (window.Content is Panel)
             {
                 var item = window.Content as Panel;
