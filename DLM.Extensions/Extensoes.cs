@@ -267,7 +267,28 @@ namespace Conexoes
             }
             return diferentes;
         }
+        public static string GetBackgroundColorHex(this ExcelRangeBase celula)
+        {
+            try
+            {
+                if (celula?.Style?.Fill?.PatternType == ExcelFillStyle.Solid)
+                {
+                    string rgb = celula.Style.Fill.BackgroundColor?.Rgb;
 
+                    if (!string.IsNullOrEmpty(rgb))
+                    {
+                        // Remove o '#' se a propriedade já o retornar e garante o prefixo correto
+                        return $"#{rgb.TrimStart('#')}";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Tratamento silencioso mantido conforme a versão original
+            }
+
+            return "";
+        }
         public static string GetBackgroundColorHex(this ExcelRange celula)
         {
             try

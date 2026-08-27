@@ -171,10 +171,8 @@ namespace Conexoes
         {
             var type_cel = Celula_Tipo_Valor.NULL;
             var valor = value.GetValue();
-            var valorstr = "";
-            if (!valor.IsNullOrEmpty())
+            if (valor!=null)
             {
-                valorstr = valor.ToString();
                 var type = value.Metadata.DataType;
                 type_cel = Celula_Tipo_Valor.Texto;
                 switch (type)
@@ -189,7 +187,7 @@ namespace Conexoes
                         break;
                     case RfcDataType.CHAR:
                     case RfcDataType.NUM:
-                        if (valorstr.ESoNumero())
+                        if (valor.ToString().ESoNumero())
                         {
                             type_cel = Celula_Tipo_Valor.Inteiro;
                         }
@@ -240,11 +238,11 @@ namespace Conexoes
             }
             else
             {
-                valorstr = null;
+
             }
 
-            var nc = new Celula(value.Metadata.Name, valorstr, type_cel);
-            return nc;
+            var nCel = new Celula(value.Metadata.Name, valor, type_cel);
+            return nCel;
         }
     }
 }

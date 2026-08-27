@@ -116,16 +116,28 @@ namespace Conexoes
                 {
                     _value = string.Format(culture, "{0:N1} t", doubleValue);
                 }
-                else if (doubleValue > 1)
+                else if (doubleValue > 0.99)
                 {
                     _value = string.Format(culture, "{0:N2} t", doubleValue);
                 }
                 else if (doubleValue > 0)
                 {
-                    var valor = (doubleValue * 1000).Round(2);
-                    if (valor > 0)
+                    var valor_Kg = (doubleValue * 1000);
+                    if (valor_Kg > 0.99)
                     {
-                        _value = string.Format(culture, "{0:N2} Kg", valor);
+                        _value = string.Format(culture, "{0:N2} Kg", valor_Kg);
+                    }
+                    else if (valor_Kg > 0.099)
+                    {
+                        _value = string.Format(culture, "{0:N2} Kg", valor_Kg);
+                    }
+                    else if (valor_Kg > 0.0099)
+                    {
+                        _value = string.Format(culture, "{0:N3} Kg", valor_Kg);
+                    }
+                    else
+                    {
+                        _value = string.Format(culture, "{0:N4} Kg", valor_Kg);
                     }
                 }
                 else

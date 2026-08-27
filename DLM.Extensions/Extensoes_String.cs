@@ -1,4 +1,5 @@
 ﻿using Conexoes.Janelas;
+using DLM;
 using DLM.db;
 using DLM.vars;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
@@ -67,6 +68,60 @@ namespace Conexoes
     }
     public static class Extensoes_String
     {
+        public static (string Valor, Celula_Tipo_Valor Tipo) GetValorETipo(this object valorOrig, Celula_Tipo_Valor tipoSugerido = Celula_Tipo_Valor.Desconhecido)
+        {
+            if(valorOrig is RSStr)
+            {
+                valorOrig = ((RSStr)valorOrig).Valor;
+                tipoSugerido = Celula_Tipo_Valor.Moeda;
+            }
+            else if (valorOrig is PesoStrKg)
+            {
+                valorOrig = ((PesoStrKg)valorOrig).Valor;
+                tipoSugerido = Celula_Tipo_Valor.Decimal;
+            }
+            else if (valorOrig is PesoStrTon)
+            {
+                valorOrig = ((PesoStrTon)valorOrig).Valor;
+                tipoSugerido = Celula_Tipo_Valor.Decimal;
+            }
+
+            // 1. Se o tipo já foi especificado explicitamente, respeita e apenas converte para string
+            if (tipoSugerido != Celula_Tipo_Valor.Desconhecido)
+            {
+                return (valorOrig?.ToString() ?? string.Empty, tipoSugerido);
+            }
+
+            // 2. Tratamento de nulos
+            if (valorOrig == null || valorOrig is DBNull)
+            {
+                return (string.Empty, Celula_Tipo_Valor.NULL);
+            }
+
+            // 3. Pattern Matching para inferência de tipo e formatação invariável
+            return valorOrig switch
+            {
+                string s => (s, Celula_Tipo_Valor.Texto),
+
+                sbyte or byte or short or ushort or int or uint or long or ulong
+                    => (Convert.ToString(valorOrig, CultureInfo.InvariantCulture), Celula_Tipo_Valor.Inteiro),
+
+                float or double or decimal
+                    => (Convert.ToString(valorOrig, CultureInfo.InvariantCulture), Celula_Tipo_Valor.Decimal),
+
+                bool b => (b ? "True" : "False", Celula_Tipo_Valor.Booleano),
+
+                DateTime dt => (dt.TimeOfDay == TimeSpan.Zero ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"), Celula_Tipo_Valor.Data),
+
+                TimeSpan ts => (ts.ToString(), Celula_Tipo_Valor.Hora),
+
+                byte[] bytes => (Convert.ToBase64String(bytes), Celula_Tipo_Valor.Binario),
+
+                _ => (valorOrig.ToString(), Celula_Tipo_Valor.Texto)
+            };
+        }
+
+
         // Dicionário com os mapeamentos dos ícones padrão SAP para Emojis
         private static readonly Dictionary<string, string> IconMap = new(StringComparer.OrdinalIgnoreCase)
         {
