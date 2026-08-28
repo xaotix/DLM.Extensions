@@ -277,6 +277,7 @@ namespace Conexoes
                 var retr = trecho.Substring(19, 1);
 
                 var subs = trecho.Substring(19, 2);
+
                 if (retr == "R")
                 {
                     var lista = new string[] { "RC", "RE", "RF", "RM", "RP", "RS", "RV" };
@@ -295,6 +296,17 @@ namespace Conexoes
                     if (!trecho.Substring(18, 3).ESoNumero() && !trecho.Substring(18, 3).Contains("."))
                     {
                         erros.Append($"\nEtapa ITC inválida. Deve terminar com um número de 000 a 999");
+                    }
+                    else
+                    {
+                        return "OK";
+                    }
+                }
+                else if(trecho.Substring(18,1) == "L")
+                {
+                    if (!trecho.Substring(19, 2).ESoNumero())
+                    {
+                        erros.Append($"\nEtapa L inválida. Deve terminar com um número de 01 a 99");
                     }
                     else
                     {
@@ -792,29 +804,16 @@ namespace Conexoes
         }
         public static string getLetra(this long indice)
         {
-            char[] alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            long max = alfabeto.Count() - 1;
-            if (indice <= max)
+            string retorno = "";
+            do
             {
-                return alfabeto[indice].ToString();
+                long resto = indice % 26;
+                retorno = (char)('A' + resto) + retorno;
+                indice = (indice / 26) - 1;
             }
-            else
-            {
-                string retorno = "";
-                long sub = indice;
-                long resto = indice;
+            while (indice >= 0);
 
-                while (sub > 0)
-                {
-
-                    resto = sub % max;
-                    sub = (long)((double)(sub / max)).Round(0);
-                    retorno = alfabeto[resto] + retorno;
-                }
-
-                return retorno;
-
-            }
+            return retorno;
         }
         public static bool IsLower(this string valor)
         {

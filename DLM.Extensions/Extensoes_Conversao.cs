@@ -286,21 +286,21 @@ namespace Conexoes
 
         public static double? DoubleNull<T>(this T comp, int decimais = 8)
         {
-            if (comp is double)
+            if (comp == null) { return null; }
+            if(comp is string)
             {
-                var vlr = Convert.ToDouble(comp);
-                if (vlr == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return vlr;
-                }
+                var vl = comp as string;
+                if(vl.Length == 0) { return null; }
             }
 
-            if (comp == null) { return null; }
-            return comp.Double(decimais);
+
+            var vlr = comp.Double(decimais);
+
+            if (vlr != 0)
+            {
+                return vlr;
+            }
+            return null;
         }
         public static double Double<T>(this T comp, int Decimais = 8)
         {
@@ -419,11 +419,11 @@ namespace Conexoes
             return false;
         }
 
-        public static DateTime? DataNull<T>(this T Data)
+        public static DateTime? DataNull<T>(this T data)
         {
-            if (Data != null)
+            if (data != null)
             {
-                return GetDateTime(Data.ToString());
+                return GetDateTime(data.ToString());
             }
 
             return null;

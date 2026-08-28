@@ -7,52 +7,47 @@ namespace Conexoes
 {
     public static class ExtensoesCor
     {
+        private static readonly SolidColorBrush PureGreen = CreateFrozenBrush(0, 255, 0);
+        private static readonly SolidColorBrush PureRed = CreateFrozenBrush(255, 0, 0);
+
         /// <summary>
-        /// Escala de Verde até Vermelho
+        /// Retorna Verde para desvio <= valorMax. 
+        /// Acima de valorMax, faz gradiente de Amarelo até Vermelho.
         /// </summary>
-        /// <param name="desvio"></param>
-        /// <param name="escala"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        public static SolidColorBrush GetCorDesvio(this double desvio, double escala, double max)
+        /// <param name="desvio">Valor atual do desvio.</param>
+        /// <param name="valorMax">Limite máximo tolerado antes de começar a ficar amarelo.</param>
+        /// <param name="limiteVermelho">Valor onde atinge o Vermelho puro (se 0, usa 2x o valorMax).</param>
+        public static SolidColorBrush GetCorDesvio(this double desvio, double valorMax, double limiteVermelho = 0)
         {
-            // Se o desvio for zero ou negativo, retorna Verde Puro
-            if (desvio <= 0)
-                return new SolidColorBrush(Color.FromArgb(255, 0, 255, 0));
+            // 1. Até o valorMax é sempre Verde Puro
+            if (desvio <= valorMax)
+                return PureGreen;
 
-            // Evita divisões por zero ou valores inconsistentes
-            if (max <= 0) max = 0.01;
-            if (escala <= 0) escala = 0.01;
+            // Se não informar onde é o Vermelho puro, por padrão será o dobro do valorMax
+            if (limiteVermelho <= valorMax)
+                limiteVermelho = valorMax * 2;
 
-            // Desvio maior ou igual ao máximo: Vermelho Puro
-            if (desvio >= max)
-                return new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+            // 2. Desvio maior ou igual ao limite do vermelho: Vermelho Puro
+            if (desvio >= limiteVermelho)
+                return PureRed;
 
-            // Calcula o degrau. Se a escala for maior que o desvio, usamos o próprio desvio
-            // para evitar que o t caia sempre em 0.
-            double degrau = desvio < escala ? desvio : Math.Floor(desvio / escala) * escala;
+            // 3. Normalização percentual (0.0 no valorMax -> 1.0 no limiteVermelho)
+            double t = (desvio - valorMax) / (limiteVermelho - valorMax);
+            t = Math.Min(1.0, Math.Max(0.0, t)); // Clamp manual para .NET 4.8
 
-            double t = degrau / max;
-            t = Math.Min(1, Math.Max(0, t)); // Garante que fique entre 0 e 1
+            // 4. Interpolação de Amarelo (255, 255, 0) para Vermelho (255, 0, 0)
+            // O Vermelho (R) fica fixo em 255, apenas o Verde (G) vai caindo até 0
+            byte r = 255;
+            byte g = (byte)Math.Round((1.0 - t) * 255);
 
-            byte r, g;
-            if (t <= 0.5)
-            {
-                // De Verde (0, 255, 0) para Amarelo (255, 255, 0)
-                double local = t / 0.5;
-                r = (byte)Math.Round(local * 255);
-                g = 255;
-            }
-            else
-            {
-                // De Amarelo (255, 255, 0) para Vermelho (255, 0, 0)
-                double local = (t - 0.5) / 0.5;
-                r = 255;
-                g = (byte)Math.Round(255 - (local * 255));
-            }
+            return CreateFrozenBrush(r, g, 0);
+        }
 
-            // Usamos FromArgb garantindo Alpha em 255 (totalmente opaco)
-            return new SolidColorBrush(Color.FromArgb(255, r, g, 0));
+        private static SolidColorBrush CreateFrozenBrush(byte r, byte g, byte b)
+        {
+            var brush = new SolidColorBrush(Color.FromRgb(r, g, b));
+            brush.Freeze(); // Otimização WPF
+            return brush;
         }
         public static Brush Inverter(this Brush cor)
         {
