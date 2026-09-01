@@ -32,6 +32,9 @@ namespace Conexoes
             if (value == null)
                 return null;
 
+            if (value is Enum enumValue)
+                return enumValue.ToString();
+
             if (value is bool)
                 return (bool)value ? "X" : "";
 
