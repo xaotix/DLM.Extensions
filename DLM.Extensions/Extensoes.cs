@@ -614,7 +614,16 @@ namespace Conexoes
 
         public static BitmapImage GetImageSource(this string file)
         {
-            return new BitmapImage(new Uri(file));
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(file);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+
+            // Torna o objeto "Freezable" para ser compartilhado entre threads
+            bitmap.Freeze();
+
+            return bitmap;
         }
 
 

@@ -815,6 +815,39 @@ namespace Conexoes
 
             return retorno;
         }
+        /// <summary>
+        /// Retorna o índice de um conjunto de letras.
+        /// Máximo 10 caracteres.
+        /// </summary>
+        /// <param name="letra"></param>
+        /// <returns></returns>
+        public static long getIndice(this string letra)
+        {
+            if (string.IsNullOrWhiteSpace(letra))
+                return -1;
+
+            letra = letra.Upper();
+            letra = letra.RemoverAcentos().Substituir("C", "Ç").TrimStart().TrimEnd();
+
+            if (string.IsNullOrWhiteSpace(letra))
+                return -1;
+
+
+            if (letra.Length > 10)
+                return -1;
+
+            long resultado = 0;
+
+            foreach (char c in letra)
+            {
+                if (c < 'A' || c > 'Z')
+                    throw new ArgumentException($"Caractere inválido '{c}'. Apenas letras de A a Z são permitidas.");
+
+                resultado = (resultado * 26) + (c - 'A' + 1);
+            }
+
+            return resultado - 1;
+        }
         public static bool IsLower(this string valor)
         {
             return valor.Any(char.IsLower);

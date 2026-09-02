@@ -18,16 +18,21 @@ namespace Conexoes
         {
             if (decimais >= 0)
             {
-                return Valor.Round(decimais).String($"F{decimais}").PadLeft(padleft, padding);
+                return Valor.Round(decimais).StringUS($"F{decimais}").PadLeft(padleft, padding);
             }
             else
             {
                 return Valor.ToString().PadLeft(padleft, padding);
             }
         }
-        public static string String(this double valor, string format= "N2", CultureInfo culture = null)
+        public static string StringBR(this double valor, string format= "N2", CultureInfo culture = null)
         {
-            if (culture == null) { culture = CultureInfo.InvariantCulture; }
+            if (culture == null) { culture = Conexoes.Utilz._BR; }
+            return valor.ToString(format, culture);
+        }
+        public static string StringUS(this double valor, string format = "N2", CultureInfo culture = null)
+        {
+            if (culture == null) { culture = Conexoes.Utilz._US; }
             return valor.ToString(format, culture);
         }
         public static string String(this int Valor, int padleft = 0, char padding = '0')

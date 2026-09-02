@@ -362,6 +362,7 @@ namespace DLM.desenho
             {
                 prefix += $"x{comp.String(0)}";
             }
+            prefix = prefix.RemoverCaracteresEspeciais();
             var nome = prefix;
 
 
@@ -494,6 +495,7 @@ namespace DLM.desenho
             {
                 prefix += $"x{comp.String(0)}";
             }
+            prefix = prefix.RemoverCaracteresEspeciais();
             var nome = prefix;
 
 
