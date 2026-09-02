@@ -412,7 +412,7 @@ namespace Conexoes
         public static List<Cam> Quebrar(this ReadCAM camOrigem, double comp_max)
         {
             var Retorno = new List<Cam>();
-            var Prefix = camOrigem.Nome + Cfg.Init.CAM_Quebra_Sufix;
+            var Prefix = $"{camOrigem.Nome}{Cfg.Init.CAM_Quebra_Sufix}";
 
             if (comp_max <= 0)
             {
