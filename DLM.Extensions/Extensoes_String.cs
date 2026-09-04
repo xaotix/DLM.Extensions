@@ -203,41 +203,59 @@ namespace Conexoes
         /// </summary>
         /// <param name="texto"></param>
         /// <returns></returns>
-        public static string ValidarPEP(this string texto)
+        public static string ValidarPEP(this string texto, bool ispedido = false)
         {
-            if (texto.IsNullOrEmpty() || texto.Length < 21)
+            if (texto.IsNullOrEmpty())
             {
-                return "Erro: O PEP deve ter pelo menos 21 caracteres.";
+                return "Erro: O texto não pode ser vazio.";
             }
             if (texto == Cfg.Init.DefaultPEP)
             {
                 return "Defina um PEP válido.";
             }
 
-            // Extrai apenas os primeiros 21 caracteres para validação do padrão
-            string primeiros21 = texto.Substring(0, 21);
-
-            // 2. Construção da Expressão Regular (Regex)
-            // ^[0-9]{2}      -> Dois números (00)
-            // -              -> Um hífen (-)
-            // [0-9]{6}      -> Seis números (000000)
-            // \.P            -> Um ponto seguido da letra P (.P)
-            // [0-9]{2}      -> Dois números (00)
-            // \.             -> Um ponto (.)
-            // [0-9]{3}      -> Três números (000)
-            // \.             -> Um ponto (.)
-            // [A-Za-z0-9]{2} -> Dois caracteres alfanuméricos (XX - letra ou número)
-            // [ABCabc]       -> Uma letra que deve ser A, B ou C (Y)
-            string padraoRegex = @"^[0-9]{2}-[0-9]{6}\.P[0-9]{2}\.[0-9]{3}\.[A-Za-z0-9]{2}[ABCabc]$";
-
-            // 3. Validação do padrão
-            if (!Regex.IsMatch(primeiros21, padraoRegex))
+            if (ispedido)
             {
-                // Se falhar, vamos identificar o que falhou para dar um retorno mais detalhado
-                return DetalharErros(primeiros21);
-            }
+                if (texto.Length < 13)
+                {
+                    return "Erro: O pedido deve ter pelo menos 13 caracteres.";
+                }
 
-            return "OK";
+                string primeiros13 = texto.Substring(0, 13);
+
+                // Padrão de 13 caracteres: 10-123456.P00
+                // ^[0-9]{2}  -> Dois números
+                // -          -> Hífen
+                // [0-9]{6}   -> Seis números
+                // \.P        -> Ponto e a letra P
+                // [0-9]{2}   -> Dois números finais
+                string padraoPedidoRegex = @"^[0-9]{2}-[0-9]{6}\.P[0-9]{2}$";
+
+                if (!Regex.IsMatch(primeiros13, padraoPedidoRegex))
+                {
+                    return "Erro: Formato de pedido inválido (Esperado: XX-XXXXXX.PXX).";
+                }
+
+                return "OK";
+            }
+            else
+            {
+                if (texto.Length < 21)
+                {
+                    return "Erro: O PEP deve ter pelo menos 21 caracteres.";
+                }
+
+                string primeiros21 = texto.Substring(0, 21);
+
+                string padraoRegex = @"^[0-9]{2}-[0-9]{6}\.P[0-9]{2}\.[0-9]{3}\.[A-Za-z0-9]{2}[ABCabc]$";
+
+                if (!Regex.IsMatch(primeiros21, padraoRegex))
+                {
+                    return DetalharErros(primeiros21);
+                }
+
+                return "OK";
+            }
         }
 
         private static string DetalharErros(string trecho)

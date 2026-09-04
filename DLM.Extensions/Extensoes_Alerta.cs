@@ -12,7 +12,7 @@ namespace Conexoes
 {
     public static class Extensoes_Alerta
     {
-        public static bool Pergunta(this string message, string title = "Confirme")
+        public static bool Pergunta(this string message, string title)
         {
             bool result = false;
 
@@ -32,6 +32,15 @@ namespace Conexoes
 
             return result;
         }
+
+        public static bool Pergunta(this string message, int tempo = 15, string msg_ok = "Sim", string msg_nao_ok = "Não", string title = "Confirme")
+        {
+            var mm = new Janela_Timer_Sim_Nao(title, message, tempo, msg_ok, msg_nao_ok);
+            var status = mm.ShowDialog();
+
+            return (bool)status;
+        }
+
         public static void Alerta(this string mensagem, int tempo = 30, string titulo = "")
         {
             if (!mensagem.IsNullOrEmpty())
