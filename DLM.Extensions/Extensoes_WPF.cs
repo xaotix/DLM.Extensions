@@ -11,14 +11,18 @@ namespace Conexoes
 {
     public static class Extensoes_WPF
     {
-        public static void SetTitle(this Window window, string prefix)
+        public static void SetTitle(this Window window, string middle = null)
         {
-            var tit = $"{prefix} - {Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()}";
+            var tit = $"{Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()}";
+            
+            if(middle.NotNullOrEmpty())
+            {
+                tit += $" - {middle}";
+            }
             if (!Cfg.Init.SOFTWARE_TERCEIROS)
             {
-                tit += $" - [SAP -{Cfg.Init.SAP_Servidor}]";
+                tit += $" - [SAP {Cfg.Init.SAP_Servidor} {Cfg.Init.SAP_Servidor_IP}] [MySQL {Cfg_User.Init.MySQL_Servidor}]";
             }
-
             window.Title = tit;
         }
         public static void Sair(this System.Windows.Window window)

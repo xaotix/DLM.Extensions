@@ -157,7 +157,7 @@ namespace Conexoes
             menu.grid.SetBinding(objetos);
             menu.ShowDialog();
         }
-        public static T ListaSelecionarCombo<T>(this List<T> objs, T selecionar, string Titulo = "Selecione")
+        public static T ListaSelecionarCombo<T>(this List<T> objs, T selecionar, string titulo = "Selecione")
         {
             if (objs.Count > 0)
             {
@@ -182,7 +182,7 @@ namespace Conexoes
                     mm.lista.SelectedIndex = 0;
                 }
 
-                mm.Title = Titulo;
+                mm.Title = titulo;
                 mm.lista.IsEditable = false;
 
                 mm.ShowDialog();
@@ -236,18 +236,18 @@ namespace Conexoes
             {
                 return null;
             }
-            var selecionar = new Janelas.Seleciona_Cor(Objetos);
+            var mm = new Janelas.Seleciona_Cor(Objetos);
 
-            selecionar.Title = "Selecione";
-            selecionar.Lista.ItemsSource = Objetos;
-            selecionar.Lista.Selecionar(Buff.Cor_RAL);
+            mm.SetTitle("Selecione");
+            mm.Lista.ItemsSource = Objetos;
+            mm.Lista.Selecionar(Buff.Cor_RAL);
 
-            selecionar.ShowDialog();
-            if (selecionar.DialogResult.HasValue && selecionar.DialogResult.Value)
+            mm.ShowDialog();
+            if (mm.DialogResult.HasValue && mm.DialogResult.Value)
             {
-                if (selecionar.Lista.SelectedItem != null)
+                if (mm.Lista.SelectedItem != null)
                 {
-                    Buff.Cor_RAL = selecionar.Lista.SelectedItem as Cor_RAL;
+                    Buff.Cor_RAL = mm.Lista.SelectedItem as Cor_RAL;
                     return Buff.Cor_RAL;
                 }
             }
@@ -260,16 +260,16 @@ namespace Conexoes
             {
                 return null;
             }
-            var selecionar = new Janelas.Selecionar_Bobina(Objetos);
-            selecionar.Title = "Bobinas";
-            selecionar.Lista.ItemsSource = Objetos;
-            selecionar.Lista.Selecionar(Buff.Bobina);
-            selecionar.ShowDialog();
-            if (selecionar.DialogResult.HasValue && selecionar.DialogResult.Value)
+            var mm = new Janelas.Selecionar_Bobina(Objetos);
+            mm.SetTitle("Bobinas");
+            mm.Lista.ItemsSource = Objetos;
+            mm.Lista.Selecionar(Buff.Bobina);
+            mm.ShowDialog();
+            if (mm.DialogResult.HasValue && mm.DialogResult.Value)
             {
-                if (selecionar.Lista.SelectedItem != null)
+                if (mm.Lista.SelectedItem != null)
                 {
-                    Buff.Bobina = selecionar.Lista.SelectedItem as Bobina;
+                    Buff.Bobina = mm.Lista.SelectedItem as Bobina;
                     return Buff.Bobina;
                 }
             }
