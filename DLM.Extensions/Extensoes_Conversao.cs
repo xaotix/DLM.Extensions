@@ -433,14 +433,45 @@ namespace Conexoes
 
             return null;
         }
-        public static DateTime? GetDateTime(this string vlr)
+        public static DateTime? GetDateTime(this string vlr_original)
         {
-            if (string.IsNullOrWhiteSpace(vlr))
+            if (string.IsNullOrWhiteSpace(vlr_original))
                 return null;
 
+            var vlr = vlr_original;
             // Remove valores nulos/inválidos conhecidos
-            if (vlr.Contains("0000") || vlr.Contains("0001"))
+            var vlr_clean = vlr.Substituir("", "-", "/", @"\",":","0");
+
+            if (vlr_clean.IsNullOrEmpty())
                 return null;
+
+            if (!vlr_clean.ESoNumero())
+                return null;
+
+
+
+            // Trata Timestamp Invertida do SAP (CO-PA)
+            // Strings de 14 dígitos começando com 11 (ano invertido de 2025/2026)
+            if (vlr.Length == 14 && vlr.StartsWith("11") && long.TryParse(vlr, out long valInvertido))
+            {
+                // Converte o valor numérico DEC(16) do RKE_HZSTMP
+                if (long.TryParse(vlr, out long rawValue))
+                {
+                    try
+                    {
+                        var BaseRkeDate = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                        // Divide por 10.000 para obter o total de segundos desde 01/01/1990
+                        double segundos = rawValue / 10000.0;
+
+                        // Retorna a data somando os segundos à base oficial do SAP
+                        var dt = BaseRkeDate.AddSeconds(segundos);
+                        return dt;
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
 
             try
             {
@@ -450,18 +481,27 @@ namespace Conexoes
                     return dt;
                 }
 
-                // Fallback caso venha em formatos customizados que o TryParse padrão não pegue de primeira
-                // Formatos comuns suportados de forma limpa:
+
+
+
                 string[] formatos = {
-            "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss",
-            "yyyy-MM-dd HH:mm", "dd/MM/yyyy HH:mm",
-            "yyyy-MM-dd", "dd/MM/yyyy"
-        };
+                                     "yyyy-MM-dd HH:mm:ss", 
+                                     "dd/MM/yyyy HH:mm:ss",
+                                     "yyyy-MM-dd HH:mm", 
+                                     "dd/MM/yyyy HH:mm",
+                                     "yyyy-MM-dd", 
+                                     "dd/MM/yyyy",
+                                     "yyyyMMddHHmmss",
+                                     "yyyyMMdd"
+                                    };
 
                 if (DateTime.TryParseExact(vlr, formatos, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
                 {
                     return dt;
                 }
+
+
+                
 
                 // Última tentativa com o conversor padrão se houver
                 return Convert.ToDateTime(vlr);
