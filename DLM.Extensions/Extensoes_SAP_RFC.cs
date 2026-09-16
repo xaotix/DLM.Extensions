@@ -29,49 +29,58 @@ namespace Conexoes
 
         private static object GetValor(object value)
         {
-            if (value == null)
-                return null;
-
-            if (value is Enum enumValue)
-                return enumValue.ToString();
-
-            if (value is bool)
-                return (bool)value ? "X" : "";
-
-            if (value is Celula)
-                return ((Celula)value).GetValor();
-
-            if (value is int?)
-                return ((int?)value).GetValueOrDefault();
-
-            if (value is long?)
-                return ((long?)value).GetValueOrDefault();
-
-            if (value is double?)
-                return ((double?)value).GetValueOrDefault();
-
-            if (value is decimal?)
-                return ((decimal?)value).GetValueOrDefault();
-
-            if (value is DateTime?)
+            try
             {
-                var dt = (DateTime?)value;
-                return dt.HasValue ? (object)dt.Value : "";
+                if (value == null)
+                    return null;
+
+                if (value is Enum enumValue)
+                    return enumValue.ToString();
+
+                if (value is bool)
+                    return (bool)value ? "X" : "";
+
+                if (value is Celula)
+                    return ((Celula)value).GetValor();
+
+                if (value is int?)
+                    return ((int?)value).GetValueOrDefault();
+
+                if (value is long?)
+                    return ((long?)value).GetValueOrDefault();
+
+                if (value is double?)
+                    return ((double?)value).GetValueOrDefault();
+
+                if (value is decimal?)
+                    return ((decimal?)value).GetValueOrDefault();
+
+                if (value is DateTime?)
+                {
+                    var dt = (DateTime?)value;
+                    return dt.HasValue ? (object)dt.Value : "";
+                }
+
+                if (value is RSStr)
+                    return ((RSStr)value).Valor;
+
+                if (value is PesoStrKg)
+                    return ((PesoStrKg)value).Valor;
+
+                if (value is PesoStrTon)
+                    return ((PesoStrTon)value).Valor;
+
+                if (value is Celula)
+                    return ((Celula)value).GetValor();
+
+                return value;
+            }
+            catch (Exception ex)
+            {
+                ex.Show();
             }
 
-            if (value is RSStr)
-                return ((RSStr)value).Valor;
-
-            if (value is PesoStrKg)
-                return ((PesoStrKg)value).Valor;
-
-            if (value is PesoStrTon)
-                return ((PesoStrTon)value).Valor;
-
-            if (value is Celula)
-                return ((Celula)value).GetValor();
-
-            return value;
+            return null;
         }
 
         public static void GetMaterialBase(this List<SAP_Material> materiais)
