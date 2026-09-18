@@ -274,6 +274,8 @@ namespace Conexoes
             retorno.Add(inicio.Year);
             retorno = retorno.Distinct().ToList();
 
+            retorno = retorno.OrderByDescending(x=>x).ToList();
+
             return retorno;
         }
         public static double GetPorcentagem(this DateTime data, DateTime inicio, DateTime fim)

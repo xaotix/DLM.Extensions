@@ -492,7 +492,12 @@ namespace Conexoes
                                      "yyyy-MM-dd", 
                                      "dd/MM/yyyy",
                                      "yyyyMMddHHmmss",
-                                     "yyyyMMdd"
+                                     "yyyyMMdd",
+                                     "MM/yy", 
+                                     "MM-yy", 
+                                     "MM/yyyy", 
+                                     "MM-yyyy", 
+
                                     };
 
                 if (DateTime.TryParseExact(vlr, formatos, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
