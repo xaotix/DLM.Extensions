@@ -235,7 +235,7 @@ namespace Conexoes
         }
         public static System.Windows.Controls.DataGrid GetParent(this System.Windows.Controls.DataGridCell cell)
         {
-            DependencyObject datag = cell as DependencyObject;
+            var datag = cell as DependencyObject;
 
             while (datag != null && !(datag is System.Windows.Controls.DataGrid))
             {

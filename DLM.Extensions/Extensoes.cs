@@ -41,11 +41,14 @@ namespace Conexoes
     {
         public static T GetParent<T>(this DependencyObject child) where T : DependencyObject
         {
-            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if(child is T self)
+                return self;
+
+            var parentObject = VisualTreeHelper.GetParent(child);
             if (parentObject == null) return null;
 
-            if (parentObject is T parent)
-                return parent;
+            if (parentObject is T parent1)
+                return parent1;
 
             return GetParent<T>(parentObject);
         }
