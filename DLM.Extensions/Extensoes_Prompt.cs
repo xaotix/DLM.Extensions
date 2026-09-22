@@ -1,5 +1,7 @@
-﻿using DLM.ini;
+﻿using DLM;
+using DLM.ini;
 using DLM.vars;
+using Microsoft.Isam.Esent.Interop;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -160,6 +162,25 @@ namespace Conexoes
             }
             return null;
         }
+
+        public static PesoStrTon Prompt(this PesoStrTon vlr, string titulo = "Digite (Toneladas)")
+        {
+            double? valor = 0;
+            if(valor!=null)
+            {
+                valor = vlr.Valor;
+            }
+
+            valor = valor.Prompt(titulo);
+
+            if(valor!=null)
+            {
+                return new PesoStrTon(valor);
+            }
+
+            return null;
+        }
+
         public static double? Prompt(this double? valor, string titulo = "Digite", int decimais = -1, string string_format = null, bool gravar_carregar = false, string chave = "")
         {
             if (valor != null)
