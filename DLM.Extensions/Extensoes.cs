@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Windows;
@@ -39,6 +40,10 @@ namespace Conexoes
     }
     public static class Extensoes
     {
+        public static int SelecionarAno(this Window w)
+        {
+            return DateTime.Now.AddYears(-5).GetRangeAnos(DateTime.Now.AddYears(1)).ListaSelecionar();
+        }
         public static T GetParent<T>(this DependencyObject child) where T : DependencyObject
         {
             if(child is T self)
