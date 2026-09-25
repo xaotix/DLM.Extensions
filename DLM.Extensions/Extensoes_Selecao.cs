@@ -61,7 +61,7 @@ namespace Conexoes
                 var obj = objeto as Exception;
                 obj.Alerta();
             }
-            else if(objeto is UnhandledExceptionEventArgs)
+            else if (objeto is UnhandledExceptionEventArgs)
             {
                 (objeto as UnhandledExceptionEventArgs).Alerta();
             }
@@ -69,7 +69,7 @@ namespace Conexoes
             else if (objeto is List<Report>)
             {
                 var objs = objeto as List<Report>;
-                if(objs.Count>0)
+                if (objs.Count > 0)
                 {
                     var mm = new Conexoes.Janelas.VerReports(objs);
                     mm.ShowDialog();
@@ -390,19 +390,26 @@ namespace Conexoes
 
         public static void Selecionar<T>(this System.Windows.Controls.DataGrid view, T objeto)
         {
-            if (objeto == null) { return; }
+            if (view == null || objeto == null) { return; }
+
             try
             {
-                view.SelectedItems.Clear();
+                if (view.SelectionMode == System.Windows.Controls.DataGridSelectionMode.Extended)
+                {
+                    view.SelectedItems.Clear();
+                }
+
                 view.SelectedItem = objeto;
                 view.UpdateLayout();
+
                 if (view.SelectedItem != null)
                 {
                     view.ScrollIntoView(view.SelectedItem);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Show();
             }
         }
         public static void Selecionar<T>(this System.Windows.Controls.DataGrid view, List<T> objeto)
@@ -449,7 +456,13 @@ namespace Conexoes
         }
         public static void SelecionaUltimo(this System.Windows.Controls.DataGrid view)
         {
-            view.Selecionar(view.Items[view.Items.Count - 1]);
+            if (view.Items.Count > 0)
+                view.Selecionar(view.Items[view.Items.Count - 1]);
+        }
+        public static void SelecionarPrimeiro(this System.Windows.Controls.DataGrid view)
+        {
+            if (view.Items.Count > 0)
+                view.Selecionar(view.Items[0]);
         }
     }
 }

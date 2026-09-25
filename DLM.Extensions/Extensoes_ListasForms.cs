@@ -30,34 +30,38 @@ namespace Conexoes
         }
         public static List<T> Selecoes<T>(this System.Windows.Controls.DataGrid lista)
         {
+            if (lista == null) return new List<T>();
+
             try
             {
-                var retorno = lista.SelectedItems.Cast<T>().ToList();
-                if (retorno != null)
+                // Tenta pegar pelas linhas inteiras selecionadas
+                var retorno = lista.SelectedItems.OfType<T>().ToList();
+
+                // Se estiver usando SelectionUnit="Cell" ou "CellOrRowHeader"
+                if (retorno.Count == 0)
                 {
-                    return retorno;
+                    var items = lista.SelectedCells
+                    .Select(x => x.Item)
+                    .GroupBy(x => x)
+                    .Select(g => g.Key);
+
+                    retorno.AddRange(items.Cast<T>());
                 }
 
-                return new List<T>();
+                return retorno;
             }
             catch (Exception)
             {
-
                 return new List<T>();
             }
         }
         public static T Selecao<T>(this System.Windows.Controls.DataGrid lista)
         {
 
-            if (lista.SelectedItems.Count > 0)
+            var selecoes = lista.Selecoes<T>();
+            if(selecoes.Count>0)
             {
-                try
-                {
-                    return lista.SelectedItems.Cast<T>().ToList().Last();
-                }
-                catch (Exception)
-                {
-                }
+                return selecoes.Last();
             }
 
             return (T)Convert.ChangeType(null, typeof(T));
