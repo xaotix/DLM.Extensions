@@ -167,11 +167,11 @@ namespace Conexoes
         {
             return p3Ds.Select(x => x.Rotacionar(Centro, Angulo)).ToList().Aninhar();
         }
-        public static List<P3d> GetContornoHull(this List<P3d> linhas, int Escala_Contorno = 5, double Concavidade_Contorno = 1)
+        public static List<P3d> GetContornoHull(this List<P3d> linhas, int escala = 5, double Concavidade_Contorno = 1)
         {
             var retorno = new List<P3d>();
             var calculo = new DLM.desenho.Contorno.Hull(linhas);
-            var contorno_perfil = calculo.GetPontos(Concavidade_Contorno, Escala_Contorno);
+            var contorno_perfil = calculo.GetPontos(Concavidade_Contorno, escala);
             retorno.AddRange(contorno_perfil);
             retorno = retorno.RemoverRepetidos();
             return retorno.Aninhar();
