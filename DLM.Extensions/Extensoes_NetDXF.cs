@@ -1107,7 +1107,7 @@ namespace DLM.desenho
                 return ss;
             }
 
-            var retorno = new Layer(name.Replace(" ", "").Upper());
+            var retorno = new Layer(name.Sanitize());
             retorno.Color = color;
             retorno.Linetype = line;
             return retorno;
