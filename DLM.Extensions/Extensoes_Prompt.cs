@@ -41,12 +41,11 @@ namespace Conexoes
             else if (Valor is string)
             {
                 var mm = new Digita_Texto(titulo, maxlenght, Valor, titulo);
-                mm.caixa_texto.TextWrapping = System.Windows.TextWrapping.WrapWithOverflow;
-                mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-
                 mm.caixa_texto.MaxLength = maxlenght;
                 if (maxlenght > 100)
                 {
+                    mm.caixa_texto.TextWrapping = System.Windows.TextWrapping.WrapWithOverflow;
+                    mm.caixa_texto.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
                     mm.caixa_texto.Height = 150;
                     mm.caixa_texto.Width = 450;
                     mm.caixa_texto.AcceptsReturn = true;
