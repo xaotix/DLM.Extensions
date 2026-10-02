@@ -173,7 +173,7 @@ namespace Conexoes
             var calculo = new DLM.desenho.Contorno.Hull(linhas);
             var contorno_perfil = calculo.GetPontos(Concavidade_Contorno, escala);
             retorno.AddRange(contorno_perfil);
-            retorno = retorno.RemoverRepetidos();
+            retorno = retorno.RemoverRepetidosXY();
             return retorno.Aninhar();
         }
         public static List<P3d> GetContornoConvexoHull(this List<P3d> pontos, TipoLiv tipo = TipoLiv.Y)
@@ -496,26 +496,19 @@ namespace Conexoes
             return new List<P3d>();
         }
 
-        public static List<P3d> RemoverRepetidos(this List<P3d> pts)
+        public static List<P3d> RemoverRepetidosXY(this List<P3d> pts, double tolerancia = 0)
         {
-            List<P3d> lista = new List<P3d>();
-            for (int i = 0; i < pts.Count; i++)
+            if (pts == null || pts.Count == 0)
+                return new List<P3d>();
+
+            var lista = new List<P3d>();
+
+            foreach (var p in pts)
             {
-                var p = pts[i];
-                if (i > 0 && lista.Count > 0)
-                {
-                    var p0 = lista[lista.Count - 1];
+                // Verifica se já existe QUALQUER ponto na lista resultante dentro da tolerância
+                bool jaExiste = lista.Any(p0 => p0.X.IsEqual(p.X, tolerancia) && p0.Y.IsEqual(p.Y, tolerancia));
 
-                    if (p0.X == p.X && p0.Y == p.Y)
-                    {
-
-                    }
-                    else
-                    {
-                        lista.Add(p);
-                    }
-                }
-                else
+                if (!jaExiste)
                 {
                     lista.Add(p);
                 }
@@ -562,7 +555,7 @@ namespace Conexoes
                 var p1 = pt.Mover(X0);
                 retorno.Add(p1.MoverX(x).MoverY(y).Round(decimais));
             }
-            retorno = retorno.RemoverRepetidos();
+            retorno = retorno.RemoverRepetidosXY();
             return retorno;
         }
         /// <summary>
