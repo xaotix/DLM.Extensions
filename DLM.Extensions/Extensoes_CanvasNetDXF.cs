@@ -850,7 +850,7 @@ namespace Conexoes
             }
             else if (entity.Color.IsByBlock)
             {
-
+                // Tratar ByBlock se necessário
             }
             else
             {
@@ -858,9 +858,17 @@ namespace Conexoes
             }
 
             var cl = Cor.Color;
+
+            // Se for preto puro (0,0,0), converte para branco
             if (cl.R == 0 && cl.G == 0 && cl.B == 0)
             {
                 Cor = Brushes.White;
+            }
+            // Ajuste de contraste para tons muito escuros (como o Azul escuro do DXF R=0, G=0, B=255)
+            else if (cl.R < 30 && cl.G < 30 && cl.B > 200)
+            {
+                // Eleva a claridade do azul para ser visível no fundo escuro do WPF/Helix
+                Cor = new SolidColorBrush(Color.FromRgb(80, 140, 255));
             }
 
             return Cor;

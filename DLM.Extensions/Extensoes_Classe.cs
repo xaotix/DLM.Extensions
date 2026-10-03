@@ -251,10 +251,14 @@ namespace Conexoes
         }
 
 
-        public static T DeSerializar<T>(this string arquivo)
+        public static T DeSerializar<T>(this string arquivo, Type tipo = null)
         {
             string xml = "";
-            var serializer = new XmlSerializer(typeof(T));
+
+            // Se o tipo informado for null, assume o tipo genérico typeof(T)
+            Type tipoTarget = tipo ?? typeof(T);
+            var serializer = new XmlSerializer(tipoTarget);
+
             if (arquivo.LenghtStr() > 0)
             {
                 if (File.Exists(arquivo))
@@ -277,6 +281,7 @@ namespace Conexoes
                 {
                     xml = arquivo;
                 }
+
                 if (xml.LenghtStr() > 0)
                 {
                     try
@@ -296,6 +301,7 @@ namespace Conexoes
                     }
                 }
             }
+
             try
             {
                 return Novo<T>();
@@ -303,6 +309,7 @@ namespace Conexoes
             catch (Exception)
             {
             }
+
             return RetornaNull<T>();
         }
 
@@ -368,13 +375,18 @@ namespace Conexoes
 
         public static T Clonar<T>(this T obj)
         {
+            if (obj == null) return default;
+
             try
             {
-                var xml = new XmlSerializer(obj.GetType());
+                var tipoReal = obj.GetType();
+                var xml = new XmlSerializer(tipoReal);
+
                 using (var txt = new StringWriter())
                 {
                     xml.Serialize(txt, obj);
-                    return txt.ToString().DeSerializar<T>();
+                    // Passa o tipo real no 2º parâmetro para criar o XmlSerializer correto
+                    return txt.ToString().DeSerializar<T>(tipoReal);
                 }
             }
             catch (Exception ex)
@@ -382,8 +394,10 @@ namespace Conexoes
                 ex.Show();
             }
 
-            return (T)Convert.ChangeType(null, typeof(T));
+            return default;
         }
+
+
         public static DataView ToDataView<T>(this T obj, bool only_can_write = true, bool only_browsable = true, bool only_simple_properties = true, bool display_names = true, params string[] remover)
         {
             var l = obj.GetLinha(only_can_write, only_browsable, only_simple_properties, remover);

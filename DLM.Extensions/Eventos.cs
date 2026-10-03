@@ -59,7 +59,7 @@ namespace Conexoes
             }
 
         }
-        public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, List<T> lista)
+        public static void ResetSource<T>(this System.Windows.Controls.DataGrid grid, IEnumerable<T> lista)
         {
             if (grid != null)
             {
