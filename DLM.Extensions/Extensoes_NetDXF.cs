@@ -152,7 +152,7 @@ namespace DLM.desenho
         }
         public static void AddRange(this netDxf.DxfDocument dxf, List<netDxf.Entities.EntityObject> objs)
         {
-            foreach(var obj in objs)
+            foreach (var obj in objs)
             {
                 dxf.Entities.Add(obj);
             }
@@ -641,7 +641,12 @@ namespace DLM.desenho
 
             return retorno;
         }
-
+        public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, object objeto, string prefix = "BLOCO", DLM.db.Linha l = null)
+        {
+            var ret = dxf.CreateBlock(entities, prefix, new desenho.P3d(), true, l);
+            ret.Objeto = objeto;
+            return ret;
+        }
         public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, string prefix = "BLOCO", P3d origem = null, bool criar_se_existir = true, DLM.db.Linha atributos = null)
         {
 
@@ -675,6 +680,7 @@ namespace DLM.desenho
                 try
                 {
                     var n_ent = (EntityObject)ent.Clone();
+                    n_ent.Objeto = ent.Objeto;
                     block.Entities.Add(n_ent);
                 }
                 catch (Exception)
