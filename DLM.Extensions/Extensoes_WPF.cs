@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,6 +12,19 @@ namespace Conexoes
 {
     public static class Extensoes_WPF
     {
+        public static Task<bool?> ShowAsync(this Window window)
+        {
+            var tcs = new TaskCompletionSource<bool?>();
+
+            //window.Closed += (s, e) =>
+            //{
+            //    tcs.TrySetResult(window.DialogResult);
+            //};
+
+            window.Show();
+
+            return tcs.Task;
+        }
         public static void SetTitle(this Window window, string middle = null)
         {
             var tit = $"{Cfg.Init.GetNomeProduto()} - {Cfg.Init.GetVersao()}";

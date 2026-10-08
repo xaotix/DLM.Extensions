@@ -299,7 +299,10 @@ namespace Conexoes
         {
             return new System.Drawing.PointF((float)p3d.X, (float)p3d.Y);
         }
-
+        public static System.Windows.Point ToPoint(this P3d p3d)
+        {
+            return new System.Windows.Point((float)p3d.X, (float)p3d.Y);
+        }
 
 
         public static P3d Mover(this P3d p3d, double Angulo, double Distancia, int decimais = 4)
