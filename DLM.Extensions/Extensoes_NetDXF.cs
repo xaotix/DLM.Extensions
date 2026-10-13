@@ -693,7 +693,6 @@ namespace DLM.desenho
             {
                 if (atributos.Count > 0)
                 {
-
                     foreach (var cel in atributos)
                     {
                         var tag = cel.Coluna.Upper();
