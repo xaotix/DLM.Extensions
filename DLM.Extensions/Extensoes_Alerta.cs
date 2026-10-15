@@ -116,8 +116,8 @@ namespace Conexoes
                 propertyName = "Erro";
             }
             Conexoes.Utilz.WaitClose();
-            var desc = $"{descricao} [{propertyName}]";
-            var texto = $"{desc}\n{ex.GetTexto()}";
+            var desc = $"{descricao}";
+            var texto = $"{desc}\n{propertyName}\n{ex.GetTexto()}";
             DLM.log.Log(texto, logfile, propertyName);
             texto.JanelaErro(desc);
         }

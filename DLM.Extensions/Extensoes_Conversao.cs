@@ -440,7 +440,7 @@ namespace Conexoes
 
             var vlr = vlr_original;
             // Remove valores nulos/inválidos conhecidos
-            var vlr_clean = vlr.Substituir("", "-", "/", @"\",":","0");
+            var vlr_clean = vlr.Substituir("", "-", "/", @"\",":","0", "T");
 
             if (vlr_clean.IsNullOrEmpty())
                 return null;

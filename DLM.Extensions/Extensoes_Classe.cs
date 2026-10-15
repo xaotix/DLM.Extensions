@@ -295,9 +295,7 @@ namespace Conexoes
                     catch (Exception ex)
                     {
                         ex.Alerta($"Erro ao tentar ler o XML" +
-                            (!arquivo.Contem("?xml") ? $"\n[Arquivo ={arquivo}]" : "") +
-                            $"\n[XML]" +
-                            $"\n{xml}", "DeSerializar");
+                            (!arquivo.Contem("?xml") ? $"\n[Arquivo ={arquivo}]" : ""), $"\n{xml}");
                     }
                 }
             }
