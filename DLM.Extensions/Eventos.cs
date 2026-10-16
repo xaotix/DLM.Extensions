@@ -6,10 +6,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Collections;
+using System.ComponentModel;
 
 namespace Conexoes
 {
+
     public static class Eventos
     {
         public static void SetFiltro(this StackPanel grid, TextBox filtro)
