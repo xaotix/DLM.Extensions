@@ -103,9 +103,43 @@ namespace Conexoes
             return System.Windows.Media.Color.FromArgb(a, r, g, b);
         }
 
+
+
+
+
+
+
+
+
         private static readonly Dictionary<string, SolidColorBrush> _colorCache = new();
 
-        public static SolidColorBrush GetCorAleatoria(this string chave)
+        // Buffer com as principais cores na ordem em que serão consumidas
+        private static readonly List<SolidColorBrush> _bufferCoresIniciais = new()
+    {
+        CreateFrozenBrush(Colors.Red),
+        CreateFrozenBrush(Colors.Blue),
+        CreateFrozenBrush(Colors.Green),
+        CreateFrozenBrush(Colors.Cyan),
+        CreateFrozenBrush(Colors.Yellow),
+        CreateFrozenBrush(Colors.Magenta),
+        CreateFrozenBrush(Colors.Orange),
+        CreateFrozenBrush(Colors.Purple),
+        CreateFrozenBrush(Colors.Lime),
+        CreateFrozenBrush(Colors.Teal),
+        CreateFrozenBrush(Colors.Pink),
+        CreateFrozenBrush(Colors.Brown)
+    };
+
+        private static int _proximoIndexBuffer = 0;
+
+        private static SolidColorBrush CreateFrozenBrush(Color color)
+        {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
+
+        public static SolidColorBrush GetCorAleatoria(this string chave, bool usarBufferCores = false)
         {
             if (string.IsNullOrEmpty(chave))
                 chave = string.Empty;
@@ -117,20 +151,25 @@ namespace Conexoes
                 return brushExistente.Clone();
             }
 
-            // 1. Gera um Matiz (Hue) único baseado no Hash da chave (0 a 360 graus)
-            // Usamos Math.Abs para evitar números negativos
-            double hue = Math.Abs(chave.GetHashCode()) % 360;
+            SolidColorBrush novoBrush;
 
-            // 2. Definimos Saturação e Luminosidade fixas/controladas
-            // Saturação alta (0.65 a 0.8) evita cores pastosas/acinzentadas
-            // Luminosidade média (0.5 a 0.6) garante que não fique nem muito escuro, nem muito claro
-            double saturation = 0.70;
-            double lightness = 0.55;
+            // Se o buffer estiver ativado e ainda houver cores nele
+            if (usarBufferCores && _proximoIndexBuffer < _bufferCoresIniciais.Count)
+            {
+                novoBrush = _bufferCoresIniciais[_proximoIndexBuffer++];
+            }
+            else
+            {
+                // Lógica antiga baseada em HSL e Hash
+                double hue = Math.Abs(chave.GetHashCode()) % 360;
+                double saturation = 0.70;
+                double lightness = 0.55;
 
-            var (r, g, b) = HslToRgb(hue, saturation, lightness);
+                var (r, g, b) = HslToRgb(hue, saturation, lightness);
 
-            var novoBrush = new SolidColorBrush(Color.FromRgb(r, g, b));
-            novoBrush.Freeze();
+                novoBrush = new SolidColorBrush(Color.FromRgb(r, g, b));
+                novoBrush.Freeze();
+            }
 
             _colorCache[chave] = novoBrush;
 

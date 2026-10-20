@@ -822,6 +822,8 @@ namespace Conexoes
         }
         public static string getLetra(this long indice)
         {
+            indice = Math.Abs(indice);
+
             string retorno = "";
             do
             {

@@ -1,4 +1,6 @@
 ﻿using Conexoes;
+using DLM.cam;
+using DLM.db;
 using DLM.macros;
 using DLM.vars;
 using netDxf;
@@ -7,7 +9,7 @@ using netDxf.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
+
 
 namespace DLM.desenho
 {
@@ -693,6 +695,7 @@ namespace DLM.desenho
             {
                 if (atributos.Count > 0)
                 {
+                    atributos.RemoverColunasDuplicadas();
                     foreach (var cel in atributos)
                     {
                         var tag = cel.Coluna.Upper();
@@ -1667,6 +1670,99 @@ namespace DLM.desenho
             return single_list;
         }
 
+
+        public static List<EntityObject> AddTabela(this netDxf.DxfDocument dxf, Tabela tabela, ref P3d p0, double tam_txt = 10, string nome_layer = "TABELA", List<string> cols = null, List<int> txt_comps = null, bool show_titulo = true)
+        {
+            var p0a = p0.Clonar();
+            var retorno = new List<EntityObject>();
+
+            var lay = dxf.GetLayer(nome_layer, AciColor.Yellow, netDxf.Tables.Linetype.Continuous);
+
+
+            var of_y = 2 * tam_txt;
+            var of_X = 5 * tam_txt;
+            var mult = 1;
+            var alt = of_y * mult;
+
+
+
+            if (tabela.Linhas.Count > 0)
+            {
+                var comps = new List<double>();
+                if (txt_comps == null)
+                {
+                    comps = tabela.GetMaxLenghts().Select(x => (x * tam_txt) + tam_txt).ToList();
+                }
+                else
+                {
+                    comps = txt_comps.Select(x => (x * tam_txt) + tam_txt).ToList();
+                }
+
+                if (cols == null)
+                    cols = tabela.GetColunas();
+
+                for (int i = 0; i < comps.Count; i++)
+                {
+                    var tam = (cols[i].Length * tam_txt) + tam_txt;
+                    if (tam > comps[i])
+                    {
+                        comps[i] = tam;
+                    }
+                }
+
+
+                var larg_tot = comps.Sum();
+
+                if (show_titulo)
+                {
+                    retorno.AddRange(AddCell(tabela.Nome, tam_txt, lay, p0, alt, larg_tot, netDxf.AciColor.Blue));
+                    p0.Y -= alt;
+                }
+
+                for (int i = 0; i < cols.Count; i++)
+                {
+                    var txt = cols[i];
+                    var comp = comps[i];
+
+                    retorno.AddRange(AddCell(txt, tam_txt, lay, p0, alt, comp, AciColor.Blue));
+                    p0.X += comp;
+                }
+
+                p0.Y -= alt;
+
+                foreach (var l in tabela)
+                {
+                    p0.X = p0a.X;
+                    for (int i = 0; i < cols.Count; i++)
+                    {
+                        var txt = l[cols[i]].GetValorStr();
+                        var comp = comps[i];
+                        retorno.AddRange(AddCell(txt, tam_txt, lay, p0, alt, comp));
+                        p0.X += comp;
+                    }
+                    p0.Y -= alt;
+                }
+            }
+
+
+            p0.X = p0a.X;
+            dxf.CreateBlock(retorno, tabela, tabela.Nome);
+            return retorno;
+        }
+
+        private static List<EntityObject> AddCell(string txt, double tam_txt, Layer lay, P3d py, double alt, double comp, netDxf.AciColor cor_txt = null)
+        {
+            if (cor_txt == null)
+            {
+                cor_txt = netDxf.AciColor.Cyan;
+            }
+            var retorno = new List<EntityObject>();
+            var mtext = DLM.desenho.Dxf.MTexto(py.MoverY(-alt / 2).MoverX(tam_txt / 2), txt, tam_txt, lay, null, 0, cor_txt, MTextAttachmentPoint.MiddleLeft);
+            var n_rec = DLM.desenho.Dxf.Retangulo(comp, alt, py.X, py.Y - alt, lay, netDxf.AciColor.Red);
+            retorno.Add(n_rec);
+            retorno.Add(mtext);
+            return retorno;
+        }
 
         public static void ApplyZoomExtends(this netDxf.DxfDocument dxf)
         {
