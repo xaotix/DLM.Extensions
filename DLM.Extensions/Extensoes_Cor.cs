@@ -110,25 +110,42 @@ namespace Conexoes
 
 
 
-
         private static readonly Dictionary<string, SolidColorBrush> _colorCache = new();
+
+        // Novo buffer de cores pré-definidas por chave específica (consultado antes de tudo)
+        private static readonly Dictionary<string, Color> _coresPredefinidas = new()
+        {
+            { "#1.55", Colors.LawnGreen },
+            { "#1.70", Colors.LightGreen },
+
+            { "#1.95", Colors.Khaki },
+            { "#2.00", Colors.Yellow },
+
+            { "#2.25", Colors.Coral },
+            { "#2.30", Colors.Orange },
+
+            { "#2.65", Colors.HotPink },
+            { "#2.70", Colors.Magenta },
+
+            { "#3.00", Colors.Red },
+        };
 
         // Buffer com as principais cores na ordem em que serão consumidas
         private static readonly List<SolidColorBrush> _bufferCoresIniciais = new()
-    {
-        CreateFrozenBrush(Colors.Red),
-        CreateFrozenBrush(Colors.Blue),
-        CreateFrozenBrush(Colors.Green),
-        CreateFrozenBrush(Colors.Cyan),
-        CreateFrozenBrush(Colors.Yellow),
-        CreateFrozenBrush(Colors.Magenta),
-        CreateFrozenBrush(Colors.Orange),
-        CreateFrozenBrush(Colors.Purple),
-        CreateFrozenBrush(Colors.Lime),
-        CreateFrozenBrush(Colors.Teal),
-        CreateFrozenBrush(Colors.Pink),
-        CreateFrozenBrush(Colors.Brown)
-    };
+        {
+            CreateFrozenBrush(Colors.Red),
+            CreateFrozenBrush(Colors.Blue),
+            CreateFrozenBrush(Colors.Green),
+            CreateFrozenBrush(Colors.Cyan),
+            CreateFrozenBrush(Colors.Yellow),
+            CreateFrozenBrush(Colors.Magenta),
+            CreateFrozenBrush(Colors.Orange),
+            CreateFrozenBrush(Colors.Purple),
+            CreateFrozenBrush(Colors.Lime),
+            CreateFrozenBrush(Colors.Teal),
+            CreateFrozenBrush(Colors.Pink),
+            CreateFrozenBrush(Colors.Brown)
+        };
 
         private static int _proximoIndexBuffer = 0;
 
@@ -146,6 +163,18 @@ namespace Conexoes
 
             chave = chave.Trim().ToUpper();
 
+            // 1. Consulta PRIMEIRO o buffer de cores pré-definidas por chave exata
+            if (_coresPredefinidas.TryGetValue(chave, out var corPredefinida))
+            {
+                if (!_colorCache.TryGetValue(chave, out var brushPredefinido))
+                {
+                    brushPredefinido = CreateFrozenBrush(corPredefinida);
+                    _colorCache[chave] = brushPredefinido;
+                }
+                return brushPredefinido.Clone();
+            }
+
+            // 2. Consulta o cache geral para chaves já processadas anteriormente
             if (_colorCache.TryGetValue(chave, out var brushExistente))
             {
                 return brushExistente.Clone();
@@ -153,14 +182,14 @@ namespace Conexoes
 
             SolidColorBrush novoBrush;
 
-            // Se o buffer estiver ativado e ainda houver cores nele
+            // 3. Se o buffer sequencial estiver ativado e ainda houver cores nele
             if (usarBufferCores && _proximoIndexBuffer < _bufferCoresIniciais.Count)
             {
                 novoBrush = _bufferCoresIniciais[_proximoIndexBuffer++];
             }
             else
             {
-                // Lógica antiga baseada em HSL e Hash
+                // 4. Fallback: Lógica baseada em HSL e Hash
                 double hue = Math.Abs(chave.GetHashCode()) % 360;
                 double saturation = 0.70;
                 double lightness = 0.55;
@@ -175,6 +204,7 @@ namespace Conexoes
 
             return novoBrush.Clone();
         }
+
 
         // Conversor auxiliar de HSL para RGB
         private static (byte r, byte g, byte b) HslToRgb(double h, double s, double l)
