@@ -143,6 +143,13 @@ namespace Conexoes
         public static void JanelaTexto(this string mensagem, string titulo = "", bool top = true, bool pendurar = false)
         {
             var mm = new VerTextoReport();
+
+            if(mensagem.Exists())
+            {
+                mensagem = string.Join("\n", Conexoes.Utilz.Arquivo.Ler(mensagem));
+            }
+
+
             mm.texto.Text = mensagem;
             mm.Title = titulo;
             mm.Topmost = top;
