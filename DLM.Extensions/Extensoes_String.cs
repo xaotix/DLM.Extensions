@@ -70,7 +70,7 @@ namespace Conexoes
     {
         public static (string Valor, Celula_Tipo_Valor Tipo) GetValorETipo(this object valorOrig, Celula_Tipo_Valor tipoSugerido = Celula_Tipo_Valor.Desconhecido)
         {
-            if(valorOrig is RSStr)
+            if (valorOrig is RSStr)
             {
                 valorOrig = ((RSStr)valorOrig).Valor;
                 tipoSugerido = Celula_Tipo_Valor.Moeda;
@@ -320,7 +320,7 @@ namespace Conexoes
                         return "OK";
                     }
                 }
-                else if(trecho.Substring(18,1) == "L")
+                else if (trecho.Substring(18, 1) == "L")
                 {
                     if (!trecho.Substring(19, 2).ESoNumero())
                     {
@@ -835,37 +835,23 @@ namespace Conexoes
 
             return retorno;
         }
-        /// <summary>
-        /// Retorna o índice de um conjunto de letras.
-        /// Máximo 10 caracteres.
-        /// </summary>
-        /// <param name="letra"></param>
-        /// <returns></returns>
-        public static long getIndice(this string letra)
+        public static long getNumero(this string letras)
         {
-            if (string.IsNullOrWhiteSpace(letra))
-                return -1;
-
-            letra = letra.Upper();
-            letra = letra.RemoverAcentos().Substituir("C", "Ç").TrimStart().TrimEnd();
-
-            if (string.IsNullOrWhiteSpace(letra))
-                return -1;
-
-
-            if (letra.Length > 10)
-                return -1;
+            if (string.IsNullOrEmpty(letras))
+            {
+                return 0;
+            }
+            letras = letras.Upper().RemoverAcentos().Substituir("C", "Ç");
 
             long resultado = 0;
-
-            foreach (char c in letra)
+            foreach (char c in letras)
             {
-                if (c < 'A' || c > 'Z')
-                    throw new ArgumentException($"Caractere inválido '{c}'. Apenas letras de A a Z são permitidas.");
-
-                resultado = (resultado * 26) + (c - 'A' + 1);
+                // Converte para maiúscula e calcula o valor na base 26 (A=1, B=2, ..., Z=26)
+                char cUpper = char.ToUpper(c);
+                resultado = (resultado * 26) + (cUpper - 'A' + 1);
             }
 
+            // Subtrai 1 para manter o índice com base em 0 (A = 0, B = 1, etc.)
             return resultado - 1;
         }
         public static bool IsLower(this string valor)
@@ -878,14 +864,35 @@ namespace Conexoes
             {
                 return false;
             }
+
+            str = str.Upper().Remover(",", ".", " ", "-", "+", "E");
             if (str.LenghtStr() == 0)
             {
                 return false;
             }
-            foreach (char c in str.Upper().Remover(",", ".", " ", "-", "+", "E"))
+
+            foreach (char c in str)
             {
                 if (c < '0' || c > '9')
                     return false;
+            }
+
+            return true;
+        }
+        public static bool ESoLetra(this string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return false;
+            }
+
+            foreach (char c in str)
+            {
+                // Aceita apenas letras do alfabeto (A-Z ou a-z)
+                if ((c < 'A' || c > 'Z') && (c < 'a' || c > 'z'))
+                {
+                    return false;
+                }
             }
 
             return true;
