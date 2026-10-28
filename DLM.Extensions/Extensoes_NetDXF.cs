@@ -643,19 +643,21 @@ namespace DLM.desenho
 
             return retorno;
         }
-        public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, object objeto, string prefix = "BLOCO", DLM.db.Linha l = null)
+        public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, object objeto, string prefix = "BLOCO", DLM.db.Linha l = null, P3d origem = null)
         {
-            var ret = dxf.CreateBlock(entities, prefix, new desenho.P3d(), true, l);
+            if (origem == null)
+            {
+                origem = new P3d();
+            }
+            var ret = dxf.CreateBlock(entities, prefix, origem, true, l);
             ret.Objeto = objeto;
             return ret;
         }
         public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, string prefix = "BLOCO", P3d origem = null, bool criar_se_existir = true, DLM.db.Linha atributos = null)
         {
-
             if (origem == null)
-            {
                 origem = new P3d();
-            }
+
             var nome = prefix;
             int c = 1;
             if (!criar_se_existir)
@@ -1680,7 +1682,6 @@ namespace DLM.desenho
 
 
             var of_y = 2 * tam_txt;
-            var of_X = 5 * tam_txt;
             var mult = 1;
             var alt = of_y * mult;
 
@@ -1757,7 +1758,7 @@ namespace DLM.desenho
                 cor_txt = netDxf.AciColor.Cyan;
             }
             var retorno = new List<EntityObject>();
-            var mtext = DLM.desenho.Dxf.MTexto(py.MoverY(-alt / 2).MoverX(tam_txt / 2), txt, tam_txt, lay, null, 0, cor_txt, MTextAttachmentPoint.MiddleLeft);
+            var mtext = DLM.desenho.Dxf.MTexto(py.MoverY(-alt / 2).MoverX(tam_txt / 2), txt, tam_txt, lay, null, 0, cor_txt, MTextAttachmentPoint.MiddleLeft, null, true, 1, null, true, 1);
             var n_rec = DLM.desenho.Dxf.Retangulo(comp, alt, py.X, py.Y - alt, lay, netDxf.AciColor.Red);
             retorno.Add(n_rec);
             retorno.Add(mtext);
