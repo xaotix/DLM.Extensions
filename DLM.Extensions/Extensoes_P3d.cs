@@ -10,6 +10,40 @@ namespace Conexoes
 {
     public static class ExtensoesP3d
     {
+        public static List<P3d> GetPtsProximosX(this List<P3d> lb, double tolerancia = 25)
+        {
+            var retorno = new List<P3d>();
+
+            var frs = lb.OrderBy(x => x.X).ToList();
+
+            for (int i = 1; i < frs.Count; i++)
+            {
+                if (frs[i].X - frs[i - 1].X < tolerancia)
+                {
+                    retorno.Add(frs[i]);
+                }
+            }
+            return retorno;
+        }
+        public static List<P3d> RemoverProximosX(this List<P3d> lb, double tolerancia = 1)
+        {
+            var retorno = new List<P3d>();
+
+            var frs = lb.OrderBy(x => x.X).ToList();
+
+            for (int i = 1; i < frs.Count; i++)
+            {
+                if (retorno.Count == 0)
+                {
+                    retorno.Add(frs[i]);
+                }
+                else if (frs[i].X - retorno.Last().X > tolerancia)
+                {
+                    retorno.Add(frs[i]);
+                }
+            }
+            return retorno;
+        }
         public static P3d Tratar(this P3d origem, int decimais = 5)
         {
             var p0 = new P3d(origem.X, origem.Y);
