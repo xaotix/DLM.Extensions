@@ -878,12 +878,12 @@ namespace Conexoes
             var children = panel.Children.Cast<FrameworkElement>().ToList();
             Retorno.AddRange(children.OfType<T>());
 
-            var panels = new List<Xceed.Wpf.AvalonDock.DockingManager>();
-            panels.AddRange(children.OfType<Xceed.Wpf.AvalonDock.DockingManager>());
-            foreach (var subpanel in panels)
-            {
-                children.AddRange(GetChildren(subpanel));
-            }
+            //var panels = new List<Xceed.Wpf.AvalonDock.DockingManager>();
+            //panels.AddRange(children.OfType<Xceed.Wpf.AvalonDock.DockingManager>());
+            //foreach (var subpanel in panels)
+            //{
+            //    children.AddRange(GetChildren(subpanel));
+            //}
 
             foreach (var subpanel in children.OfType<Panel>())
             {
@@ -909,22 +909,22 @@ namespace Conexoes
             return Retorno;
         }
 
-        private static List<FrameworkElement> GetChildren(Xceed.Wpf.AvalonDock.DockingManager subpanel)
-        {
-            List<FrameworkElement> children = new List<FrameworkElement>();
-            var layoutpanel = subpanel.Layout.RootPanel;
-            var la = new List<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorable>();
-            var ld = new List<Xceed.Wpf.AvalonDock.Layout.LayoutContent>();
-            la.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePane>().SelectMany(x => x.Children.ToList()));
-            la.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePaneGroup>().SelectMany(x => x.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePane>().SelectMany(y => y.Children)));
+        //private static List<FrameworkElement> GetChildren(Xceed.Wpf.AvalonDock.DockingManager subpanel)
+        //{
+        //    List<FrameworkElement> children = new List<FrameworkElement>();
+        //    var layoutpanel = subpanel.Layout.RootPanel;
+        //    var la = new List<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorable>();
+        //    var ld = new List<Xceed.Wpf.AvalonDock.Layout.LayoutContent>();
+        //    la.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePane>().SelectMany(x => x.Children.ToList()));
+        //    la.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePaneGroup>().SelectMany(x => x.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutAnchorablePane>().SelectMany(y => y.Children)));
 
-            ld.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPane>().SelectMany(x => x.Children.ToList()));
-            ld.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPaneGroup>().SelectMany(x => x.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPane>()).SelectMany(x => x.Children));
+        //    ld.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPane>().SelectMany(x => x.Children.ToList()));
+        //    ld.AddRange(layoutpanel.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPaneGroup>().SelectMany(x => x.Children.OfType<Xceed.Wpf.AvalonDock.Layout.LayoutDocumentPane>()).SelectMany(x => x.Children));
 
-            children.AddRange(la.Select(x => x.Content).OfType<FrameworkElement>());
-            children.AddRange(ld.Select(x => x.Content).OfType<FrameworkElement>());
-            return children;
-        }
+        //    children.AddRange(la.Select(x => x.Content).OfType<FrameworkElement>());
+        //    children.AddRange(ld.Select(x => x.Content).OfType<FrameworkElement>());
+        //    return children;
+        //}
 
         public static List<T> GetChildren<T>(this Selector subpanel)
         {
