@@ -703,7 +703,7 @@ namespace Conexoes
             var _reports = new List<Report>();
             var fbus = rmes.FindAll(x => x.TIPO.Contem("FLANGE BRACE"));
             var diags_mdj = rmes.FindAll(x => x.TIPO.StartsW("DSD", "MTD", "DLD", "MTE", "MTI"));
-
+            var scis = rmes.FindAll(x => x.COD_DB.StartsW("SCI-", "SCIE-"));
             var diags_medabar = rmes.FindAll(x => x.TIPO == "MD");
 
             var w = Utilz.Wait(rmes.Count, "Gerando CAMs...");
@@ -739,6 +739,24 @@ namespace Conexoes
                 var nDiagonal = Utilz.Medajoist.GetCamDiagonalMedajoist(arqDiagonal, diag);
                 if (nDiagonal != null)
                 {
+                    nDiagonal.CopiarInfo(diag.GetInfo());
+                    nDiagonal.Cabecalho.Marca = diag.CODIGOFIM;
+                    nDiagonal.Gerar();
+                }
+                else
+                {
+                    _reports.Add("Não foi possível gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                }
+                w.somaProgresso();
+            }
+            foreach (var diag in scis)
+            {
+                var arqDiagonal = $"{Destino_CAM}{diag.CODIGOFIM}.{Cfg.Init.EXT_CAM}";
+                var nDiagonal = new DLM.cam.Cam(arqDiagonal, DLM.cam.Perfil.L_Dobrado("", diag.ABA, diag.ABA, diag.ESP), diag.COMP);
+                if (nDiagonal != null)
+                {
+                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(25, -20), 14, 8, 0);
+                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(diag.COMP - 25, -20), 14, 8, 0);
                     nDiagonal.CopiarInfo(diag.GetInfo());
                     nDiagonal.Cabecalho.Marca = diag.CODIGOFIM;
                     nDiagonal.Gerar();

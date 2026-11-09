@@ -175,7 +175,8 @@ namespace Conexoes
                 {
                     tabela.AddRange(new Linha(lista.Items.Cast<Celula>()).Transpor());
                 }
-                else
+
+                else if (lista.Items[0] is DataRowView)
                 {
                     var linhas = lista.Items.Cast<DataRowView>().ToList().Select(x => x.Row).ToList().Select(x => x.ItemArray.ToList()).ToList();
 
@@ -196,6 +197,10 @@ namespace Conexoes
                             tabela.Add(l);
                         }
                     }
+                }
+                else
+                {
+                    tabela.AddRange(lista.Items.Cast<object>().Select(x=>x.GetLinha()));
                 }
             }
             return tabela;
