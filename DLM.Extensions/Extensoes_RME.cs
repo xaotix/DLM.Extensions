@@ -326,7 +326,7 @@ namespace Conexoes
 
                 }
 
-                var ctrs = correntes.GroupBy(x => $"{x.id_db}@{x.Tratamento}").ToList();
+                var ctrs = correntes.GroupBy(x => $"{x.id_db}@{x.Tratamento}@{x.Material}").ToList();
                 foreach (var ctr in ctrs)
                 {
                     var frst = ctr.First();
@@ -340,6 +340,18 @@ namespace Conexoes
                             nctr.FICHA_PINTURA = frst.Tratamento;
                             nctr.Observacoes = txt_macro_corrente;
                             nctr.User = Cfg.Init.GetUser().Alias;
+                            if (!string.IsNullOrWhiteSpace(frst.Material))
+                            {
+                                nctr.MATERIAL_CUSTOM = frst.Material;
+                                nctr.TIPO_ACO_CUSTOM = frst.Material;
+                                foreach (var pos in nctr.Posicoes)
+                                {
+                                    if (pos.pode_mudar_material)
+                                    {
+                                        pos.ZPP_TIPOACO = frst.Material;
+                                    }
+                                }
+                            }
                             retorno.Add(nctr);
                         }
                     }
