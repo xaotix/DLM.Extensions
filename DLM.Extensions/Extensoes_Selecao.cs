@@ -1,4 +1,4 @@
-﻿using Conexoes.Acessos;
+using Conexoes.Acessos;
 using DLM.db;
 using DLM.encoder;
 using System;
@@ -66,14 +66,18 @@ namespace Conexoes
                 (objeto as UnhandledExceptionEventArgs).Alerta();
             }
 
-            else if (objeto is List<Report>)
+            else if (objeto is List<Report> reports)
             {
-                var objs = objeto as List<Report>;
-                if (objs.Count > 0)
+                if (reports.Count > 0)
                 {
-                    var mm = new Conexoes.Janelas.VerReports(objs);
+                    var mm = new Conexoes.Janelas.VerReports(reports);
                     mm.ShowDialog();
                 }
+            }
+            else if (objeto is Report report)
+            {
+                var mm = new Conexoes.Janelas.VerReports(new List<Report> { report });
+                mm.ShowDialog();
             }
             else if (objeto is List<Linha>)
             {
