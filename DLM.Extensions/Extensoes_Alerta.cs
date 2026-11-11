@@ -37,8 +37,10 @@ namespace Conexoes
         {
             var mm = new Janela_Timer_Sim_Nao(title, message, tempo, msg_ok, msg_nao_ok);
             var status = mm.ShowDialog();
+            if (status != null)
+                return (bool)status;
 
-            return (bool)status;
+            return false;
         }
 
         public static void Alerta(this string mensagem, int tempo = 30, string titulo = "")
@@ -144,7 +146,7 @@ namespace Conexoes
         {
             var mm = new VerTextoReport();
 
-            if(mensagem.Exists())
+            if (mensagem.Exists())
             {
                 mensagem = string.Join("\n", Conexoes.Utilz.Arquivo.Ler(mensagem));
             }
