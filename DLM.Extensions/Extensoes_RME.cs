@@ -767,8 +767,8 @@ namespace Conexoes
                 var nDiagonal = new DLM.cam.Cam(arqDiagonal, DLM.cam.Perfil.L_Dobrado("", diag.ABA, diag.ABA, diag.ESP), diag.COMP);
                 if (nDiagonal != null)
                 {
-                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(25, -20), 14, 8, 0);
-                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(diag.COMP - 25, -20), 14, 8, 0);
+                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(25, -20), 11, 11, 0);
+                    nDiagonal.Formato.AddFuroLIV1(new DLM.desenho.P3d(diag.COMP - 25, -20), 11, 11, 0);
                     nDiagonal.CopiarInfo(diag.GetInfo());
                     nDiagonal.Cabecalho.Marca = diag.CODIGOFIM;
                     nDiagonal.Gerar();
