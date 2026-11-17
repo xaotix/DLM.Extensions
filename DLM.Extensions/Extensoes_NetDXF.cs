@@ -109,11 +109,11 @@ namespace DLM.desenho
         {
             try
             {
-                var block = dxf_destino.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
+                var block = dxf_destino.GetBlock(nome);
 
                 if (block == null)
                 {
-                    block = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
+                    block = dxf.GetBlock(nome);
                     block = block.Clone() as netDxf.Blocks.Block;
                 }
 
@@ -643,6 +643,13 @@ namespace DLM.desenho
 
             return retorno;
         }
+        /// <summary>Bloco pelo nome, sem diferenciar maiúsculas (busca indexada do netDxf; nulo se não existe).</summary>
+        public static netDxf.Blocks.Block GetBlock(this DxfDocument dxf, string nome)
+        {
+            if (dxf == null || string.IsNullOrEmpty(nome)) return null;
+            return dxf.Blocks.Contains(nome) ? dxf.Blocks[nome] : null;
+        }
+
         public static Insert CreateBlock(this DxfDocument dxf, List<EntityObject> entities, object objeto, string prefix = "BLOCO", DLM.db.Linha l = null, P3d origem = null)
         {
             if (origem == null)
@@ -662,7 +669,7 @@ namespace DLM.desenho
             int c = 1;
             if (!criar_se_existir)
             {
-                var blk = dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper());
+                var blk = dxf.GetBlock(nome);
                 if (blk != null)
                 {
                     var ent = new Insert(blk);
@@ -672,7 +679,7 @@ namespace DLM.desenho
                     return ent;
                 }
             }
-            while (dxf.Blocks.ToList().Find(x => x.Name.Upper() == nome.Upper()) != null)
+            while (dxf.Blocks.Contains(nome))
             {
                 nome = $"{prefix}_{c}";
                 c++;
@@ -1013,7 +1020,7 @@ namespace DLM.desenho
         {
             try
             {
-                var block = destino.Blocks.ToList().Find(x => x.Name.Upper() == arquivo.getNome().Upper());
+                var block = destino.GetBlock(arquivo.getNome());
 
                 if (block == null)
                 {

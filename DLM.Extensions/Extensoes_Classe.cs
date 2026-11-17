@@ -435,96 +435,79 @@ namespace Conexoes
             return retorno;
         }
 
+        /// <summary>Coluna de <see cref="GetTabela{T}"/>: metadados por tipo, calculados uma única vez.</summary>
+        private sealed class ColunaTabela
+        {
+            public string Nome;
+            public string DisplayName;
+            public string StringFormat;
+            /// <summary>Propriedade lida no item (nula quando não é simples: a célula fica vazia).</summary>
+            public PropertyInfo Valor;
+        }
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<(Type, bool, bool, bool), ColunaTabela[]> _colunasTabela
+            = new System.Collections.Concurrent.ConcurrentDictionary<(Type, bool, bool, bool), ColunaTabela[]>();
+
+        private static ColunaTabela[] GetColunasTabela(Type tipo, bool only_can_write, bool only_browsable, bool simple_properties)
+        {
+            return _colunasTabela.GetOrAdd((tipo, only_can_write, only_browsable, simple_properties), k =>
+            {
+                var todas = tipo.GetProperties().Where(x => x.CanRead).ToList();
+                var simples = todas.Filter();
+
+                var listagem = simple_properties ? simples : todas;
+                if (only_can_write) listagem = listagem.Where(x => x.CanWrite).ToList();
+                if (only_browsable) listagem = listagem.Where(x => x.Browsable()).ToList();
+
+                return listagem.Select(x =>
+                {
+                    var meta = todas.Find(p => p.Name == x.Name);
+                    return new ColunaTabela
+                    {
+                        Nome = x.Name,
+                        DisplayName = meta.GetDisplayName(),
+                        StringFormat = meta.GetDataFormatString(),
+                        Valor = simples.Find(p => p.Name == x.Name),
+                    };
+                }).ToArray();
+            });
+        }
+
         /// <summary>
         /// Extrai uma tabela com todas as propriedades da lista
+        /// (só os itens do mesmo tipo do primeiro; metadados das colunas em cache por tipo)
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="lista"></param>
-        /// <returns></returns>
         public static DLM.db.Tabela GetTabela<T>(this List<T> lista, bool only_can_write, bool only_browsable = true, bool simple_properties = true, string nome = "")
         {
-
             var retorno = new DLM.db.Tabela(nome);
-            if (lista.Count > 0)
+            if (lista.Count == 0 || lista[0] == null) return retorno;
+
+            var tipo = lista[0].GetType();
+            var colunas = GetColunasTabela(tipo, only_can_write, only_browsable, simple_properties);
+
+            foreach (var item in lista)
             {
-                var listagem = new List<PropertyInfo>();
-                listagem.AddRange(lista[0].GetPropriedades());
-                var colunas_props = new List<Celula>();
-                foreach (var item in listagem)
-                {
-                    var ncel = new Celula(item.Name);
-                    ncel.DisplayName = item.GetDisplayName();
-                    ncel.StringFormat = item.GetDataFormatString();
-                    colunas_props.Add(ncel);
-                }
+                if (item == null || item.GetType() != tipo) continue;
 
-                if (simple_properties)
+                var celulas = new List<Celula>(colunas.Length);
+                foreach (var col in colunas)
                 {
-                    listagem = listagem.Filter();
-                }
-
-                if (only_can_write)
-                {
-                    listagem = listagem
-                  .Where(x => x.CanWrite)
-                  .ToList();
-                }
-
-                if (only_browsable)
-                {
-                    listagem = listagem
-                 .Where(x => x.Browsable())
-                 .ToList();
-                }
-
-                var colunas = listagem.Select(x => x.Name).ToList();
-                var display = listagem.Select(x => x.GetDisplayName()).ToList();
-                foreach (var item in lista)
-                {
-                    if (item == null)
+                    var cel = new DLM.db.Celula(col.Nome);
+                    if (col.Valor != null)
                     {
-                        continue;
-                    }
-                    //pula itens que são diferentes do primeiro item da lista
-                    if (item.GetType() != lista[0].GetType())
-                    {
-                        continue;
-                    }
-                    var celulas = new List<Celula>();
-                    var props = item.GetPropriedades().Filter();
-
-                    for (int c = 0; c < colunas.Count; c++)
-                    {
-                        var igual = props.Find(x => x.Name == colunas[c]);
-                        var cel = new DLM.db.Celula(colunas[c]);
-                        var ccel = colunas_props.Find(x => x.Coluna == colunas[c]);
-
-                        if (igual != null)
+                        try
                         {
-
-                            try
-                            {
-                                var vlr = igual.GetValue(item);
-                                cel.Set(vlr);
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
+                            cel.Set(col.Valor.GetValue(item));
                         }
-
-
-                        if (ccel != null)
+                        catch (Exception)
                         {
-                            cel.DisplayName = ccel.DisplayName;
-                            cel.StringFormat = ccel.StringFormat;
                         }
-
-                        celulas.Add(cel);
                     }
-                    retorno.Add(new Linha(celulas));
+                    cel.DisplayName = col.DisplayName;
+                    cel.StringFormat = col.StringFormat;
+                    celulas.Add(cel);
                 }
-
+                retorno.Add(new Linha(celulas));
             }
             return retorno;
         }
