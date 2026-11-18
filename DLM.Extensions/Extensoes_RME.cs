@@ -138,7 +138,8 @@ namespace Conexoes
             retorno.AddRange(pacoteEM1.getPecas().Get<RME>());
 
             //ARREMATES ESPECIAIS => peça RMU (marca ARREMATE + chapa com a bobina escolhida)
-            foreach (var arremate in objetos.Get<DLM.macros.ArremateEspecial>())
+            //PERFIS DOBRADOS ESPECIAIS => peça RME (marca PERFIL DOBRADO + chapa da lista de espessuras)
+            foreach (var arremate in objetos.Get<DLM.macros.ChapaDobradaEspecial>())
             {
                 var pc = arremate.GetPeca(out string erro);
                 if (pc != null)
@@ -147,7 +148,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report("Arremate especial inválido", $"{arremate.MarcaFinal} => {erro}", TipoReport.Critico));
+                    retorno.Add(new Report($"{arremate.TipoNome} inválido", $"{arremate.MarcaFinal} => {erro}", TipoReport.Critico));
                 }
             }
 
