@@ -137,6 +137,20 @@ namespace Conexoes
             retorno.AddRange(pacoteEM1.getPecas().Get<RMA>());
             retorno.AddRange(pacoteEM1.getPecas().Get<RME>());
 
+            //ARREMATES ESPECIAIS => peça RMU (marca ARREMATE + chapa com a bobina escolhida)
+            foreach (var arremate in objetos.Get<DLM.macros.ArremateEspecial>())
+            {
+                var pc = arremate.GetPeca(out string erro);
+                if (pc != null)
+                {
+                    retorno.Add(pc);
+                }
+                else
+                {
+                    retorno.Add(new Report("Arremate especial inválido", $"{arremate.MarcaFinal} => {erro}", TipoReport.Critico));
+                }
+            }
+
 
             var txt_macro_corrente = "[MACRO CORRENTE]";
             var txt_macro_tirante = "[MACRO TIRANTES]";
