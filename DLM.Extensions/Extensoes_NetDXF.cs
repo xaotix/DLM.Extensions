@@ -1399,10 +1399,11 @@ namespace DLM.desenho
                     return (entityObject as MLine).Vertexes[0].Position.P3d();
 
 
+                // entidades explodidas de um bloco (Insert.Explode) não têm Owner
                 case EntityType.Wipeout:
-                    return (entityObject as Wipeout).Owner.Origin.ToP3d();
+                    return (entityObject as Wipeout).Owner != null ? (entityObject as Wipeout).Owner.Origin.ToP3d() : new P3d();
                 case EntityType.Hatch:
-                    return (entityObject as Hatch).Owner.Origin.ToP3d();
+                    return (entityObject as Hatch).Owner != null ? (entityObject as Hatch).Owner.Origin.ToP3d() : new P3d();
             }
 
             return new P3d();
@@ -1630,9 +1631,11 @@ namespace DLM.desenho
                 case EntityType.Point:
                 case EntityType.Solid:
                 case EntityType.Ray:
-                case EntityType.Hatch:
                 case EntityType.Shape:
                     single_list.Add(origem);
+                    break;
+                case EntityType.Hatch:
+                    // a "posição" da hachura é a origem do bloco dono (0,0 do desenho), não a geometria: não entra na extensão
                     break;
                 case EntityType.Arc:
                     single_list.AddRange((obj as netDxf.Entities.Arc).PolygonalVertexes(Precisao).Select(x => x.P3d().Mover(origem)));
