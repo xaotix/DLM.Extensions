@@ -1,4 +1,4 @@
-﻿using DLM;
+using DLM;
 using DLM.vars;
 using System;
 using System.Collections.Generic;
@@ -48,113 +48,7 @@ namespace Conexoes
             Cfg.Init.GetUser().SetOnline(false);
             Environment.Exit(0);
         }
-        public static void SetIcones(this System.Windows.Window window)
-        {
-            var menus = window.GetChildren<System.Windows.Controls.Menu>();
-            var contexts = window.GetChildren<System.Windows.FrameworkElement>().FindAll(x => x.ContextMenu != null);
-            foreach (var menu in menus)
-            {
-                menu.SetIcones();
-            }
-
-            foreach (var menu in contexts)
-            {
-                menu.ContextMenu.SetIcones();
-            }
-        }
-        private static void SetIcones(this System.Windows.Controls.Menu menu)
-        {
-            foreach (var pp in menu.Items)
-            {
-                if (pp is System.Windows.Controls.MenuItem)
-                {
-                    (pp as System.Windows.Controls.MenuItem).SetIcones();
-                }
-            }
-        }
-        private static void SetIcones(this System.Windows.Controls.ContextMenu menu)
-        {
-            foreach (var pp in menu.Items)
-            {
-                if (pp is System.Windows.Controls.MenuItem)
-                {
-                    (pp as System.Windows.Controls.MenuItem).SetIcones();
-                }
-            }
-        }
-        private static void SetIcones(this System.Windows.Controls.MenuItem menu)
-        {
-            menu.VerticalContentAlignment = VerticalAlignment.Center;
-            menu.VerticalAlignment = VerticalAlignment.Center;
-            string chave = "";
-
-
-            if (menu.Header is string || menu.ToolTip is string)
-            {
-                chave = (menu.Header is string ? menu.Header as string : menu.ToolTip as string);
-
-                if (chave.IsNullOrEmpty())
-                {
-                    chave = menu.ToolTip.ToString();
-                }
-
-                if (chave != "")
-                {
-                    if (menu.Header.NotNullOrEmpty())
-                    {
-                        var txt = new TextBlock();
-                        txt.VerticalAlignment = VerticalAlignment.Center;
-                        txt.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                        txt.Text = (menu.Header as string).TrimStart("_");
-                        txt.FontSize = menu.FontSize;
-                        txt.FontFamily = menu.FontFamily;
-                        txt.Background = System.Windows.Media.Brushes.Transparent;
-                        txt.Margin = new Thickness(2, 0, 0, 0);
-                        txt.ToolTip = menu.ToolTip;
-                        menu.Header = txt;
-                        menu.ToolTip = null;
-                    }
-                    else
-                    {
-                        menu.Header = null;
-                    }
-
-                    // Criação do ícone com melhorias visuais e de renderizaçãox
-                    var imagemIcone = new System.Windows.Controls.Image()
-                    {
-                        Source = chave.GetIcone(),
-                        ToolTip = menu.ToolTip,
-                        VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-
-                        Width = 16,
-                        Height = 16,
-
-                        Stretch = System.Windows.Media.Stretch.Uniform,
-
-                        SnapsToDevicePixels = true,
-                        UseLayoutRounding = true
-                    };
-
-                    System.Windows.Media.RenderOptions.SetBitmapScalingMode(imagemIcone, System.Windows.Media.BitmapScalingMode.HighQuality);
-
-                    menu.Icon = imagemIcone;
-
-                }
-            }
-
-
-
-
-            foreach (var pp in menu.Items)
-            {
-                if (pp is System.Windows.Controls.MenuItem)
-                {
-                    (pp as System.Windows.Controls.MenuItem).SetIcones();
-                }
-            }
-
-        }
+        // SetIcones movido e otimizado em DLM.Icones (Conexoes.ExtensoesMenuIcones)
 
         public static void Inicializar(this System.Windows.Window window)
         {
