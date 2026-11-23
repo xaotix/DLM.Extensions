@@ -482,8 +482,8 @@ namespace Conexoes
                 }
             }
 
-            // Normaliza Y para que o topo máximo da chapa deformada fique em Y = 0
-            double topoMax = livDeformado.Where(v => v.Raio <= 0.05).Max(v => v.Origem.Y);
+            // Normaliza Y considerando vértices E o ápice real dos arcos para que toda a chapa fique em Y <= 0
+            double topoMax = livDeformado.Max(v => v.Raio > 0.05 ? (arcoParaCima ? v.Origem.Y + v.Raio : v.Origem.Y - v.Raio) : v.Origem.Y);
             if (Math.Abs(topoMax) > 0.05)
             {
                 double ajuste = -topoMax;
