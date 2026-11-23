@@ -1,4 +1,4 @@
-Ôªøusing Conexoes.Macros.Escada;
+using Conexoes.Macros.Escada;
 using DLM.db;
 using DLM.encoder;
 using DLM.vars;
@@ -32,7 +32,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _reports.Add("Pe√ßa n√£o encontrada no banco de dados", tipo.First().ToString());
+                    _reports.Add("PeÁa n„o encontrada no banco de dados", tipo.First().ToString());
                 }
             }
         }
@@ -53,7 +53,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _reports.Add("Pe√ßa n√£o encontrada no banco de dados", tipo.First().ToString());
+                    _reports.Add("PeÁa n„o encontrada no banco de dados", tipo.First().ToString());
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    erros.Add(tipo.First().ToString(), "Pe√ßa n√£o encontrada no banco de dados");
+                    erros.Add(tipo.First().ToString(), "PeÁa n„o encontrada no banco de dados");
                 }
             }
         }
@@ -126,6 +126,7 @@ namespace Conexoes
             var correntes = objetos.Get<DLM.macros.Corrente>();
             var tirantes = objetos.Get<DLM.macros.Tirante>();
             var purlins = objetos.Get<Macros.Purlin>();
+            var banzosMdj = objetos.Get<Macros.BanzoMedajoist>();
             var ctv1 = objetos.Get<Macros.Contravento>();
             var ctv2 = objetos.Get<DLM.macros.CTV2>();
             var escadasEM1 = objetos.Get<Marinheiro>();
@@ -137,8 +138,8 @@ namespace Conexoes
             retorno.AddRange(pacoteEM1.getPecas().Get<RMA>());
             retorno.AddRange(pacoteEM1.getPecas().Get<RME>());
 
-            //ARREMATES ESPECIAIS => pe√ßa RMU (marca ARREMATE + chapa com a bobina escolhida)
-            //PERFIS DOBRADOS ESPECIAIS => pe√ßa RME (marca PERFIL DOBRADO + chapa da lista de espessuras)
+            //ARREMATES ESPECIAIS => peÁa RMU (marca ARREMATE + chapa com a bobina escolhida)
+            //PERFIS DOBRADOS ESPECIAIS => peÁa RME (marca PERFIL DOBRADO + chapa da lista de espessuras)
             foreach (var arremate in objetos.Get<DLM.macros.ChapaDobradaEspecial>())
             {
                 var pc = arremate.GetPeca(out string erro);
@@ -148,7 +149,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report($"{arremate.TipoNome} inv√°lido", $"{arremate.MarcaFinal} => {erro}", TipoReport.Critico));
+                    retorno.Add(new Report($"{arremate.TipoNome} inv·lido", $"{arremate.MarcaFinal} => {erro}", TipoReport.Critico));
                 }
             }
 
@@ -178,7 +179,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report("Pe√ßa N√£o encontrada", $"CTV2 => {pc.Nome}", TipoReport.Critico));
+                    retorno.Add(new Report("PeÁa N„o encontrada", $"CTV2 => {pc.Nome}", TipoReport.Critico));
                 }
             }
 
@@ -216,7 +217,7 @@ namespace Conexoes
                             }
                             else
                             {
-                                retorno.Add(new Report("Pe√ßa N√£o encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
+                                retorno.Add(new Report("PeÁa N„o encontrada", $"EM2 => Porca para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
 
                             var ARR = PAR.GetARR().Clonar(qtd, txt_macro_em2);
@@ -226,7 +227,7 @@ namespace Conexoes
                             }
                             else
                             {
-                                retorno.Add(new Report("Pe√ßa N√£o encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
+                                retorno.Add(new Report("PeÁa N„o encontrada", $"EM2 => Arruela para o parafuso: {pc.Key}", TipoReport.Critico));
                             }
                         }
                     }
@@ -236,16 +237,29 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report("Pe√ßa N√£o encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
+                    retorno.Add(new Report("PeÁa N„o encontrada", $"EM2 => {pc.Key}", TipoReport.Critico));
                 }
             }
 
-            /*todo = √© necess√°rio melhorar essa parte.*/
+            /*todo = È necess·rio melhorar essa parte.*/
             retorno.AddRange(ctv1.SelectMany(x => x.getPecas().GetRMAs()).ToList().Juntar());
             retorno.AddRange(ctv1.SelectMany(x => x.getPecas().GetRMEs()).ToList().Juntar());
             retorno.AddRange(ctv1.SelectMany(x => x.getPecas().Get<Report>()));
 
 
+
+            foreach (var banzo in banzosMdj)
+            {
+                var nova = banzo.GetRMEFinal();
+                if (nova != null)
+                {
+                    retorno.Add(nova);
+                }
+                else
+                {
+                    retorno.Add(new Report("PeÁa N„o encontrada", $"Banzo Medajoist, id_peca={banzo.id_peca}", TipoReport.Critico));
+                }
+            }
 
             foreach (var purlin in purlins)
             {
@@ -286,7 +300,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    retorno.Add(new Report("Pe√ßa N√£o encontrada", $"Purlin, id_peca={purlin.id_peca}", TipoReport.Critico));
+                    retorno.Add(new Report("PeÁa N„o encontrada", $"Purlin, id_peca={purlin.id_peca}", TipoReport.Critico));
                 }
             }
 
@@ -335,7 +349,7 @@ namespace Conexoes
                         }
                         else
                         {
-                            retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Correntes => {frs.Fixacao.ToString()}", TipoReport.Critico));
+                            retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Correntes => {frs.Fixacao.ToString()}", TipoReport.Critico));
                         }
                     }
 
@@ -372,7 +386,7 @@ namespace Conexoes
                     }
                     else
                     {
-                        retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Correntes => RME id={frst.id_db}", TipoReport.Critico));
+                        retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Correntes => RME id={frst.id_db}", TipoReport.Critico));
                     }
                 }
 
@@ -412,7 +426,7 @@ namespace Conexoes
                             }
                             else
                             {
-                                retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
+                                retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Tirantes => {sftNome}", TipoReport.Critico));
                             }
                         }
                     }
@@ -427,7 +441,7 @@ namespace Conexoes
                         }
                         else
                         {
-                            retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Tirantes => {ntrPOR}", TipoReport.Critico));
+                            retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Tirantes => {ntrPOR}", TipoReport.Critico));
                         }
 
                         if (ntrARR != null)
@@ -436,7 +450,7 @@ namespace Conexoes
                         }
                         else
                         {
-                            retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Tirantes => {ntrARR}", TipoReport.Critico));
+                            retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Tirantes => {ntrARR}", TipoReport.Critico));
                         }
                     }
 
@@ -460,7 +474,7 @@ namespace Conexoes
                             }
                             else
                             {
-                                retorno.Add(new Report("Comprimento inv√°lido", $"V√£o digitado √© maior ou menor que poss√≠vel para o Tirante: {tr_comp}", TipoReport.Critico));
+                                retorno.Add(new Report("Comprimento inv·lido", $"V„o digitado È maior ou menor que possÌvel para o Tirante: {tr_comp}", TipoReport.Critico));
                             }
 
                         }
@@ -468,7 +482,7 @@ namespace Conexoes
                     }
                     else
                     {
-                        retorno.Add(new Report("Pe√ßa n√£o encontrada", $"Macro Tirantes => {tipoTR.Key}", TipoReport.Critico));
+                        retorno.Add(new Report("PeÁa n„o encontrada", $"Macro Tirantes => {tipoTR.Key}", TipoReport.Critico));
                     }
                 }
             }
@@ -498,9 +512,9 @@ namespace Conexoes
         }
         public static bool Comprimento_Pode(this RME _rme, double _valor, bool _setar = true)
         {
-            if (!_rme.VARIAVEL) { "Pe√ßa com comprimento fixo".Alerta(); return false; }
-            if (_rme.COMP_MAX > 0 && _valor > _rme.COMP_MAX) { $"Comprimento maior que o m√°ximo [{_rme.COMP_MAX}]".Alerta(); return false; }
-            if (_valor < _rme.COMP_MIN) { $"Comprimento menor que o m√≠nimo [{_rme.COMP_MIN}]".Alerta(); return false; }
+            if (!_rme.VARIAVEL) { "PeÁa com comprimento fixo".Alerta(); return false; }
+            if (_rme.COMP_MAX > 0 && _valor > _rme.COMP_MAX) { $"Comprimento maior que o m·ximo [{_rme.COMP_MAX}]".Alerta(); return false; }
+            if (_valor < _rme.COMP_MIN) { $"Comprimento menor que o mÌnimo [{_rme.COMP_MIN}]".Alerta(); return false; }
             if (_setar)
             {
                 _rme.SetComprimento(_valor);
@@ -740,7 +754,7 @@ namespace Conexoes
                 var igual = DBases.GetFBsConfig().Find(x => x.Prefixo == fbgrp.Key);
                 if (igual == null)
                 {
-                    _reports.Add("N√£o foi poss√≠vel gerar o CAM.", $"[{fbgrp.Key}] => N√£o h√° configura√ß√£o para este tipo de flange brace. Consulte padroniza√ß√£o.", TipoReport.Critico);
+                    _reports.Add("N„o foi possÌvel gerar o CAM.", $"[{fbgrp.Key}] => N„o h· configuraÁ„o para este tipo de flange brace. Consulte padronizaÁ„o.", TipoReport.Critico);
                 }
                 else
                 {
@@ -752,7 +766,7 @@ namespace Conexoes
                         var fp = ncam.GetCAM(Destino_CAM, false, fb.GetInfo(), fb.COMP_USER, fb.CODIGOFIM);
                         if (!fp)
                         {
-                            _reports.Add("N√£o foi poss√≠vel gerar o CAM.", $"[{fbgrp.Key}] => H√° algo de errado na configura√ß√£o padr√£o. Consulte padroniza√ß√£o.", TipoReport.Critico);
+                            _reports.Add("N„o foi possÌvel gerar o CAM.", $"[{fbgrp.Key}] => H· algo de errado na configuraÁ„o padr„o. Consulte padronizaÁ„o.", TipoReport.Critico);
                         }
                         w.somaProgresso();
                     }
@@ -772,7 +786,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _reports.Add("N√£o foi poss√≠vel gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                    _reports.Add("N„o foi possÌvel gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
@@ -790,7 +804,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _reports.Add("N√£o foi poss√≠vel gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                    _reports.Add("N„o foi possÌvel gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
@@ -806,7 +820,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    _reports.Add("N√£o foi poss√≠vel gerar o CAM", diag.COD_DB, TipoReport.Critico);
+                    _reports.Add("N„o foi possÌvel gerar o CAM", diag.COD_DB, TipoReport.Critico);
                 }
                 w.somaProgresso();
             }
