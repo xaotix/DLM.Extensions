@@ -65,6 +65,10 @@ namespace Conexoes
             {
                 (objeto as UnhandledExceptionEventArgs).Alerta();
             }
+            else if (objeto is OperationCanceledException)
+            {
+                (objeto as OperationCanceledException).Alerta();
+            }
 
             else if (objeto is List<Report> reports)
             {
@@ -221,6 +225,10 @@ namespace Conexoes
             {
                 if (mm._lista.SelectedItem != null)
                 {
+                    if (mm._lista.SelectedItem is T valorTipado)
+                    {
+                        return valorTipado;
+                    }
                     return (T)Convert.ChangeType(mm._lista.SelectedItem, typeof(T));
                 }
             }
