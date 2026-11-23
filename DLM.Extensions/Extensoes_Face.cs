@@ -1,4 +1,4 @@
-ï»¿using DLM.cam;
+using DLM.cam;
 using DLM.desenho;
 using DLM.vars;
 using System;
@@ -273,7 +273,7 @@ namespace Conexoes
 
 
             }
-            /*No caso as mesas (LIV2 e LIV3 nÃ£o precisa descontar)*/
+            /*No caso as mesas (LIV2 e LIV3 não precisa descontar)*/
             return new Face(
                 face.LivSegmentada,
                 face.FaceNum,
@@ -284,191 +284,220 @@ namespace Conexoes
         }
         public static Face Deformar(this Face face, double ContraFlecha)
         {
+            return Deformar(face, ContraFlecha, null, true);
+        }
 
-            var retorno = new List<Liv>();
-            double comp = face.Comprimento;
-            double larg = face.Largura;
+        /// <summary>
+        /// Aplica contra-flecha (arco circular) em uma Face de Chapa, deformando todos os vértices do contorno,
+        /// furos, recortes internos e soldas em torno de um centro de distorção configurável (centroDistorsaoX).
+        /// </summary>
+        public static Face Deformar(this Face face, double ContraFlecha, double? centroDistorsaoX, bool arcoParaCima = true)
+        {
+            if (face == null || Math.Abs(ContraFlecha) < 0.01)
+            {
+                return face;
+            }
+
+            double f = Math.Abs(ContraFlecha);
+            var origVerts = new List<Liv>();
+            var fonteLiv = (face.Liv != null && face.Liv.Count >= 3) ? face.Liv : face.LivSegmentada;
+            if (fonteLiv == null || fonteLiv.Count < 3)
+            {
+                return face;
+            }
+
+            foreach (var L in fonteLiv)
+            {
+                if (L.Raio > 0.05) continue; // ignora centros de arco anteriores
+                origVerts.Add(new Liv(L));
+            }
+            if (origVerts.Count < 3) return face;
+
+            // Remove ponto de fechamento repetido se existir
+            bool fechado = Math.Abs(origVerts[0].Origem.X - origVerts[origVerts.Count - 1].Origem.X) < 0.05 &&
+                           Math.Abs(origVerts[0].Origem.Y - origVerts[origVerts.Count - 1].Origem.Y) < 0.05;
+            if (fechado && origVerts.Count > 3)
+            {
+                origVerts.RemoveAt(origVerts.Count - 1);
+            }
+
+            double minX = origVerts.Min(v => v.Origem.X);
+            double maxX = origVerts.Max(v => v.Origem.X);
+            double minY = origVerts.Min(v => v.Origem.Y);
+            double maxY = origVerts.Max(v => v.Origem.Y);
+            double comp = Math.Max(1.0, maxX - minX);
+            double larg = Math.Max(1.0, maxY - minY);
+
+            double x0 = centroDistorsaoX.HasValue
+                ? Math.Max(minX, Math.Min(maxX, centroDistorsaoX.Value))
+                : (minX + comp * 0.5);
+
+            double lMax = Math.Max(x0 - minX, maxX - x0);
+            if (lMax < 1.0) lMax = comp * 0.5;
+
+            // Raio exato do arco circular passando por (x0, 0) com flecha f em lMax
+            double raio = (f * f + lMax * lMax) / (2.0 * f);
+
+            Func<double, double> deslocY = (x) =>
+            {
+                double dx = x - x0;
+                double rad = raio * raio - dx * dx;
+                double yArco = (rad > 0 ? Math.Sqrt(rad) : 0.0) - (raio - f);
+                return arcoParaCima ? (-f + yArco) : (-yArco);
+            };
+
+            // Deforma TODOS os vértices do polígono
+            var defVerts = new List<Liv>(origVerts.Count);
+            for (int i = 0; i < origVerts.Count; i++)
+            {
+                var v = new Liv(origVerts[i]);
+                v.Raio = 0;
+                v.Ang1 = 0;
+                v.Ang2 = 0;
+                v.Origem.Y = Math.Round(v.Origem.Y + deslocY(v.Origem.X), 2);
+                defVerts.Add(v);
+            }
+
+            // Reconstrói o contorno inserindo o arco circular exato nos segmentos horizontais/principais (superior e inferior)
             var livDeformado = new List<Liv>();
+            int n = defVerts.Count;
+            double minSegHorizontal = Math.Max(40.0, comp * 0.20);
 
-            foreach (Liv L in face.Liv)
+            for (int i = 0; i < n; i++)
             {
-                retorno.Add(new Liv(L));
-            }
-            retorno.Aninhar();
+                var p1Orig = origVerts[i];
+                var p2Orig = origVerts[(i + 1) % n];
+                var p1 = defVerts[i];
+                var p2 = defVerts[(i + 1) % n];
 
-            #region Separa a lista de coordenadas em 2 horizontalmente
-            var Superior2 = new List<Liv>();
-            var Inferior2 = new List<Liv>();
-            retorno.DividirHorizontal(out Superior2, out Inferior2);
-            #endregion
+                livDeformado.Add(new Liv(p1));
 
-            //ponto onde inserir a linha do contra flecha - lado superior
-            int sup1 = -1;
-            int sup2 = -1;
-            double supdist = -1;
+                double dxOrig = Math.Abs(p2Orig.Origem.X - p1Orig.Origem.X);
+                double dyOrig = Math.Abs(p2Orig.Origem.Y - p1Orig.Origem.Y);
 
-            //ponto onde inserir a linha do contra flecha - lado inferior
-            int inf1 = -1;
-            int inf2 = -1;
-            double infdist = -1;
-            #region Acha os pontos onde inserir a linha do contra-flecha
-            for (int i = 0; i < retorno.Count; i++)
-            {
-                if (i == retorno.Count - 1)
+                // Segmento longitudinal (horizontal ou suavemente inclinado) recebe o arco circular exato de raio R
+                if (dxOrig >= minSegHorizontal && dyOrig <= Math.Max(8.0, dxOrig * 0.25))
                 {
-                    var p1 = retorno[i];
-                    var p2 = retorno[0];
-                    if (Superior2.Find(x => x.GetCid() == p1.GetCid()) != null && Superior2.Find(x => x.GetCid() == p2.GetCid()) != null)
+                    double x1 = p1.Origem.X, y1 = p1.Origem.Y;
+                    double x2 = p2.Origem.X, y2 = p2.Origem.Y;
+                    double chord = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+                    if (chord > 1.0 && chord < 2.0 * raio - 0.1)
                     {
-                        double dist = p1.Origem.Distancia(p2.Origem).Abs();
-                        if (supdist < dist)
+                        double mx = (x1 + x2) * 0.5;
+                        double my = (y1 + y2) * 0.5;
+                        double h = Math.Sqrt(Math.Max(0.0, raio * raio - (chord * 0.5) * (chord * 0.5)));
+
+                        // Normal unitária perpendicular à corda apontando para o centro da curvatura
+                        double nx = -(y2 - y1) / chord;
+                        double ny = (x2 - x1) / chord;
+                        // Para arcoParaCima, o centro do círculo está ABAIXO (ny < 0); para baixo, ACIMA (ny > 0)
+                        if ((arcoParaCima && ny > 0) || (!arcoParaCima && ny < 0))
                         {
-                            supdist = dist;
-                            sup1 = i;
-                            sup2 = 0;
+                            nx = -nx;
+                            ny = -ny;
                         }
-                    }
-                }
-                else
-                {
-                    var p1 = retorno[i];
-                    var p2 = retorno[i + 1];
-                    if (Superior2.Find(x => x.GetCid() == p1.GetCid()) != null && Superior2.Find(x => x.GetCid() == p2.GetCid()) != null)
-                    {
-                        double dist = p1.Origem.Distancia(p2.Origem).Abs();
-                        if (supdist < dist)
+
+                        double cx = mx + nx * h;
+                        double cy = my + ny * h;
+
+                        double a1 = Math.Atan2(y1 - cy, x1 - cx) * 180.0 / Math.PI;
+                        double a2 = Math.Atan2(y2 - cy, x2 - cx) * 180.0 / Math.PI;
+                        if (a1 < 0) a1 += 360.0;
+                        if (a2 < 0) a2 += 360.0;
+
+                        // Na convenção DXF/CAM, Ang1 -> Ang2 sempre percorre CCW; escolher o menor arco (<= 180°)
+                        double sweep12 = a2 - a1;
+                        if (sweep12 <= 0) sweep12 += 360.0;
+                        double angIni, angFim;
+                        if (sweep12 <= 180.0)
                         {
-                            supdist = dist;
-                            sup1 = i;
-                            sup2 = i + 1;
+                            angIni = a1;
+                            angFim = a2;
                         }
-                    }
-                }
-            }
-
-            //10-05-2018 - removi o -1 da contagem por causa do problema que tava dando nas primeiras linhas
-            for (int i = 0; i < retorno.Count; i++)
-            {
-                if (i == retorno.Count - 1)
-                {
-                    var p1 = retorno[i];
-                    var p2 = retorno[0];
-                    if (Inferior2.Find(x => x.GetCid() == p1.GetCid()) != null && Inferior2.Find(x => x.GetCid() == p2.GetCid()) != null)
-                    {
-                        double dist = p1.Origem.Distancia(p2.Origem).Abs();
-                        if (infdist < dist)
+                        else
                         {
-                            infdist = dist;
-                            inf1 = i;
-                            inf2 = 0;
+                            angIni = a2;
+                            angFim = a1;
                         }
-                    }
-                }
-                else
-                {
-                    var p1 = retorno[i];
-                    var p2 = retorno[i + 1];
-                    if (Inferior2.Find(x => x.GetCid() == p1.GetCid()) != null && Inferior2.Find(x => x.GetCid() == p2.GetCid()) != null)
-                    {
-                        double dist = p1.Origem.Distancia(p2.Origem).Abs();
-                        if (infdist < dist)
-                        {
-                            infdist = dist;
-                            inf1 = i;
-                            inf2 = i + 1;
-                        }
-                    }
-                }
-            }
-            #endregion
 
-            if (sup1 >= 0 && sup2 >= 0 && inf1 >= 0 && inf2 >= 0)
-            {
-                //acha a diferenÃ§a y do ponto inicial e final
-                double psup1y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup1].Origem.X);
-                double psup2y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup2].Origem.X);
-
-                double pinf1y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf1].Origem.X);
-                double pinf2y = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf2].Origem.X);
-
-                double Raio = FuncoesDLMCam.Arco.Raio(ContraFlecha, comp);
-
-                //double AnguloSup = Funcoes.Graus(Math.Atan(Funcoes.Arco.DifY(supdist, ContraFlecha, 1) / 1));
-                //double AnguloInf = Funcoes.Graus(Math.Atan(Funcoes.Arco.DifY(infdist, ContraFlecha, 1) / 1));
-
-                double AnguloSup = FuncoesDLMCam.Arco.Angulo2(Raio, supdist) / 2;
-                double AnguloInf = FuncoesDLMCam.Arco.Angulo2(Raio, infdist) / 2;
-
-                var sup = new Liv(comp / 2, -Raio, 0, Raio, 90 - AnguloSup, 90 + AnguloSup);
-                var inf = new Liv(comp / 2, -Raio - larg, 0, Raio, 90 - AnguloInf, 90 + AnguloInf);
-
-                for (int i = 0; i < retorno.Count; i++)
-                {
-                    retorno[i].Origem.Y = retorno[i].Origem.Y - ContraFlecha;
-                }
-
-                //ajusta diferenÃ§as em Y
-                retorno[sup1].Origem.Y = retorno[sup1].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup1].Origem.X);
-                retorno[sup2].Origem.Y = retorno[sup2].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[sup2].Origem.X);
-
-                retorno[inf1].Origem.Y = retorno[inf1].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf1].Origem.X);
-                retorno[inf2].Origem.Y = retorno[inf2].Origem.Y + FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, retorno[inf2].Origem.X);
-
-
-
-                for (int i = 0; i < retorno.Count; i++)
-                {
-                    livDeformado.Add(retorno[i]);
-                    if (i == sup1)
-                    {
-                        livDeformado.Add(sup);
-                    }
-                    if (i == inf1)
-                    {
-                        livDeformado.Add(inf);
+                        livDeformado.Add(new Liv(Math.Round(cx, 2), Math.Round(cy, 2), 0, Math.Round(raio, 2), Math.Round(angIni, 2), Math.Round(angFim, 2)));
                     }
                 }
             }
 
+            // Fecha o polígono no primeiro vértice
+            if (livDeformado.Count > 0)
+            {
+                livDeformado.Add(new Liv(livDeformado[0]));
+            }
 
-
-
+            // Deforma furos (clonando sem mutar face.Furacoes original)
             var furos = new List<Furo>();
-            var recortes = new List<Recorte>();
-            foreach (Furo furo in face.Furacoes)
+            if (face.Furacoes != null)
             {
-                //Deslocamento Inicial
-                var FR = furo.Clonar();
-                FR.Origem.Y = FR.Origem.Y - ContraFlecha;
-
-                double offY = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, FR.Origem.X);
-                FR.Origem.Y = FR.Origem.Y + offY;
-                if (Cfg.Init.CAM_CTF_AlinharFuros)
+                foreach (var furo in face.Furacoes)
                 {
-                    if (FR.Validado == false)
+                    var fr = furo.Clonar();
+                    fr.Origem.Y = Math.Round(fr.Origem.Y + deslocY(fr.Origem.X), 2);
+                    furos.Add(fr);
+                }
+
+                if (Cfg.Init.CAM_CTF_AlinharFuros && furos.Count > 1)
+                {
+                    foreach (var fr in furos)
                     {
-                        FR.Validado = true;
-                        var Proximos = face.Furacoes.FindAll(x => Math.Abs(Math.Abs(x.Origem.Y) - Math.Abs(FR.Origem.Y)) <= Cfg.Init.CAM_CTF_AlinharFurosTolerancia && x.Validado == false);
-                        foreach (Furo F in Proximos)
+                        if (fr.Validado) continue;
+                        fr.Validado = true;
+                        var proximos = furos.FindAll(x => !x.Validado && Math.Abs(Math.Abs(x.Origem.Y) - Math.Abs(fr.Origem.Y)) <= Cfg.Init.CAM_CTF_AlinharFurosTolerancia);
+                        foreach (var p in proximos)
                         {
-                            F.Origem.Y = FR.Origem.Y;
-                            F.Validado = true;
+                            p.Origem.Y = fr.Origem.Y;
+                            p.Validado = true;
                         }
                     }
                 }
-                furos.Add(FR);
             }
 
-            foreach (Recorte recorte in face.RecortesInternos)
+            // Deforma recortes internos pelo centro de cada recorte (preservando círculos/retângulos sem distorcer)
+            var recortes = new List<Recorte>();
+            if (face.RecortesInternos != null)
             {
-                //Deslocamento Inicial
-                var FR = recorte.MoverY(-ContraFlecha);
-                double offY = FuncoesDLMCam.Arco.DifY(comp, ContraFlecha, FR.Origem.X);
-                FR = FR.MoverY(offY);
-                recortes.Add(FR);
+                foreach (var rec in face.RecortesInternos)
+                {
+                    double offRec = deslocY(rec.Origem.X);
+                    recortes.Add(rec.MoverY(Math.Round(offRec, 2)));
+                }
             }
 
-            var nFace = new Face(livDeformado, FaceNum.LIV1, recortes, furos);
+            // Deforma soldas proporcionalmente
+            var soldas = new List<Solda>();
+            if (face.Soldas != null)
+            {
+                foreach (var s in face.Soldas)
+                {
+                    var sc = s.Clonar();
+                    sc.Linha.P1.Y = Math.Round(sc.Linha.P1.Y + deslocY(sc.Linha.P1.X), 2);
+                    sc.Linha.P2.Y = Math.Round(sc.Linha.P2.Y + deslocY(sc.Linha.P2.X), 2);
+                    soldas.Add(sc);
+                }
+            }
+
+            // Normaliza Y para que o topo máximo da chapa deformada fique em Y = 0
+            double topoMax = livDeformado.Where(v => v.Raio <= 0.05).Max(v => v.Origem.Y);
+            if (Math.Abs(topoMax) > 0.05)
+            {
+                double ajuste = -topoMax;
+                foreach (var lv in livDeformado) lv.Origem.Y = Math.Round(lv.Origem.Y + ajuste, 2);
+                foreach (var fr in furos) fr.Origem.Y = Math.Round(fr.Origem.Y + ajuste, 2);
+                recortes = recortes.Select(r => r.MoverY(Math.Round(ajuste, 2))).ToList();
+                foreach (var s in soldas)
+                {
+                    s.Linha.P1.Y = Math.Round(s.Linha.P1.Y + ajuste, 2);
+                    s.Linha.P2.Y = Math.Round(s.Linha.P2.Y + ajuste, 2);
+                }
+            }
+
+            var nFace = new Face(livDeformado, FaceNum.LIV1, recortes, furos, face.Dobras, soldas);
             return nFace;
         }
         public static Face Cortar(this Face face, double cima, double baixo)
@@ -488,7 +517,7 @@ namespace Conexoes
                     l0 = l2.Zerar(out x2, out y2);
                     if (x2 > xmin)
                     {
-                        //sÃ³ os cartolas caem aqui, porque sÃ£o tudo bugado.
+                        //só os cartolas caem aqui, porque são tudo bugado.
                         xmin = x2;
                         ymax = y2;
                     }
@@ -685,7 +714,7 @@ namespace Conexoes
                 }
                 else
                 {
-                    //nÃ£o deveria chegar aqui
+                    //não deveria chegar aqui
                 }
 
                 var p_recortes_internos = p_contorno_interno.Intersect(p_contorno);
