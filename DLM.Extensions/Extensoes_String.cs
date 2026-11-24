@@ -298,7 +298,7 @@ namespace Conexoes
 
                 if (retr == "R")
                 {
-                    var lista = new string[] { "RC", "RE", "RF", "RM", "RP", "RS", "RV" };
+                    var lista = new string[] { "RC", "RE", "RF", "RL", "RM", "RP", "RS", "RV" };
 
                     if (!subs.EqualsOne(lista))
                     {
